@@ -11,7 +11,8 @@ add_executable(hsolver-bin
 set_target_properties(hsolver-bin
     PROPERTIES OUTPUT_NAME hsolver)
 
-target_link_libraries(hsolver-bin hsolver)
+    
+target_link_libraries(hsolver-bin hsolver fmt::fmt)
 
 add_subdirectory(test)
 

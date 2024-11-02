@@ -9,7 +9,7 @@ add_executable(hpproc-test
     main.cpp
     )
 
-target_link_libraries(hpproc-test hpproc)
+target_link_libraries(hpproc-test hpproc fmt::fmt)
 
 install(
     TARGETS hpproc-test

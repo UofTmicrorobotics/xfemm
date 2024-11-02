@@ -19,9 +19,10 @@
    Contact: richard.crozier@yahoo.co.uk
 */
 
-#include<stdio.h>
-#include<math.h>
-#include<algorithm>
+#include <stdio.h>
+#include <math.h>
+#include <algorithm>
+#include <iostream>
 #include <malloc.h>
 #include "femmcomplex.h"
 #include "femmconstants.h"
@@ -209,7 +210,7 @@ int FSolver::HarmonicAxisymmetric(CBigComplexLinProb &L,bool verbose)
 //		TheView->SetDlgItemText(IDC_FRAME1,"Matrix Construction");
 //		TheView->m_prog1.SetPos(0);
 	if(verbose)
-            printf("Matrix Construction\n");
+        std::cout << "Matrix Construction" << "\n";
         pctr=0;
 
         if (Iter>0) L.Wipe();
@@ -784,7 +785,7 @@ int FSolver::HarmonicAxisymmetric(CBigComplexLinProb &L,bool verbose)
 //#endif
 //        TheView->SetDlgItemText(IDC_FRAME2,outstr);
             if(verbose)
-                printf("%s\n", outstr);
+                std::cout << outstr << "\n";
             j=(int)  (100.*log10(res)/(log10(Precision)+2.));
             if (j>100) j=100;
 //        TheView->m_prog2.SetPos(j);

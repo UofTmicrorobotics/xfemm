@@ -150,7 +150,9 @@ char *parseString(char *t, string *s)
 // default function for displaying warning messages
 int PrintWarningMsg(const char* message, ...)
 {
-    return printf("%s", message);
+    std::cout << message << std::endl;
+    return 1;
+    // return printf("%s", message);
 }
 
 bool expectChar(istream &input, char c,  std::ostream &err)

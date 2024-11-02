@@ -78,5 +78,5 @@ target_include_directories(femm
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:include>
     )
-target_link_libraries(femm PUBLIC luacomplex)
+target_link_libraries(femm PUBLIC luacomplex fmt::fmt)
 # vi:expandtab:tabstop=4 shiftwidth=4:

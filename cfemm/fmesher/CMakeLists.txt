@@ -28,7 +28,7 @@ add_library(fmesher STATIC
     nosebl.cpp
     writepoly.cpp
     )
-target_link_libraries(fmesher PUBLIC femm PRIVATE Triangle::triangle-api)
+target_link_libraries(fmesher PUBLIC femm fmt::fmt PRIVATE Triangle::triangle-api)
 target_include_directories(fmesher PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
 
 add_executable(fmesher-bin

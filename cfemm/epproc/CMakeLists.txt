@@ -9,6 +9,6 @@ add_executable(epproc-test
     main.cpp
     )
 
-target_link_libraries(epproc-test epproc)
+target_link_libraries(epproc-test epproc fmt::fmt)
 add_subdirectory(test)
 # vi:expandtab:tabstop=4 shiftwidth=4:

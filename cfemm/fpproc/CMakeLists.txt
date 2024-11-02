@@ -11,7 +11,7 @@ add_executable(fpproc-test
     main.cpp
     )
 
-target_link_libraries(fpproc-test fpproc)
+target_link_libraries(fpproc-test fpproc fmt::fmt)
 install(
     TARGETS fpproc-test
     RUNTIME DESTINATION bin

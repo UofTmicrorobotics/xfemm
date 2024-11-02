@@ -15,7 +15,7 @@ add_executable(fsolver-bin
 set_target_properties(fsolver-bin
     PROPERTIES OUTPUT_NAME fsolver)
 
-target_link_libraries(fsolver-bin fsolver)
+target_link_libraries(fsolver-bin fsolver fmt::fmt)
 
 add_subdirectory(test)
 
