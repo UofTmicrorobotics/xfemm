@@ -75,6 +75,9 @@ add_subdirectory(fpproc)
 add_subdirectory(hsolver)
 add_subdirectory(hpproc)
 
+# fmt
+add_subdirectory(fmt)
+
 install(
    FILES LICENSE-FEMM.txt LICENSE-Lua.txt LICENSE-triangle.txt
    DESTINATION doc/xfemm
