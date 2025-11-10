@@ -1,1 +1,0 @@
-// dummy.cpp: used to make sure matlab links object files using g++
