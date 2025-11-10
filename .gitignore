@@ -1,8 +1,4 @@
-
-cfemm/Testing/Temporary/
-mfemm/xfemm_mex_files_for_glnxa64/
-mfemm/xfemm_mex_files_for_gnu-linux-x86_64/
-cfemm/build/
+# xfemm ignores
 cfemm/bin/
 *.asv
 *.o
