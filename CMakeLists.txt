@@ -48,14 +48,10 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} 
 
 
 add_subdirectory(libfemm)
-add_subdirectory(epproc)
-add_subdirectory(esolver)
 add_subdirectory(femmcli)
 add_subdirectory(fmesher)
 add_subdirectory(fsolver)
 add_subdirectory(fpproc)
-add_subdirectory(hsolver)
-add_subdirectory(hpproc)
 
 # install(
 #    FILES LICENSE-FEMM.txt LICENSE-Lua.txt LICENSE-triangle.txt
