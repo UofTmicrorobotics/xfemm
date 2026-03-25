@@ -2,8 +2,6 @@ add_library(femmcli STATIC
     FemmState.cpp
     LuaBaseCommands.cpp
     LuaCommonCommands.cpp
-    LuaElectrostaticsCommands.cpp
-    LuaHeatflowCommands.cpp
     LuaMagneticsCommands.cpp
     )
 target_include_directories(femmcli PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)

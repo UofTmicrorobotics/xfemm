@@ -19,11 +19,9 @@
 
 #include "fmesher.h"
 #include "fpproc.h"
-#include "epproc.h"
-#include "hpproc.h"
 
 #include <memory>
-
+#include <stdexcept>
 
 const std::shared_ptr<femm::FemmProblem> femmcli::FemmState::femmDocument()
 {
@@ -46,9 +44,9 @@ const std::shared_ptr<femm::PProcIface> femmcli::FemmState::getPostProcessor()
         if (current.document->filetype == femm::FileType::MagneticsFile)
             current.postProcessor = std::make_shared<FPProc>();
         if (current.document->filetype == femm::FileType::ElectrostaticsFile)
-            current.postProcessor = std::make_shared<ElectrostaticsPostProcessor>();
+            throw std::invalid_argument("Electrostatics post-processor is not implemented.");
         if (current.document->filetype == femm::FileType::HeatFlowFile)
-            current.postProcessor = std::make_shared<HPProc>();
+            throw std::invalid_argument("Heat flow post-processor is not implemented.");
     }
     return current.postProcessor;
 }

@@ -16,8 +16,6 @@
 #include "locationTools.h"
 #include "LuaBaseCommands.h"
 #include "LuaInstance.h"
-#include "LuaElectrostaticsCommands.h"
-#include "LuaHeatflowCommands.h"
 #include "LuaMagneticsCommands.h"
 #include "stringTools.h"
 
@@ -57,8 +55,6 @@ int execLuaFile( const std::string &inputFile, const std::string &luaInit, bool 
     LuaInstance li(static_pointer_cast<FemmStateBase>(state));
     LuaBaseCommands::registerCommands(li);
     LuaMagneticsCommands::registerCommands(li);
-    LuaElectrostaticsCommands::registerCommands(li);
-    LuaHeatflowCommands::registerCommands(li);
     li.enableTracing(luaTrace);
     li.setPedanticMode(luaPedanticMode);
     li.setDebugGeometry(luaDebugGeometry);
