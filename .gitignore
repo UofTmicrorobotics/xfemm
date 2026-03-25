@@ -11,3 +11,6 @@ cfemm/libfemm/femmversion.h
 *.a
 *.result.ans
 *.result.fem
+
+# my ignores
+build
