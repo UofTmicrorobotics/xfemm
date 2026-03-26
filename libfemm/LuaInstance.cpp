@@ -17,7 +17,7 @@
 
 #include "LuaInstance.h"
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "femmversion.h"
 #include "FemmStateBase.h"
 

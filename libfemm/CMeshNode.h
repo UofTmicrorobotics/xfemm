@@ -27,7 +27,7 @@
 #ifndef FEMM_CMESHNODE_H
 #define FEMM_CMESHNODE_H
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 
 #include <iostream>
 #include <string>

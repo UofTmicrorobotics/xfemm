@@ -28,7 +28,7 @@
 // fsolver.cpp : implementation of the FSolver class
 //
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "spars.h"
 #include "fparse.h"
 #include "feasolver.h"

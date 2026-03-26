@@ -28,7 +28,6 @@
 #define FMESHER_H
 
 #include "nosebl.h"
-#include "femmcomplex.h"
 #include "IntPoint.h"
 
 #include "CArcSegment.h"

@@ -34,7 +34,7 @@
 #include <cstdlib>
 #include <cmath>
 #include "fullmatrix.h"
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "femmconstants.h"
 
 #define ElementsPerSkinDepth 10

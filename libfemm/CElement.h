@@ -21,8 +21,7 @@
 #ifndef FEMM_CELEMENT_H
 #define FEMM_CELEMENT_H
 
-#include "femmcomplex.h"
-
+#include <complex>
 #include <iostream>
 #include <string>
 
@@ -42,7 +41,7 @@ public:
     int e[3]; ///< boundary condition applied to each edge of the element
     int blk;  ///< block property applied to the element, i.e. an index into the CMaterialProp list (blockproplist)
     int lbl;  ///< block label associated with the element, i.e. an index into the CBlockLabel list (labellist)
-    CComplex ctr;
+    std::complex<double> ctr;
     double rsqr;
     int n[3]; ///< 3 ints to store elem's neighbouring elements
 };
@@ -61,10 +60,10 @@ public:
      */
     static CMElement fromStream( std::istream &input, std::ostream &err = std::cerr );
 
-    CComplex mu1,mu2;
-    CComplex v12;
-    CComplex B1,B2;
-    CComplex b1[3],b2[3];
+    std::complex<double> mu1,mu2;
+    std::complex<double> v12;
+    std::complex<double> B1,B2;
+    std::complex<double> b1[3],b2[3];
     double magdir;
     double Jprev;
 };
@@ -94,10 +93,10 @@ public:
      */
     static CHSElement fromStream( std::istream &input, std::ostream &err = std::cerr );
 
-    CComplex D;    // elemental flux density
-    CComplex d[3];  // smoothed flux density at corners
+    std::complex<double> D;    // elemental flux density
+    std::complex<double> d[3];  // smoothed flux density at corners
 
-    //CComplex E(); unused?
+    //std::complex<double> E(); unused?
 };
 
 // interim-solution until everything is moved to the new type:

@@ -27,7 +27,7 @@
 #ifndef FEMM_CNODE_H
 #define FEMM_CNODE_H
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include <iostream>
 #include <memory>
 #include <string>

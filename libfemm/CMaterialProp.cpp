@@ -27,9 +27,9 @@
 #include "CMaterialProp.h"
 
 #include "fullmatrix.h"
-#include "femmcomplex.h"
 #include "femmconstants.h"
 #include "fparse.h"
+#include "complex_type.h"
 
 #include <algorithm>
 #include <cassert>
@@ -390,7 +390,7 @@ CComplex CMMaterialProp::LaminatedBH(double w, int i)
             {
                 B=abs(x[k+1]-x[k])/L;
                 vi=GetdHdB(B);
-                vo=GetH(CComplex(B))/B;
+                vo=GetH(B)/B; // <- this is the GetH from fsolver
             }
             else
             {

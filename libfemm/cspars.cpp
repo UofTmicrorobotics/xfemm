@@ -22,7 +22,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <cstdlib>
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "cspars.h"
 
 #define MAXITER 1000000

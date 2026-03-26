@@ -33,12 +33,12 @@
 #include <cstdio>
 #include <cmath>
 #include <regex>
-#include "femmcomplex.h"
 #include "femmconstants.h"
 #include "fparse.h"
 #include "lua.h"
 #include "lualib.h"
 #include "fpproc.h"
+#include "complex_type.h"
 
 //#define DEBUG_FPPROC 1
 

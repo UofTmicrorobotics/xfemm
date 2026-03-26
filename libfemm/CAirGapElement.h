@@ -22,7 +22,7 @@
 #define FEMM_CAIRGAPELEMENT_H
 
 #include "CQuadPoint.h"
-#include "femmcomplex.h"
+#include "complex_type.h"
 
 #include <memory>
 #include <iostream>

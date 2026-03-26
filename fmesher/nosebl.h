@@ -28,7 +28,7 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include "femmcomplex.h"
+#include "complex_type.h"
 
 namespace fmesher
 {

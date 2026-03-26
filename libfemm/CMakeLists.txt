@@ -1,38 +1,3 @@
-# lua with complex numbers
-add_library(luacomplex
-    liblua/femmcomplex.cpp
-    liblua/llimits.h
-    liblua/lopcodes.h
-    liblua/lua.h
-    liblua/luadebug.h
-    liblua/lualib.h
-    liblua/lapi.cpp
-    liblua/lauxlib.cpp
-    liblua/lbaselib.cpp
-    liblua/lcode.cpp
-    liblua/ldblib.cpp
-    liblua/ldebug.cpp
-    liblua/ldo.cpp
-    liblua/lfunc.cpp
-    liblua/lgc.cpp
-    liblua/liolib.cpp
-    liblua/llex.cpp
-    liblua/lmathlib.cpp
-    liblua/lmem.cpp
-    liblua/lobject.cpp
-    liblua/lparser.cpp
-    liblua/lstate.cpp
-    liblua/lstring.cpp
-    liblua/lstrlib.cpp
-    liblua/ltable.cpp
-    liblua/ltests.cpp
-    liblua/ltm.cpp
-    liblua/lundump.cpp
-    liblua/lvm.cpp
-    liblua/lzio.cpp
-    )
-target_include_directories(luacomplex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/liblua> $<INSTALL_INTERFACE:include/liblua>)
-
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/femmversion.h.in"
     "${CMAKE_CURRENT_SOURCE_DIR}/femmversion.h"

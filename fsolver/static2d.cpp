@@ -19,7 +19,7 @@
    Contact: richard.crozier@yahoo.co.uk
 */
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "femmconstants.h"
 #include "CElement.h"
 #include "spars.h"

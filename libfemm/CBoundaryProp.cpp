@@ -32,7 +32,7 @@
 #include "CBoundaryProp.h"
 
 #include "fullmatrix.h"
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "femmconstants.h"
 #include "fparse.h"
 

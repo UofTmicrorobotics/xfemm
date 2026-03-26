@@ -31,7 +31,7 @@
 #ifndef FEMM_CCIRCUIT_H
 #define FEMM_CCIRCUIT_H
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include <iostream>
 #include <string>
 

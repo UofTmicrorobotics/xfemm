@@ -27,7 +27,7 @@
 #ifndef FEMM_POSTPROCESSOR_H
 #define FEMM_POSTPROCESSOR_H
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "fparse.h"
 #include "FemmProblem.h"
 

@@ -34,7 +34,7 @@
 
 #include "lua.h"
 #include "luadebug.h"
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "femmenums.h"
 #include "fparse.h"
 #include "CArcSegment.h"

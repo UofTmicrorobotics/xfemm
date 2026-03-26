@@ -31,7 +31,7 @@
 #include <CElement.h>
 #include <CAirGapElement.h>
 #include <CNode.h>
-#include <femmcomplex.h>
+#include "complex_type.h"
 #include <fparse.h>
 #include <fsolver.h>
 #include <LuaInstance.h>

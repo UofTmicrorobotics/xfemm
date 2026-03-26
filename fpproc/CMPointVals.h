@@ -27,7 +27,7 @@
 #ifndef CMPOINTVALS_H
 #define CMPOINTVALS_H
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 
 class CMPointVals
 {

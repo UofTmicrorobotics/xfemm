@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "fpproc.h"
-#include "femmcomplex.h"
+#include "complex_type.h"
 
 using namespace std;
 

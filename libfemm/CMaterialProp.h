@@ -27,7 +27,7 @@
 #ifndef FEMM_CMATERIALPROP_H
 #define FEMM_CMATERIALPROP_H
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include <iostream>
 #include <string>
 #include <vector>

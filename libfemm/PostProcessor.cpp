@@ -1,4 +1,3 @@
-
 /*
    This code is a modified version of an algorithm
    forming part of the software program Finite
@@ -27,7 +26,7 @@
 */
 #include "PostProcessor.h"
 
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include "femmconstants.h"
 #include "fparse.h"
 #include "spars.h"

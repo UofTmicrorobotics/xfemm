@@ -1,4 +1,3 @@
-
 //#undef min
 //#undef max
 //#define NOMINMAX
@@ -27,7 +26,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include "femmcomplex.h"
+#include "complex_type.h"
 //#include "spars.h"
 //#include "mmesh.h"
 #include "feasolver.h"

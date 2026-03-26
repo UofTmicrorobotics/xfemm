@@ -22,7 +22,7 @@
 #define FEMM_CPOSTPROCMELEMENT_H
 
 #include "CElement.h"
-#include "femmcomplex.h"
+#include "complex_type.h"
 
 //#include <iostream>
 //#include <string>

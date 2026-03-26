@@ -29,7 +29,7 @@
 
 #include <string>
 #include <iostream>
-#include "femmcomplex.h"
+#include "complex_type.h"
 
 namespace femm {
 
