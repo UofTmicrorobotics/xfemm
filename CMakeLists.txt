@@ -44,7 +44,6 @@ FetchContent_MakeAvailable(eigen)
 
 
 add_subdirectory(libfemm)
-add_subdirectory(femmcli)
 add_subdirectory(fmesher)
 add_subdirectory(fsolver)
 add_subdirectory(fpproc)
