@@ -84,7 +84,7 @@ public:
      * @brief CC
      * @return the coordinates as a complex number
      */
-    CComplex CC() const;
+    complexd_t CC() const;
     void ToggleSelect();
 
     /**

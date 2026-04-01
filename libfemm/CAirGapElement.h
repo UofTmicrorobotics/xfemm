@@ -73,15 +73,15 @@ public:
     double OuterAngle;///< Angle in degrees through which the inner ring (stator) is turned
     double InnerShift;///< fraction of an element that inner mesh is shifted relative to annular mesh
     double OuterShift;///< fraction of an element that outer mesh is shifted relative to annular mesh
-    CComplex agc; ///< centre of the air gap element
+    complexd_t agc; ///< centre of the air gap element
     std::vector <femm::CQuadPoint> quadNode; ///< quad nodes that are part of the air gap element (was called 'qp' in FEMM)
     std::vector <int> nodeNums; ///< node numbers that are part of the air gap element (was called 'node' in FEMM)
 
     int nn; ///< number of harmonics in harmonic problem
-    CComplex aco;
-    CComplex *brc, *brs; ///< harmonic components of air gap centerline flux density
-    CComplex *btc, *bts;
-    CComplex *br, *bt;
+    complexd_t aco;
+    complexd_t *brc, *brs; ///< harmonic components of air gap centerline flux density
+    complexd_t *btc, *bts;
+    complexd_t *br, *bt;
     double *brcPrev, *brsPrev; ///< harmonic components of air gap centerline flux density from prev solution
     double *btcPrev, *btsPrev;
     double *brPrev,*btPrev;

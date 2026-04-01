@@ -21,7 +21,7 @@
 #ifndef FULLMATRIX_H
 #define FULLMATRIX_H
 
-class CComplex;
+class complexd_t;
 
 class CFullMatrix{
 
@@ -44,19 +44,19 @@ class CFullMatrix{
 
 };
 
-class CComplexFullMatrix{
+class complexd_tFullMatrix{
 
     public:
 
         // data members
-        CComplex **M;           // Matrix on LHS
-        CComplex *b;            // vector on RHS
+        complexd_t **M;           // Matrix on LHS
+        complexd_t *b;            // vector on RHS
         int n;              // dimension of the matrix
 
         // member functions
-        CComplexFullMatrix();
-        CComplexFullMatrix(int d);
-        ~CComplexFullMatrix();
+        complexd_tFullMatrix();
+        complexd_tFullMatrix(int d);
+        ~complexd_tFullMatrix();
         void Wipe();
         int Create(int d);
         int GaussSolve();

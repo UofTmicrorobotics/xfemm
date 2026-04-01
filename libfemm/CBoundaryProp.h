@@ -202,7 +202,7 @@ public:
      * <c0> <c0i>
      * \endverbatim
      */
-    CComplex c0;
+    complexd_t c0;
     /**
      * @brief Mixed BC parameter: c1
      * Second coefficient for mixed BC (for BdryFormat=2).
@@ -210,7 +210,7 @@ public:
      * <c1> <c1i>
      * \endverbatim
      */
-    CComplex c1;
+    complexd_t c1;
 
     virtual bool isPeriodic(PeriodicityType pt) const override;
 

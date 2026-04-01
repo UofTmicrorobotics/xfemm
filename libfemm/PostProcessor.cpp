@@ -163,7 +163,7 @@ void PostProcessor::setMessageCallback(PostProcessor::MessageCB msgFun)
         WarnMessage = msgFun;
 }
 
-void PostProcessor::addContourPoint(CComplex p)
+void PostProcessor::addContourPoint(complexd_t p)
 {
     if (contour.empty() || p!=contour.back())
         contour.push_back(p);
@@ -177,7 +177,7 @@ void PostProcessor::addContourPointFromNode(double mx, double my)
 
         int lineno=-1;
         int arcno=-1;
-        CComplex z(problem->nodelist[n0]->x,problem->nodelist[n0]->y);
+        complexd_t z(problem->nodelist[n0]->x,problem->nodelist[n0]->y);
         if (contour.empty())
         {
             contour.push_back(z);
@@ -185,13 +185,13 @@ void PostProcessor::addContourPointFromNode(double mx, double my)
             return;
         }
         //check to see if point is the same as last point in the contour;
-        CComplex y = contour.back();
+        complexd_t y = contour.back();
 
         if (y==z)
             return;
 
         int n1 = problem->closestNode(y.re,y.im);
-        CComplex x(problem->nodelist[n1]->x,problem->nodelist[n1]->y);
+        complexd_t x(problem->nodelist[n1]->x,problem->nodelist[n1]->y);
 
         //check to see if this point and the last point are ends of an
         //input segment;
@@ -229,7 +229,7 @@ void PostProcessor::addContourPointFromNode(double mx, double my)
             {
                 if((problem->arclist[k]->n0==n1) && (problem->arclist[k]->n1==n0))
                 {
-                    double d2=problem->shortestDistanceFromArc(CComplex(mx,my),
+                    double d2=problem->shortestDistanceFromArc(complexd_t(mx,my),
                                                               *problem->arclist[k].get());
                     if(d2<d1){
                         arcno=k;
@@ -240,7 +240,7 @@ void PostProcessor::addContourPointFromNode(double mx, double my)
                 }
                 if((problem->arclist[k]->n0==n0) && (problem->arclist[k]->n1==n1))
                 {
-                    double d2=problem->shortestDistanceFromArc(CComplex(mx,my),
+                    double d2=problem->shortestDistanceFromArc(complexd_t(mx,my),
                                                               *problem->arclist[k].get());
                     if(d2<d1){
                         arcno=k;
@@ -324,7 +324,7 @@ int femm::PostProcessor::InTriangle(double x, double y) const
         lo--;
         if (lo < 0)   lo = sz - 1;
 
-        CComplex hiCtr = meshelems[hi]->ctr;
+        complexd_t hiCtr = meshelems[hi]->ctr;
         z = (hiCtr.re - x) * (hiCtr.re - x) + (hiCtr.im - y) * (hiCtr.im - y);
 
         if (z <= meshelems[hi]->rsqr)
@@ -336,7 +336,7 @@ int femm::PostProcessor::InTriangle(double x, double y) const
             }
         }
 
-        CComplex loCtr = meshelems[lo]->ctr;
+        complexd_t loCtr = meshelems[lo]->ctr;
         z = (loCtr.re-x)*(loCtr.re-x) + (loCtr.im-y)*(loCtr.im-y);
 
         if (z <= meshelems[lo]->rsqr)
@@ -434,13 +434,13 @@ bool PostProcessor::isSameMaterial(const femmsolver::CElement &e1, const femmsol
 }
 
 // identical in FPProc and HPProc
-CComplex femm::PostProcessor::Ctr(int i)
+complexd_t femm::PostProcessor::Ctr(int i)
 {
-    CComplex c = 0;
+    complexd_t c = 0;
     for(int j=0; j<3; j++)
     {
         int p_j = meshelems[i]->p[j];
-        CComplex p(meshnodes[ p_j ]->x/3., meshnodes[ p_j ]->y/3.);
+        complexd_t p(meshnodes[ p_j ]->x/3., meshnodes[ p_j ]->y/3.);
         c+=p;
     }
 
@@ -588,7 +588,7 @@ bool PostProcessor::makeMask()
     // the force calculation
     if(problem->nodeproplist.size()>0)
     {
-        CComplex *p=(CComplex *)calloc(problem->nodelist.size(),sizeof(CComplex));
+        complexd_t *p=(complexd_t *)calloc(problem->nodelist.size(),sizeof(complexd_t));
         int npts = 0;
         for(int i=0;i<(int)problem->nodelist.size();i++)
             if(problem->nodelist[i]->BoundaryMarker>=0)
@@ -738,7 +738,7 @@ double femm::PostProcessor::ElmArea(femmsolver::CElement *elm)
 
 
 // identical in FPProc and HPProc
-CComplex femm::PostProcessor::HenrotteVector(int k) const
+complexd_t femm::PostProcessor::HenrotteVector(int k) const
 {
     int n[3];
     double b[3],c[3];
@@ -757,7 +757,7 @@ CComplex femm::PostProcessor::HenrotteVector(int k) const
 
     double da = (b[0] * c[1] - b[1] * c[0]);
 
-    CComplex v = 0;
+    complexd_t v = 0;
     for(int i=0; i<3; i++)
     {
         v -= meshnodes[n[i]]->msk * (b[i] + I * c[i]) / (da * LengthConv[problem->LengthUnits]);  // grad
@@ -775,7 +775,7 @@ void femm::PostProcessor::bendContour(double angle, double anglestep)
 
     int k,n;
     double d,tta,dtta,R;
-    CComplex c,a0,a1;
+    complexd_t c,a0,a1;
 
     // check to see if there are at least enough
     // points to have made one line;
@@ -850,7 +850,7 @@ void PostProcessor::toggleSelectionForGroup(int group)
     bHasMask = false;
 }
 
-const std::vector<CComplex> &PostProcessor::getContour() const
+const std::vector<complexd_t> &PostProcessor::getContour() const
 {
     return contour;
 }
@@ -877,7 +877,7 @@ double PostProcessor::AECF(const femmsolver::CElement *elem) const
 }
 
 // identical in epproc and hpproc
-double PostProcessor::AECF(const femmsolver::CElement *elem, CComplex p) const
+double PostProcessor::AECF(const femmsolver::CElement *elem, complexd_t p) const
 {
     // Correction factor for a point within the element, rather than
     // for the center of the element.
@@ -890,7 +890,7 @@ double PostProcessor::AECF(const femmsolver::CElement *elem, CComplex p) const
 }
 
 // almost the same in epproc and hpproc; differences noted by comments
-void PostProcessor::getNodalD(CComplex *d, int N) const
+void PostProcessor::getNodalD(complexd_t *d, int N) const
 {
     // this method is only valid for heatflow and electrostatics problems; otherwise punt
     if (problem->filetype != FileType::HeatFlowFile && problem->filetype != FileType::ElectrostaticsFile )
@@ -1004,7 +1004,7 @@ void PostProcessor::getNodalD(CComplex *d, int N) const
             // The node of interest is on some boundary where the charge is fixed.
             // if the angle is shallow enough, we can just do the regular thing;
             // Otherwise, we punt.
-            CComplex x,y;
+            complexd_t x,y;
             x=meshnodes[lf]->CC()-meshnodes[j]->CC(); x/=abs(x);
             y=meshnodes[j]->CC()-meshnodes[rt]->CC(); y/=abs(y);
             if(std::abs(arg(x/y))>10.0001*PI/180.)
@@ -1077,7 +1077,7 @@ void PostProcessor::getNodalD(CComplex *d, int N) const
                 {
                     const auto nodej = reinterpret_cast<femmsolver::CHMeshNode*>(meshnodes[j].get());
                     const auto bprop = reinterpret_cast<CHMaterialProp*>(problem->blockproplist[elem->blk].get());
-                    CComplex kn=bprop->GetK(nodej->T);
+                    complexd_t kn=bprop->GetK(nodej->T);
                     d[i]= Re(kn)*Ex + I*Im(kn)*Ey;
                 }
                     break;
@@ -1149,7 +1149,7 @@ void femm::PostProcessor::FindBoundaryEdges()
 }
 
 // identical in hpproc and epproc
-void PostProcessor::getPointD(double x, double y, CComplex &D, const femmsolver::CElement &element) const
+void PostProcessor::getPointD(double x, double y, complexd_t &D, const femmsolver::CElement &element) const
 {
     // this method is only valid for heatflow and electrostatics problems; otherwise punt
     if (problem->filetype != FileType::HeatFlowFile && problem->filetype != FileType::ElectrostaticsFile )

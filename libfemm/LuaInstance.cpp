@@ -102,11 +102,11 @@ int femm::LuaInstance::doString(const std::string &luaString, femm::LuaInstance:
 
 }
 
-CComplex femm::LuaInstance::getGlobal(const std::string &varName, bool *ok)
+complexd_t femm::LuaInstance::getGlobal(const std::string &varName, bool *ok)
 {
     lua_getglobal(lua, varName.c_str()); //+1
 
-    CComplex value = lua_tonumber(lua,-1);
+    complexd_t value = lua_tonumber(lua,-1);
     if (ok!=nullptr)
         *ok = (lua_isnumber(lua,-1));
     lua_pop(lua, 1); //-1
@@ -114,7 +114,7 @@ CComplex femm::LuaInstance::getGlobal(const std::string &varName, bool *ok)
     return value;
 }
 
-void femm::LuaInstance::setGlobal(const std::string &varName, CComplex val)
+void femm::LuaInstance::setGlobal(const std::string &varName, complexd_t val)
 {
     lua_pushnumber(lua, val); //+1
     lua_setglobal(lua, varName.c_str()); //-1
@@ -227,7 +227,7 @@ void femm::LuaInstance::addFunction(const char *name, lua_CFunction fun)
  */
 int femm::LuaInstance::luaComplex(lua_State *L)
 {
-    CComplex y;
+    complexd_t y;
     int numArgs=lua_gettop(L);
     // FIXME raise error when arg is not a number
     if (numArgs==2)
@@ -249,7 +249,7 @@ int femm::LuaInstance::luaComplex(lua_State *L)
  */
 int femm::LuaInstance::luaFemmVersion(lua_State *L)
 {
-    CComplex version = FEMM_VERSION_INT;
+    complexd_t version = FEMM_VERSION_INT;
     lua_pushnumber(L,version);
     return 1;
 }
@@ -284,7 +284,7 @@ int femm::LuaInstance::luaGetCompatibilityMode(lua_State *L)
 {
     LuaInstance *me = instance(L);
     //assert(me)
-    CComplex compatMode = (me->compatibilityMode()) ? 1.0 : 0.0;
+    complexd_t compatMode = (me->compatibilityMode()) ? 1.0 : 0.0;
     lua_pushnumber(L, compatMode);
     return 1;
 }

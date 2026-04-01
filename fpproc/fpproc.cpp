@@ -787,7 +787,7 @@ bool FPProc::OpenDocument(string pathname)
             sscanf(v,"%i",&MProp.BHpoints);
             if (MProp.BHpoints>0)
             {
-                //MProp.Hdata = (CComplex *)calloc(MProp.BHpoints,sizeof(CComplex));
+                //MProp.Hdata = (complexd_t *)calloc(MProp.BHpoints,sizeof(complexd_t));
                 //MProp.Bdata =   (double *)calloc(MProp.BHpoints,sizeof(double));
                 MProp.Bdata.clear();
                 MProp.Bdata.shrink_to_fit();
@@ -799,7 +799,7 @@ bool FPProc::OpenDocument(string pathname)
                 {
                     fgets(s,1024,fp);
                     double b;
-                    CComplex h;
+                    complexd_t h;
                     sscanf(s,"%lf\t%lf",&b,&h.re);
                     MProp.Hdata.push_back(h);
                     MProp.Bdata.push_back(b);
@@ -814,7 +814,7 @@ bool FPProc::OpenDocument(string pathname)
             {
                 if (bIncremental != 0){
                     // first time through was just to get MuMax from AC curve...
-                    CComplex *tmpHdata=(CComplex *)calloc(MProp.BHpoints,sizeof(CComplex));
+                    complexd_t *tmpHdata=(complexd_t *)calloc(MProp.BHpoints,sizeof(complexd_t));
                     double *tmpBdata=(double *)calloc(MProp.BHpoints,sizeof(double));
                     for(i=0;i<MProp.BHpoints;i++)
                     {
@@ -1421,7 +1421,7 @@ bool FPProc::OpenDocument(string pathname)
 	{
 		int m;
 		double tta,R,dr,ri,ro,n,dt;
-		CComplex brc,brs,btc,bts;
+		complexd_t brc,brs,btc,bts;
 		double brcPrev,brsPrev,btcPrev,btsPrev;
 
 		R=(agelist[i].ri + agelist[i].ro)/2.;
@@ -1442,12 +1442,12 @@ bool FPProc::OpenDocument(string pathname)
 		}
 
 		// for present solution
-		agelist[i].brc=(CComplex *)calloc(agelist[i].nn,sizeof(CComplex));
-		agelist[i].brs=(CComplex *)calloc(agelist[i].nn,sizeof(CComplex));
-		agelist[i].btc=(CComplex *)calloc(agelist[i].nn,sizeof(CComplex));
-		agelist[i].bts=(CComplex *)calloc(agelist[i].nn,sizeof(CComplex));
-		agelist[i].br=(CComplex *)calloc(agelist[i].totalArcElements,sizeof(CComplex));
-		agelist[i].bt=(CComplex *)calloc(agelist[i].totalArcElements,sizeof(CComplex));
+		agelist[i].brc=(complexd_t *)calloc(agelist[i].nn,sizeof(complexd_t));
+		agelist[i].brs=(complexd_t *)calloc(agelist[i].nn,sizeof(complexd_t));
+		agelist[i].btc=(complexd_t *)calloc(agelist[i].nn,sizeof(complexd_t));
+		agelist[i].bts=(complexd_t *)calloc(agelist[i].nn,sizeof(complexd_t));
+		agelist[i].br=(complexd_t *)calloc(agelist[i].totalArcElements,sizeof(complexd_t));
+		agelist[i].bt=(complexd_t *)calloc(agelist[i].totalArcElements,sizeof(complexd_t));
 		agelist[i].nh=(int *)calloc(agelist[i].nn,sizeof(int));
 
 		// for previous solution;
@@ -1476,8 +1476,8 @@ bool FPProc::OpenDocument(string pathname)
 			int nn[10];
 			double ww[10];
 			int kk;
-			CComplex a[10];
-			CComplex ac;
+			complexd_t a[10];
+			complexd_t ac;
 
 			double ci=agelist[i].InnerShift;
 			double co=agelist[i].OuterShift;
@@ -1691,7 +1691,7 @@ bool FPProc::OpenDocument(string pathname)
         {
             // The magnetization direction is defined by a lua calculation
             string str;
-            CComplex X;
+            complexd_t X;
 
             // Get the element centroid
             X = meshelem[i].ctr;
@@ -1756,9 +1756,9 @@ bool FPProc::OpenDocument(string pathname)
         fflush(stdout);
         #endif
 
-        CComplex deg45;
+        complexd_t deg45;
         deg45=1+I;
-        CComplex K,halflag;
+        complexd_t K,halflag;
         double ds;
         double w=2.*PI*Frequency;
 
@@ -1852,7 +1852,7 @@ bool FPProc::OpenDocument(string pathname)
         fflush(stdout);
         #endif
     
-        CComplex Jelm[3],Aelm[3];
+        complexd_t Jelm[3],Aelm[3];
 
         double J_Low, J_High;
         double Jr_Low, Jr_High;
@@ -1920,7 +1920,7 @@ bool FPProc::OpenDocument(string pathname)
         double Hi_Low, Hi_High;
         double logB_Low, logB_High;
         double a0,a1;
-        CComplex h1,h2;
+        complexd_t h1,h2;
 
         // Do a little bit of work to exclude external region from the extreme value calculation
         // Otherwise, flux in the external regions can give a spurious indication of limits
@@ -2078,7 +2078,7 @@ bool FPProc::OpenDocument(string pathname)
     #endif
     for(i=0; i<(int)circproplist.size(); i++)
     {
-        CComplex Jelm[3],Aelm[3];
+        complexd_t Jelm[3],Aelm[3];
         double a;
 
         if(circproplist[i].CircType>1)
@@ -2587,7 +2587,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
         // prox and skin effect for nonzero frequency cases.
         if (blockproplist[meshelem[k].blk].LamType>2)
         {
-            CComplex J;
+            complexd_t J;
             J=u.Js*1.e6;
 
             u.E+=Re(J*J)*Im(blocklist[meshelem[i].lbl].o)/2.;
@@ -2608,7 +2608,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
         }
         else
         {
-            CComplex v[6];
+            complexd_t v[6];
             double R[3];
 //            double Z[3];
             double p,q;
@@ -2665,7 +2665,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
 			u.H2 = u.B2/(u.mu2*muo);
 		}
 		else{
-			CComplex muinc,murel;
+			complexd_t muinc,murel;
 			double B,B1p,B2p;
 
 			B1p=meshelem[k].B1p;
@@ -2736,7 +2736,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
             else u.Je=0;
         }
 
-        CComplex z;
+        complexd_t z;
         z=(u.H1*u.B1.Conj()) + (u.H2*u.B2.Conj());
         u.E=0.25*z.re;
 
@@ -2744,7 +2744,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
         // prox and skin effect for nonzero frequency cases.
         if (blockproplist[meshelem[k].blk].LamType>2)
         {
-            CComplex J;
+            complexd_t J;
             J=u.Js*1.e6;
 
             u.E += Re(J*conj(J))*(Im(1./blocklist[meshelem[k].lbl].o)/(2.e6*PI*Frequency))/4.;
@@ -2767,7 +2767,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
     return false;
 }
 
-void FPProc::GetPointB(const double x, const double y, CComplex &B1, CComplex &B2,
+void FPProc::GetPointB(const double x, const double y, complexd_t &B1, complexd_t &B2,
                        const femmpostproc::CPostProcMElement &elm)
 {
     // elm is a reference to the element that contains the point of interest.
@@ -2802,11 +2802,11 @@ void FPProc::GetPointB(const double x, const double y, CComplex &B1, CComplex &B
     }
 }
 
-void FPProc::GetNodalB(CComplex *b1, CComplex *b2, femmpostproc::CPostProcMElement &elm)
+void FPProc::GetNodalB(complexd_t *b1, complexd_t *b2, femmpostproc::CPostProcMElement &elm)
 {
     // elm is a reference to the element that contains the point of interest.
-    CComplex p;
-    CComplex tn,bn,bt,btu,btv,u1,u2,v1,v2;
+    complexd_t p;
+    complexd_t tn,bn,bt,btu,btv,u1,u2,v1,v2;
     int i,j,k,l,q,m,pt,nxt;
     i=j=k=l=q=m=pt=nxt = 0;
     double r,R,z;
@@ -3106,7 +3106,7 @@ void FPProc::GetElementB(femmpostproc::CPostProcMElement &elm)
     }
     else
     {
-        CComplex v[6],dp,dq;
+        complexd_t v[6],dp,dq;
         double R[3],r; //Z[3]
 
         for(i=0,r=0; i<3; i++)
@@ -3208,7 +3208,7 @@ int FPProc::ClosestNode(const double x, const double y) const
 //void FPProc::GetLineValues(CXYPlot &p,int PlotType,int NumPlotPoints)
 //{
 //    double *q,z,u,dz;
-//    CComplex pt,n,t;
+//    complexd_t pt,n,t;
 //    int i,j,k,m,elm;
 //    CPointVals v;
 //    bool flag;
@@ -3524,9 +3524,9 @@ bool FPProc::InTriangleTest(double x, double y, int i) const
     return true;
 }
 
-CComplex FPProc::Ctr(int i) const
+complexd_t FPProc::Ctr(int i) const
 {
-    CComplex p,c;
+    complexd_t p,c;
     int j;
 
     for(j=0,c=0; j<3; j++)
@@ -3593,7 +3593,7 @@ double FPProc::ElmVolume(int i) const
     return a;
 }
 
-CComplex FPProc::GetJA(int k,CComplex *J,CComplex *A) const
+complexd_t FPProc::GetJA(int k,complexd_t *J,complexd_t *A) const
 {
     // returns current density with contribution from all sources in
     // units of MA/m^2
@@ -3601,7 +3601,7 @@ CComplex FPProc::GetJA(int k,CComplex *J,CComplex *A) const
     int i,blk,lbl,crc;
     double r,c,rn;
     r=c=rn = 0;
-    CComplex Javg;
+    complexd_t Javg;
 
     blk=meshelem[k].blk;
     lbl=meshelem[k].lbl;
@@ -3678,10 +3678,10 @@ CComplex FPProc::GetJA(int k,CComplex *J,CComplex *A) const
     return (Javg*1.e06);
 }
 
-CComplex FPProc::PlnInt(double a, CComplex *u, CComplex *v) const
+complexd_t FPProc::PlnInt(double a, complexd_t *u, complexd_t *v) const
 {
     int i;
-    CComplex z[3],x;
+    complexd_t z[3],x;
 
     z[0]=2.*u[0]+u[1]+u[2];
     z[1]=u[0]+2.*u[1]+u[2];
@@ -3691,11 +3691,11 @@ CComplex FPProc::PlnInt(double a, CComplex *u, CComplex *v) const
     return a*x/12.;
 }
 
-CComplex FPProc::AxiInt(double a, CComplex *u, CComplex *v,double *r) const
+complexd_t FPProc::AxiInt(double a, complexd_t *u, complexd_t *v,double *r) const
 {
     int i;
-    static CComplex M[3][3];
-    CComplex x, z[3];
+    static complexd_t M[3][3];
+    complexd_t x, z[3];
 
     M[0][0]=6.*r[0]+2.*r[1]+2.*r[2];
     M[0][1]=2.*r[0]+2.*r[1]+1.*r[2];
@@ -3712,11 +3712,11 @@ CComplex FPProc::AxiInt(double a, CComplex *u, CComplex *v,double *r) const
     return PI*a*x/30.;
 }
 
-CComplex FPProc::HenrotteVector(int k) const
+complexd_t FPProc::HenrotteVector(int k) const
 {
     int i,n[3];
     double b[3],c[3],da;
-    CComplex v;
+    complexd_t v;
 
     for(i=0; i<3; i++)
     {
@@ -3740,11 +3740,11 @@ CComplex FPProc::HenrotteVector(int k) const
     return v;
 }
 
-CComplex FPProc::BlockIntegral(const int inttype)
+complexd_t FPProc::BlockIntegral(const int inttype)
 {
     int i,k;
-    CComplex c,y,z,J,mu1,mu2,B1,B2,H1,H2,F1,F2;
-    CComplex A[3],Jn[3],U[3],V[3];
+    complexd_t c,y,z,J,mu1,mu2,B1,B2,H1,H2,F1,F2;
+    complexd_t A[3],Jn[3],U[3],V[3];
     double a,sig,R = 0;
     double r[3] = {0, 0, 0};
 
@@ -3871,7 +3871,7 @@ CComplex FPProc::BlockIntegral(const int inttype)
                         // wound regions subject to prox and skin effects
                         if (blockproplist[meshelem[i].blk].LamType>2)
                         {
-                            CComplex mu;
+                            complexd_t mu;
                             mu=muo*blocklist[meshelem[i].lbl].mu;
                             double u=Im(1./blocklist[meshelem[i].lbl].o)/(2.e6*PI*Frequency);
                             y=a*Re(B1*conj(B1)+B2*conj(B2))*Re(1./mu)/4.;
@@ -3890,7 +3890,7 @@ CComplex FPProc::BlockIntegral(const int inttype)
                             // in the linear case:
                             if (blockproplist[bk].BHpoints==0)
                             {
-                                CComplex Hc;
+                                complexd_t Hc;
                                 mu1=blockproplist[bk].mu_x;
                                 mu2=blockproplist[bk].mu_y;
                                 H1=B1/(mu1*muo);
@@ -3998,7 +3998,7 @@ CComplex FPProc::BlockIntegral(const int inttype)
                         // wound regions subject to prox and skin effects
                         if (blockproplist[meshelem[i].blk].LamType>2)
                         {
-                            CComplex mu;
+                            complexd_t mu;
                             mu=muo*blocklist[meshelem[i].lbl].mu;
                             double u=Im(1./blocklist[meshelem[i].lbl].o)/(2.e6*PI*Frequency);
                             y=a*Re(B1*conj(B1)+B2*conj(B2))*Re(1./mu)/4.;
@@ -4064,7 +4064,7 @@ CComplex FPProc::BlockIntegral(const int inttype)
                 }
             }
 
-CComplex temp;
+complexd_t temp;
             // integrals that need to be evaluated over all elements,
             // regardless of which elements are actually selected.
             if((inttype>=18) || (inttype<=23))
@@ -4184,7 +4184,7 @@ CComplex temp;
     if (inttype == 25) // 2D shape centroid
     {
         // divide sum of Cx*A and Cy*A by sum of A
-        CComplex temp = BlockIntegral(5);
+        complexd_t temp = BlockIntegral(5);
         z.re = y.Re() / temp.Re();
         z.im = y.Im() / temp.Re();
     }
@@ -4192,7 +4192,7 @@ CComplex temp;
     return z;
 }
 
-void FPProc::LineIntegral(int inttype, CComplex *z)
+void FPProc::LineIntegral(int inttype, complexd_t *z)
 {
 // inttype    Integral
 //        0    B.n
@@ -4205,7 +4205,7 @@ void FPProc::LineIntegral(int inttype, CComplex *z)
     // inttype==0 => B.n
     if(inttype==0)
     {
-        CComplex a0,a1;
+        complexd_t a0,a1;
         CMPointVals u;
         double l;
         int i,k;
@@ -4237,7 +4237,7 @@ void FPProc::LineIntegral(int inttype, CComplex *z)
     // inttype==1 => H.t
     if(inttype==1)
     {
-        CComplex n,t,pt,Ht;
+        complexd_t n,t,pt,Ht;
         CMPointVals v;
         double dz,u,l;
         int i,j,k,m,elm;
@@ -4318,7 +4318,7 @@ void FPProc::LineIntegral(int inttype, CComplex *z)
     // inttype==3 => Stress Tensor Force
     if(inttype==3)
     {
-        CComplex n,t,pt,Hn,Bn,BH,dF1,dF2;
+        complexd_t n,t,pt,Hn,Bn,BH,dF1,dF2;
         CMPointVals v;
         double dz,dza,u;
         int i,j,k,m,elm;
@@ -4419,7 +4419,7 @@ void FPProc::LineIntegral(int inttype, CComplex *z)
     // inttype==4 => Stress Tensor Torque
     if(inttype==4)
     {
-        CComplex n,t,pt,Hn,Bn,BH,dF1,dF2,dT;
+        complexd_t n,t,pt,Hn,Bn,BH,dF1,dF2,dT;
         CMPointVals v;
         double dz,dza,u;
         int i,j,k,m,elm;
@@ -4510,7 +4510,7 @@ void FPProc::LineIntegral(int inttype, CComplex *z)
     // inttype==5 => (B.n)^2
     if(inttype==5)
     {
-        CComplex n,t,pt,Ht;
+        complexd_t n,t,pt,Ht;
         CMPointVals pvals;
         double dz,u,l;
         int i,j,k,m,elm;
@@ -4624,10 +4624,10 @@ int FPProc::ClosestArcSegment(double x, double y) const
     if(arclist.size()==0) return -1;
 
     j=0;
-    d0=ShortestDistanceFromArc(CComplex(x,y),arclist[0]);
+    d0=ShortestDistanceFromArc(complexd_t(x,y),arclist[0]);
     for(i=0; i<(int)arclist.size(); i++)
     {
-        d1=ShortestDistanceFromArc(CComplex(x,y),arclist[i]);
+        d1=ShortestDistanceFromArc(complexd_t(x,y),arclist[i]);
         if(d1<d0)
         {
             d0=d1;
@@ -4638,9 +4638,9 @@ int FPProc::ClosestArcSegment(double x, double y) const
     return j;
 }
 
-void FPProc::GetCircle(const CArcSegment &arc, CComplex &c, double &R) const
+void FPProc::GetCircle(const CArcSegment &arc, complexd_t &c, double &R) const
 {
-    CComplex a0,a1,t;
+    complexd_t a0,a1,t;
     double d,tta;
 
     a0.Set(nodelist[arc.n0].x,nodelist[arc.n0].y);
@@ -4654,10 +4654,10 @@ void FPProc::GetCircle(const CArcSegment &arc, CComplex &c, double &R) const
     c=a0 + (d/2. + I*sqrt(R*R-d*d/4.))*t; // center of the arc segment's circle...
 }
 
-double FPProc::ShortestDistanceFromArc(const CComplex p, const CArcSegment &arc) const
+double FPProc::ShortestDistanceFromArc(const complexd_t p, const CArcSegment &arc) const
 {
     double R,d,l,z;
-    CComplex a0,a1,c,t;
+    complexd_t a0,a1,c,t;
 
     a0.Set(nodelist[arc.n0].x,nodelist[arc.n0].y);
     a1.Set(nodelist[arc.n1].x,nodelist[arc.n1].y);
@@ -4749,7 +4749,7 @@ void FPProc::BendContour(double angle, double anglestep)
 
     int k,n;
     double d,tta,dtta,R;
-    CComplex c,a0,a1;
+    complexd_t c,a0,a1;
 
     // check to see if there are at least enough
     // points to have made one line;
@@ -4800,14 +4800,14 @@ void FPProc::BendContour(double angle, double anglestep)
 //    return CDocument::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 //}
 
-CComplex FPProc::GetStrandedVoltageDrop(int lbl) const
+complexd_t FPProc::GetStrandedVoltageDrop(int lbl) const
 {
     // Derive the voltage drop associated with a stranded and
     // current-carrying region.
 
     int i,k;
-    CComplex dVolts,rho;
-    CComplex A[3],J[3],U[3],V[3];
+    complexd_t dVolts,rho;
+    complexd_t A[3],J[3],U[3],V[3];
     double a,atot;
     double r[3];
 
@@ -4857,7 +4857,7 @@ void FPProc::GetFillFactor(int lbl)
     double atot,awire,w,d,o,fill,dd,W,R,c1,c2,c3,c4;
     atot=awire=w=d=o=fill=dd=W=R=c1=c2=c3=c4=0;
     int i,wiretype;
-    CComplex ufd,ueff,ofd;
+    complexd_t ufd,ueff,ofd;
 
     // default values
     if (abs(bl->Turns)>1)
@@ -4988,14 +4988,14 @@ void FPProc::GetFillFactor(int lbl)
     bl->o=ofd*1.e-6;                                            // return frequency-dependent conductivity in MS/m
 }
 
-CComplex FPProc::GetStrandedLinkage(int lbl) const
+complexd_t FPProc::GetStrandedLinkage(int lbl) const
 {
     // This is a routine for the special case of determining
     // the flux linkage of a stranded conductor at zero frequency
     // when the conductor is carrying zero current.
     int i,k;
-    CComplex FluxLinkage;
-    CComplex A[3],J[3],U[3];//,V[3];
+    complexd_t FluxLinkage;
+    complexd_t A[3],J[3],U[3];//,V[3];
     double a,atot;
     double r[3];
 
@@ -5026,7 +5026,7 @@ CComplex FPProc::GetStrandedLinkage(int lbl) const
     return FluxLinkage;
 }
 
-CComplex FPProc::GetSolidAxisymmetricLinkage(int lbl) const
+complexd_t FPProc::GetSolidAxisymmetricLinkage(int lbl) const
 {
     // This is a routine for the special case of determining
     // the flux linkage of a solid and axisymmetric conductor
@@ -5039,8 +5039,8 @@ CComplex FPProc::GetSolidAxisymmetricLinkage(int lbl) const
     // to traverse is smaller on the inner edge.
 
     int i,k;
-    CComplex FluxLinkage;
-    CComplex Aa,A[3],J[3],U[3];//,V[3];
+    complexd_t FluxLinkage;
+    complexd_t Aa,A[3],J[3],U[3];//,V[3];
     double a,atot,R;
     double r[3];
 
@@ -5069,7 +5069,7 @@ CComplex FPProc::GetSolidAxisymmetricLinkage(int lbl) const
     return FluxLinkage;
 }
 
-CComplex FPProc::GetParallelLinkage(int numcirc) const
+complexd_t FPProc::GetParallelLinkage(int numcirc) const
 {
     // routine for deducing the flux linkage of a "parallel-connected"
     // "circuit" in the annoying special case in which the
@@ -5078,8 +5078,8 @@ CComplex FPProc::GetParallelLinkage(int numcirc) const
     // up based on the conductivity and size of the various regions
 
     int i,k;
-    CComplex FluxLinkage;
-    CComplex Aa,A[3],J[3],U[3];//,V[3];
+    complexd_t FluxLinkage;
+    complexd_t Aa,A[3],J[3],U[3];//,V[3];
     double a,atot,R,c;
     a=atot=R=c = 0;
     double r[3];
@@ -5121,7 +5121,7 @@ CComplex FPProc::GetParallelLinkage(int numcirc) const
     return FluxLinkage;
 }
 
-CComplex FPProc::GetParallelLinkageAlt(int numcirc) const
+complexd_t FPProc::GetParallelLinkageAlt(int numcirc) const
 {
     // routine for deducing the flux linkage of a "parallel-connected"
     // "circuit" in the annoying special case in which the
@@ -5132,8 +5132,8 @@ CComplex FPProc::GetParallelLinkageAlt(int numcirc) const
     // that are marked with the circuit (for both axi and planar cases).
 
     int i,k;
-    CComplex FluxLinkage;
-    CComplex Aa,A[3],J[3],U[3];//,V[3];
+    complexd_t FluxLinkage;
+    complexd_t Aa,A[3],J[3],U[3];//,V[3];
     double a,atot; //c,R;
     double r[3];
 
@@ -5167,10 +5167,10 @@ CComplex FPProc::GetParallelLinkageAlt(int numcirc) const
     return FluxLinkage;
 }
 
-CComplex FPProc::GetVoltageDrop(int circnum) const
+complexd_t FPProc::GetVoltageDrop(int circnum) const
 {
     int i;
-    CComplex Volts;
+    complexd_t Volts;
 
     Volts=0;
 
@@ -5221,8 +5221,8 @@ CComplex FPProc::GetVoltageDrop(int circnum) const
         if(flag==false)
         {
             int k;
-            CComplex FluxLinkage;
-            CComplex A[3],J[3],U[3];
+            complexd_t FluxLinkage;
+            complexd_t A[3],J[3],U[3];
             double a,atot;
             double r[3];
 
@@ -5255,11 +5255,11 @@ CComplex FPProc::GetVoltageDrop(int circnum) const
     return Volts;
 }
 
-CComplex FPProc::GetFluxLinkage(int circnum) const
+complexd_t FPProc::GetFluxLinkage(int circnum) const
 {
     int i,k;
-    CComplex FluxLinkage;
-    CComplex A[3],J[3];
+    complexd_t FluxLinkage;
+    complexd_t A[3],J[3];
     double a,r[3];
 
     // in the "normal" case, we can just use Integral of A.J
@@ -5357,15 +5357,15 @@ CComplex FPProc::GetFluxLinkage(int circnum) const
     return FluxLinkage;
 }
 
-void FPProc::GetMagnetization(int n, CComplex &M1, CComplex &M2)
+void FPProc::GetMagnetization(int n, complexd_t &M1, complexd_t &M2)
 {
     // Puts the piece-wise constant magnetization for an element into
     // M1 and M2.  The magnetization could be useful for some kinds of
     // postprocessing, e.g. computation of field gradients by integrating
     // gradient contributions from each non-air element;
 
-    CComplex mu1,mu2,Hc;
-    CComplex b1,b2;
+    complexd_t mu1,mu2,Hc;
+    complexd_t b1,b2;
 
     b1=meshelem[n].B1;
     b2=meshelem[n].B2;
@@ -5406,7 +5406,7 @@ double FPProc::AECF(int k) const
 
 // versions of GetMu that sort out whether or not the AECF should be applied,
 // as well as the corrections required for wound regions.
-void FPProc::GetMu(CComplex b1, CComplex b2,CComplex &mu1, CComplex &mu2, int i)
+void FPProc::GetMu(complexd_t b1, complexd_t b2,complexd_t &mu1, complexd_t &mu2, int i)
 {
     if(blockproplist[meshelem[i].blk].LamType>2) // is a region subject to prox effects
     {
@@ -5431,7 +5431,7 @@ void FPProc::GetMu(double b1, double b2, double &mu1, double &mu2, int i)
 void FPProc::GetH(double b1, double b2, double &h1, double &h2, int k)
 {
     double mu1,mu2;
-    CComplex Hc;
+    complexd_t Hc;
 
     GetMu(b1,b2,mu1,mu2,k);
     h1 = b1/(mu1*muo);
@@ -5445,9 +5445,9 @@ void FPProc::GetH(double b1, double b2, double &h1, double &h2, int k)
     }
 }
 
-void FPProc::GetH(CComplex b1, CComplex b2, CComplex &h1, CComplex &h2, int k)
+void FPProc::GetH(complexd_t b1, complexd_t b2, complexd_t &h1, complexd_t &h2, int k)
 {
-    CComplex mu1,mu2;
+    complexd_t mu1,mu2;
 
     GetMu(b1,b2,mu1,mu2,k);
     h1 = b1/(mu1*muo);
@@ -5546,7 +5546,7 @@ FPProcError FPProc::gapDCTorqueIntegral(const std::string myBdryName, double &tq
     return FPProcError::NoError;
 }
 
-FPProcError FPProc::gap2XTorqueIntegral(const std::string myBdryName, CComplex &tq) const
+FPProcError FPProc::gap2XTorqueIntegral(const std::string myBdryName, complexd_t &tq) const
 {
 	int i,k;
 
@@ -5576,7 +5576,7 @@ FPProcError FPProc::gap2XTorqueIntegral(const std::string myBdryName, CComplex &
     return FPProcError::NoError;
 }
 
-FPProcError FPProc::gapDCForceIntegral(const std::string myBdryName, CComplex &fx, CComplex &fy) const
+FPProcError FPProc::gapDCForceIntegral(const std::string myBdryName, complexd_t &fx, complexd_t &fy) const
 {
 	int i,k;
 
@@ -5594,7 +5594,7 @@ FPProcError FPProc::gapDCForceIntegral(const std::string myBdryName, CComplex &f
 	// DC Force
     fx=0;
     fy=0;
-    CComplex dfx,dfy;
+    complexd_t dfx,dfy;
 
     if (round(agelist[i].totalArcLength)==360)
     {
@@ -5627,7 +5627,7 @@ FPProcError FPProc::gapDCForceIntegral(const std::string myBdryName, CComplex &f
 
 }
 
-FPProcError FPProc::gap2XForceIntegral(const std::string myBdryName, CComplex &fx, CComplex &fy) const
+FPProcError FPProc::gap2XForceIntegral(const std::string myBdryName, complexd_t &fx, complexd_t &fy) const
 {
 	int i,k;
 
@@ -5646,7 +5646,7 @@ FPProcError FPProc::gap2XForceIntegral(const std::string myBdryName, CComplex &f
 	// 2X Force
     fx=0;
     fy=0;
-    CComplex dfx,dfy;
+    complexd_t dfx,dfy;
 
     if ((round(agelist[i].totalArcLength)==360) && (Frequency!=0))
     {
@@ -5670,7 +5670,7 @@ FPProcError FPProc::gap2XForceIntegral(const std::string myBdryName, CComplex &f
 
 }
 
-FPProcError FPProc::gapIncrementalTorqueIntegral(const std::string myBdryName, CComplex &tq) const
+FPProcError FPProc::gapIncrementalTorqueIntegral(const std::string myBdryName, complexd_t &tq) const
 {
 	int i,k;
 
@@ -5701,7 +5701,7 @@ FPProcError FPProc::gapIncrementalTorqueIntegral(const std::string myBdryName, C
 }
 
 
-FPProcError FPProc::gapIncrementalForceIntegral(const std::string myBdryName, CComplex &fx, CComplex &fy) const
+FPProcError FPProc::gapIncrementalForceIntegral(const std::string myBdryName, complexd_t &fx, complexd_t &fy) const
 {
 	int i,k;
 
@@ -5719,7 +5719,7 @@ FPProcError FPProc::gapIncrementalForceIntegral(const std::string myBdryName, CC
 	// Incremental Force
     fx=0;
     fy=0;
-    CComplex dfx,dfy;
+    complexd_t dfx,dfy;
 
     if ((round(agelist[i].totalArcLength)==360) && (Frequency!=0))
     {
@@ -5750,7 +5750,7 @@ FPProcError FPProc::gapIncrementalForceIntegral(const std::string myBdryName, CC
     return FPProcError::NoError;
 }
 
-FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName, CComplex &W) const
+FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName, complexd_t &W) const
 {
 	int i,k,n;
 
@@ -5831,10 +5831,10 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 	if (IntegralType==0) // DC torque
 	{
 		int k;
-		CComplex tq=0;
+		complexd_t tq=0;
 
 		double dt=(PI/180.)*(agelist[i].totalArcLength/agelist[i].totalArcElements);
-		CComplex br,bt;
+		complexd_t br,bt;
 
 		for(k=0;k<agelist[i].totalArcElements;k++)
 		{
@@ -5855,7 +5855,7 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //	if (IntegralType==3) // 2X torque
 //	{
 //		int k;
-//		CComplex tq=0;
+//		complexd_t tq=0;
 //
 //		if (Frequency!=0)
 //		{
@@ -5875,9 +5875,9 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //	if (IntegralType==1) // DC Force
 //	{
 //		int k;
-//		CComplex fx=0;
-//		CComplex fy=0;
-//		CComplex dfx,dfy;
+//		complexd_t fx=0;
+//		complexd_t fy=0;
+//		complexd_t dfx,dfy;
 //
 //		if (round(agelist[i].totalArcLength)==360)
 //		{
@@ -5915,9 +5915,9 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //	if (IntegralType==4) // 2X Force
 //	{
 //		int k;
-//		CComplex fx=0;
-//		CComplex fy=0;
-//		CComplex dfx,dfy;
+//		complexd_t fx=0;
+//		complexd_t fy=0;
+//		complexd_t dfx,dfy;
 //
 //		if ((round(agelist[i].totalArcLength)==360) && (Frequency!=0))
 //		{
@@ -5946,7 +5946,7 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //	if (IntegralType==5) // Incremental Torque
 //	{
 //		int k;
-//		CComplex tq=0;
+//		complexd_t tq=0;
 //
 //		for(k=0;k<agelist[i].nn;k++)
 //		{
@@ -5965,9 +5965,9 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //	if (IntegralType==6) // Incremental Force
 //	{
 //		int k;
-//		CComplex fx=0;
-//		CComplex fy=0;
-//		CComplex dfx,dfy;
+//		complexd_t fx=0;
+//		complexd_t fy=0;
+//		complexd_t dfx,dfy;
 //
 //		if ((round(agelist[i].totalArcLength)==360) && (Frequency!=0))
 //		{
@@ -6004,7 +6004,7 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //	if (IntegralType==2) // (Time-Average) Stored Energy
 //	{
 //		int k,n;
-//		CComplex W=0;
+//		complexd_t W=0;
 //
 //		double Ri = agelist[i].ri/R;
 //		double Ro = agelist[i].ro/R;
@@ -6034,7 +6034,7 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //	return 0;
 //}
 
-FPProcError FPProc::getAGEflux(const std::string myBdryName, const double angle, CComplex &br, CComplex &bt) const
+FPProcError FPProc::getAGEflux(const std::string myBdryName, const double angle, complexd_t &br, complexd_t &bt) const
 {
 
     int i, k, n;
@@ -6066,7 +6066,7 @@ FPProcError FPProc::getAGEflux(const std::string myBdryName, const double angle,
 	return FPProcError::NoError;
 }
 
-FPProcError FPProc::getGapA(const std::string myBdryName, double tta, CComplex &ac) const
+FPProcError FPProc::getGapA(const std::string myBdryName, double tta, complexd_t &ac) const
 {
 	int i,k;
 	double n,R;
@@ -6157,7 +6157,7 @@ bool FPProc::AGEBoundNumFromName(const std::string myBdryName, int &n) const
     return true;
 }
 
-FPProcError FPProc::getGapHarmonics(const std::string myBdryName, const int n, CComplex &acc, CComplex &acs, CComplex &brc, CComplex &brs, CComplex &btc, CComplex &bts) const
+FPProcError FPProc::getGapHarmonics(const std::string myBdryName, const int n, complexd_t &acc, complexd_t &acs, complexd_t &brc, complexd_t &brs, complexd_t &btc, complexd_t &bts) const
 {
 
 	int i,k;

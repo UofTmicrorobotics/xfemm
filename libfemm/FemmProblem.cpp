@@ -345,8 +345,8 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
     // add proposed arc to the linelist
     asegm.IsSelected = false;
 
-    CComplex p[2];
-    std::vector < CComplex > newnodes;
+    complexd_t p[2];
+    std::vector < complexd_t > newnodes;
     // check to see if there are intersections
     for(int i=0; i<(int)linelist.size(); i++)
     {
@@ -369,7 +369,7 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
     {
         if (nodelist.size()<2) t=1.e-08;
         else{
-            CComplex p0,p1;
+            complexd_t p0,p1;
             p0 = nodelist[0]->CC();
             p1 = p0;
             for (int i=1; i<(int)nodelist.size(); i++)
@@ -395,7 +395,7 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
     // does this by recursive use of AddArcSegment;
 
     unselectAll();
-    CComplex c;
+    complexd_t c;
     double R;
     getCircle(asegm,c,R);
 
@@ -408,7 +408,7 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
     {
         if( (i!=asegm.n0) && (i!=asegm.n1) )
         {
-            double d=shortestDistanceFromArc(CComplex(nodelist[i]->x,nodelist[i]->y),*arclist[k]);
+            double d=shortestDistanceFromArc(complexd_t(nodelist[i]->x,nodelist[i]->y),*arclist[k]);
 
             //	MsgBox("d=%g dmin=%g",d,dmin);
             // what is the purpose of this test?
@@ -418,7 +418,7 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
 
             if (d<dmin){
 
-                CComplex a0,a1,a2;
+                complexd_t a0,a1,a2;
                 a0.Set(nodelist[asegm.n0]->x,nodelist[asegm.n0]->y);
                 a1.Set(nodelist[asegm.n1]->x,nodelist[asegm.n1]->y);
                 a2.Set(nodelist[i]->x,nodelist[i]->y);
@@ -506,7 +506,7 @@ bool femm::FemmProblem::addNode(double x, double y, double d)
 
 bool femm::FemmProblem::addNode(std::unique_ptr<femm::CNode> &&node, double d)
 {
-    CComplex c,a0,a1,a2;
+    complexd_t c,a0,a1,a2;
     double R;
     double x = node->x;
     double y = node->y;
@@ -541,7 +541,7 @@ bool femm::FemmProblem::addNode(std::unique_ptr<femm::CNode> &&node, double d)
     // break into two arcs;
     for(int i=0, k=(int)arclist.size(); i<k; i++)
     {
-        if (shortestDistanceFromArc(CComplex(x,y),*arclist[i])<d)
+        if (shortestDistanceFromArc(complexd_t(x,y),*arclist[i])<d)
         {
             a0.Set(nodelist[arclist[i]->n0]->x,nodelist[arclist[i]->n0]->y);
             a1.Set(nodelist[arclist[i]->n1]->x,nodelist[arclist[i]->n1]->y);
@@ -568,9 +568,9 @@ bool femm::FemmProblem::addSegment(int n0, int n1, double tol)
 bool femm::FemmProblem::addSegment(int n0, int n1, const femm::CSegment *parsegm, double tol)
 {
     double xi,yi,t;
-    CComplex p[2];
+    complexd_t p[2];
     CSegment segm;
-    std::vector < CComplex > newnodes;
+    std::vector < complexd_t > newnodes;
 
     // don't add if line is degenerate
     if (n0==n1) return false;
@@ -589,7 +589,7 @@ bool femm::FemmProblem::addSegment(int n0, int n1, const femm::CSegment *parsegm
 
     // check to see if there are intersections with segments
     for (int i=0; i<(int)linelist.size(); i++)
-        if(getIntersection(n0,n1,i,&xi,&yi)) newnodes.push_back(CComplex(xi,yi));
+        if(getIntersection(n0,n1,i,&xi,&yi)) newnodes.push_back(complexd_t(xi,yi));
 
     // check to see if there are intersections with arcs
     for (int i=0; i<(int)arclist.size(); i++){
@@ -605,7 +605,7 @@ bool femm::FemmProblem::addSegment(int n0, int n1, const femm::CSegment *parsegm
         if (nodelist.size()<2)
             t = 1.e-08;
         else{
-            CComplex p0,p1;
+            complexd_t p0,p1;
             p0 = nodelist[0]->CC();
             p1 = p0;
             for (int i=1; i<(int)nodelist.size(); i++)
@@ -682,11 +682,11 @@ int femm::FemmProblem::closestArcSegment(double x, double y) const
 {
     if(arclist.size()==0) return -1;
 
-    double d0=shortestDistanceFromArc(CComplex(x,y),*arclist[0]);
+    double d0=shortestDistanceFromArc(complexd_t(x,y),*arclist[0]);
     int idx=0;
     for(int i=0; i<(int)arclist.size(); i++)
     {
-        double d1=shortestDistanceFromArc(CComplex(x,y),*arclist[i]);
+        double d1=shortestDistanceFromArc(complexd_t(x,y),*arclist[i]);
         if(d1<d0)
         {
             d0=d1;
@@ -966,7 +966,7 @@ bool femm::FemmProblem::createRadius(int n, double r)
     {
     case 0:  // One arc and one line
     {
-        CComplex c,u,p0,p1,q,p[4],v[8],i1[8],i2[8];
+        complexd_t c,u,p0,p1,q,p[4],v[8],i1[8],i2[8];
         double rc,b,R[4],phi;
         CArcSegment ar;
 
@@ -1067,7 +1067,7 @@ bool femm::FemmProblem::createRadius(int n, double r)
     }
     case 2:  // Two lines
     {
-        CComplex p0,p1,p2;
+        complexd_t p0,p1,p2;
         double phi,len;
         CArcSegment ar;
 
@@ -1128,7 +1128,7 @@ bool femm::FemmProblem::createRadius(int n, double r)
     }
     case -2: // Two arcs
     {
-        CComplex c0,c1,c2,p[8],i1[8],i2[8];
+        complexd_t c0,c1,c2,p[8],i1[8],i2[8];
         double a[8],b[8],c,d[8],x[8],r0,r1,r2,phi;
         CArcSegment ar;
 
@@ -1362,8 +1362,8 @@ void femm::FemmProblem::enforcePSLG(double tol)
             d = 1.e-08;
         else
         {
-            CComplex p0 = newnodelist[0]->CC();
-            CComplex p1 = p0;
+            complexd_t p0 = newnodelist[0]->CC();
+            complexd_t p1 = p0;
             for (int i=1; i<(int)newnodelist.size(); i++)
             {
                 if(newnodelist[i]->x<p0.re) p0.re = newnodelist[i]->x;
@@ -1391,8 +1391,8 @@ void femm::FemmProblem::enforcePSLG(double tol)
         // not necessarily preserve all nodes and therefore inices into the newnodelist are not always
         // valid at this point.
 
-        CComplex p0 (newnodelist[line->n0]->x, newnodelist[line->n0]->y);
-        CComplex p1 (newnodelist[line->n1]->x, newnodelist[line->n1]->y);
+        complexd_t p0 (newnodelist[line->n0]->x, newnodelist[line->n0]->y);
+        complexd_t p1 (newnodelist[line->n1]->x, newnodelist[line->n1]->y);
         // using the raw pointer is ok here, because AddSegment creates a copy anyways
         addSegment(ClosestNode(p0.re,p0.im), ClosestNode(p1.re,p1.im), line.get(), d);
     }
@@ -1407,8 +1407,8 @@ void femm::FemmProblem::enforcePSLG(double tol)
         // not necessarily preserve all nodes and therefore inices into the newnodelist are not always
         // valid at this point.
 
-        CComplex p0 (newnodelist[arc->n0]->x, newnodelist[arc->n0]->y);
-        CComplex p1 (newnodelist[arc->n1]->x, newnodelist[arc->n1]->y);
+        complexd_t p0 (newnodelist[arc->n0]->x, newnodelist[arc->n0]->y);
+        complexd_t p1 (newnodelist[arc->n1]->x, newnodelist[arc->n1]->y);
         arc->n0 = closestNode(p0.re,p0.im);
         arc->n1 = closestNode(p1.re,p1.im);
         // using the raw pointer is ok here, because AddArcSegment creates a copy anyways
@@ -1426,9 +1426,9 @@ void femm::FemmProblem::enforcePSLG(double tol)
 
 
 
-int femm::FemmProblem::getArcArcIntersection(const femm::CArcSegment &arc0, const femm::CArcSegment &arc1, CComplex *p) const
+int femm::FemmProblem::getArcArcIntersection(const femm::CArcSegment &arc0, const femm::CArcSegment &arc1, complexd_t *p) const
 {
-    CComplex a0,a1,t,c0,c1;
+    complexd_t a0,a1,t,c0,c1;
     double d,l,R0,R1,z0,z1,c,tta0,tta1;
     int i=0;
 
@@ -1501,11 +1501,11 @@ bool femm::FemmProblem::getBoundingBox(double (&x)[2], double (&y)[2]) const
     {
         int k=(int) ceil(arc->ArcLength/arc->MaxSideLength);
         double dt = arc->ArcLength*PI/(((double) k)*180.);
-        CComplex c;
+        complexd_t c;
         double R;
         getCircle(*arc,c,R);
-        CComplex p(nodelist[arc->n0]->x, nodelist[arc->n0]->y);
-        CComplex s=exp(I*dt);
+        complexd_t p(nodelist[arc->n0]->x, nodelist[arc->n0]->y);
+        complexd_t s=exp(I*dt);
         for(int j=0; j<k; j++)
         {
             p=(p-c)*s+c;
@@ -1520,11 +1520,11 @@ bool femm::FemmProblem::getBoundingBox(double (&x)[2], double (&y)[2]) const
 }
 
 // identical in fmesher, FPProc and HPProc
-void femm::FemmProblem::getCircle(const femm::CArcSegment &arc, CComplex &c, double &R) const
+void femm::FemmProblem::getCircle(const femm::CArcSegment &arc, complexd_t &c, double &R) const
 {
     // construct the coordinates of the two points on the circle
-    CComplex a0(nodelist[arc.n0]->x,nodelist[arc.n0]->y);
-    CComplex a1(nodelist[arc.n1]->x,nodelist[arc.n1]->y);
+    complexd_t a0(nodelist[arc.n0]->x,nodelist[arc.n0]->y);
+    complexd_t a1(nodelist[arc.n1]->x,nodelist[arc.n1]->y);
 
     // calculate distance between arc endpoints
     double d = abs(a1 - a0);
@@ -1532,7 +1532,7 @@ void femm::FemmProblem::getCircle(const femm::CArcSegment &arc, CComplex &c, dou
     // figure out what the radius of the circle is...
 
     // get unit vector pointing from a0 to a1
-    CComplex t = (a1 - a0) / d;
+    complexd_t t = (a1 - a0) / d;
 
     // convert swept angle from degrees to radians
     double tta = arc.ArcLength * PI / 180.;
@@ -1553,7 +1553,7 @@ std::string femm::FemmProblem::getTitle() const
 
 bool femm::FemmProblem::getIntersection(int n0, int n1, int segm, double *xi, double *yi) const
 {
-    CComplex p0,p1,q0,q1;
+    complexd_t p0,p1,q0,q1;
     double ee,x,z;
 
     // Check to see if the two lines have a common endpoint
@@ -1597,9 +1597,9 @@ bool femm::FemmProblem::getIntersection(int n0, int n1, int segm, double *xi, do
     return true;
 }
 
-int femm::FemmProblem::getLineArcIntersection(const femm::CSegment &seg, const femm::CArcSegment &arc, CComplex *p) const
+int femm::FemmProblem::getLineArcIntersection(const femm::CSegment &seg, const femm::CArcSegment &arc, complexd_t *p) const
 {
-    CComplex p0,p1,a0,a1,t,v,c;
+    complexd_t p0,p1,a0,a1,t,v,c;
     double d,l,R,z,tta;
     int i=0;
 
@@ -1662,8 +1662,8 @@ double femm::FemmProblem::lengthOfLine(const femm::CSegment &seg) const
 void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, femm::EditMode selector)
 {
     assert(selector != EditMode::Invalid);
-    CComplex x=x0 + I*y0;
-    CComplex p=(x1-x0) + I*(y1-y0);
+    complexd_t x=x0 + I*y0;
+    complexd_t p=(x1-x0) + I*(y1-y0);
     if(abs(p)==0)
         return;
     p/=abs(p);
@@ -1674,7 +1674,7 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
         {
             if (node->IsSelected)
             {
-                CComplex y (node->x,node->y);
+                complexd_t y (node->x,node->y);
                 y = (y-x) / p;
                 y = p*y.Conj()+x;
                 // create copy
@@ -1695,7 +1695,7 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
             {
                 // copy endpoints
                 std::unique_ptr<CNode> n0 = nodelist[line->n0]->clone();
-                CComplex y0 (n0->x,n0->y);
+                complexd_t y0 (n0->x,n0->y);
                 y0 = (y0-x) / p;
                 y0 = p*y0.Conj()+x;
                 n0->x = y0.re;
@@ -1703,7 +1703,7 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
                 n0->IsSelected = false;
 
                 std::unique_ptr<CNode> n1 = nodelist[line->n1]->clone();
-                CComplex y1 (n1->x,n1->y);
+                complexd_t y1 (n1->x,n1->y);
                 y1 = (y1-x) / p;
                 y1 = p*y1.Conj()+x;
                 n1->x = y1.re;
@@ -1730,7 +1730,7 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
             if (label->IsSelected)
             {
                 std::unique_ptr<CBlockLabel> newlabel = label->clone();
-                CComplex y (label->x,label->y);
+                complexd_t y (label->x,label->y);
                 y = (y-x) / p;
                 y = p*y.Conj()+x;
                 newlabel->x = y.re;
@@ -1752,7 +1752,7 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
             {
                 // copy endpoints
                 std::unique_ptr<CNode> n0 = nodelist[arc->n0]->clone();
-                CComplex y0 (n0->x,n0->y);
+                complexd_t y0 (n0->x,n0->y);
                 y0 = (y0-x) / p;
                 y0 = p*y0.Conj()+x;
                 n0->x = y0.re;
@@ -1760,7 +1760,7 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
                 n0->IsSelected = false;
 
                 std::unique_ptr<CNode> n1 = nodelist[arc->n1]->clone();
-                CComplex y1 (n1->x,n1->y);
+                complexd_t y1 (n1->x,n1->y);
                 y1 = (y1-x) / p;
                 y1 = p*y1.Conj()+x;
                 n1->x = y1.re;
@@ -1782,7 +1782,7 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
     enforcePSLG();
 }
 
-void femm::FemmProblem::rotateCopy(CComplex c, double dt, int ncopies, femm::EditMode selector)
+void femm::FemmProblem::rotateCopy(complexd_t c, double dt, int ncopies, femm::EditMode selector)
 {
     assert(selector != EditMode::Invalid);
     for(int nc=0; nc<ncopies; nc++)
@@ -1790,7 +1790,7 @@ void femm::FemmProblem::rotateCopy(CComplex c, double dt, int ncopies, femm::Edi
         // accumulated angle
         double t = ((double) (nc+1))*dt;
 
-        CComplex z = exp(I*t*PI/180);
+        complexd_t z = exp(I*t*PI/180);
 
         if (selector==EditMode::EditNodes || selector == EditMode::EditGroup)
         {
@@ -1798,7 +1798,7 @@ void femm::FemmProblem::rotateCopy(CComplex c, double dt, int ncopies, femm::Edi
             {
                 if (node->IsSelected)
                 {
-                    CComplex x (node->x, node->y);
+                    complexd_t x (node->x, node->y);
                     x=(x-c)*z+c;
                     // create copy
                     std::unique_ptr<CNode> newnode = node->clone();
@@ -1819,14 +1819,14 @@ void femm::FemmProblem::rotateCopy(CComplex c, double dt, int ncopies, femm::Edi
                 {
                     // copy endpoints
                     std::unique_ptr<CNode> n0 = nodelist[line->n0]->clone();
-                    CComplex x0 (n0->x,n0->y);
+                    complexd_t x0 (n0->x,n0->y);
                     x0 = (x0-c)*z+c;
                     n0->x = x0.re;
                     n0->y = x0.im;
                     n0->IsSelected = false;
 
                     std::unique_ptr<CNode> n1 = nodelist[line->n1]->clone();
-                    CComplex x1 (n1->x,n1->y);
+                    complexd_t x1 (n1->x,n1->y);
                     x1 = (x1-c)*z+c;
                     n1->x = x1.re;
                     n1->y = x1.im;
@@ -1853,14 +1853,14 @@ void femm::FemmProblem::rotateCopy(CComplex c, double dt, int ncopies, femm::Edi
                 {
                     // copy endpoints
                     std::unique_ptr<CNode> n0 = nodelist[arc->n0]->clone();
-                    CComplex x0 (n0->x,n0->y);
+                    complexd_t x0 (n0->x,n0->y);
                     x0 = (x0-c)*z+c;
                     n0->x = x0.re;
                     n0->y = x0.im;
                     n0->IsSelected = false;
 
                     std::unique_ptr<CNode> n1 = nodelist[arc->n1]->clone();
-                    CComplex x1 (n1->x,n1->y);
+                    complexd_t x1 (n1->x,n1->y);
                     x1 = (x1-c)*z+c;
                     n1->x = x1.re;
                     n1->y = x1.im;
@@ -1886,7 +1886,7 @@ void femm::FemmProblem::rotateCopy(CComplex c, double dt, int ncopies, femm::Edi
                 if (label->IsSelected)
                 {
                     std::unique_ptr<CBlockLabel> newlabel = label->clone();
-                    CComplex x(label->x,label->y);
+                    complexd_t x(label->x,label->y);
                     x = (x-c)*z+c;
                     newlabel->x = x.re;
                     newlabel->y = x.im;
@@ -1913,12 +1913,12 @@ void femm::FemmProblem::rotateCopy(CComplex c, double dt, int ncopies, femm::Edi
     enforcePSLG();
 }
 
-void femm::FemmProblem::rotateMove(CComplex c, double t, femm::EditMode selector)
+void femm::FemmProblem::rotateMove(complexd_t c, double t, femm::EditMode selector)
 {
     assert(selector != EditMode::Invalid);
     bool processNodes = (selector == EditMode::EditNodes);
 
-    const CComplex z = exp(I*t*PI/180);
+    const complexd_t z = exp(I*t*PI/180);
 
     if(selector==EditMode::EditLines || selector==EditMode::EditGroup)
     {
@@ -1952,7 +1952,7 @@ void femm::FemmProblem::rotateMove(CComplex c, double t, femm::EditMode selector
         {
             if (label->IsSelected)
             {
-                CComplex x (label->x, label->y);
+                complexd_t x (label->x, label->y);
                 x = (x-c)*z+c;
                 label->x = x.re;
                 label->y = x.im;
@@ -1979,7 +1979,7 @@ void femm::FemmProblem::rotateMove(CComplex c, double t, femm::EditMode selector
         {
             if (node->IsSelected)
             {
-                CComplex x(node->x,node->y);
+                complexd_t x(node->x,node->y);
                 x = (x-c)*z+c;
                 node->x = x.re;
                 node->y = x.im;
@@ -2078,18 +2078,18 @@ double femm::FemmProblem::shortestDistanceFromSegment(double p, double q, int se
 
 
 // identical in fmesher, FPProc and HPProc
-double femm::FemmProblem::shortestDistanceFromArc(CComplex p, const femm::CArcSegment &arc) const
+double femm::FemmProblem::shortestDistanceFromArc(complexd_t p, const femm::CArcSegment &arc) const
 {
     double R;
-    CComplex c;
+    complexd_t c;
     getCircle(arc,c,R);
 
     double d=abs(p-c);
     if(d==0) return R;
 
-    CComplex a0(nodelist[arc.n0]->x,nodelist[arc.n0]->y);
-    CComplex a1(nodelist[arc.n1]->x,nodelist[arc.n1]->y);
-    CComplex t=(p-c)/d;
+    complexd_t a0(nodelist[arc.n0]->x,nodelist[arc.n0]->y);
+    complexd_t a1(nodelist[arc.n1]->x,nodelist[arc.n1]->y);
+    complexd_t t=(p-c)/d;
     double l=abs(p-c-R*t);
     double z=arg(t/(a0-c))*180/PI;
     if ((z>0) && (z<arc.ArcLength)) return l;
@@ -2296,10 +2296,10 @@ int femm::FemmProblem::ClosestArcSegment(double x, double y) const
     if(arclist.size()==0) return -1;
 
     j=0;
-    d0=ShortestDistanceFromArc(CComplex(x,y),*(arclist[0]));
+    d0=ShortestDistanceFromArc(complexd_t(x,y),*(arclist[0]));
     for(i=0; i<(int)arclist.size(); i++)
     {
-        d1=ShortestDistanceFromArc(CComplex(x,y),*(arclist[i]));
+        d1=ShortestDistanceFromArc(complexd_t(x,y),*(arclist[i]));
         if(d1<d0)
         {
             d0=d1;
@@ -2310,9 +2310,9 @@ int femm::FemmProblem::ClosestArcSegment(double x, double y) const
     return j;
 }
 
-void femm::FemmProblem::GetCircle(const CArcSegment &arc, CComplex &c, double &R) const
+void femm::FemmProblem::GetCircle(const CArcSegment &arc, complexd_t &c, double &R) const
 {
-    CComplex a0,a1,t;
+    complexd_t a0,a1,t;
     double d,tta;
 
     a0.Set(nodelist[arc.n0]->x, nodelist[arc.n0]->y);
@@ -2326,10 +2326,10 @@ void femm::FemmProblem::GetCircle(const CArcSegment &arc, CComplex &c, double &R
     c=a0 + (d/2. + I*sqrt(R*R-d*d/4.))*t; // center of the arc segment's circle...
 }
 
-double femm::FemmProblem::ShortestDistanceFromArc(const CComplex p, const CArcSegment &arc) const
+double femm::FemmProblem::ShortestDistanceFromArc(const complexd_t p, const CArcSegment &arc) const
 {
     double R,d,l,z;
-    CComplex a0,a1,c,t;
+    complexd_t a0,a1,c,t;
 
     a0.Set(nodelist[arc.n0]->x,nodelist[arc.n0]->y);
     a1.Set(nodelist[arc.n1]->x,nodelist[arc.n1]->y);

@@ -34,13 +34,13 @@ class CMPointVals
 public:
     CMPointVals();
 
-    CComplex A;            // vector potential
-    CComplex B1,B2;        // flux density
-    CComplex mu1,mu2;    // permeability
-    CComplex mu12;       // incremental permeability
-    CComplex H1,H2;        // field intensity
-    CComplex Je,Js;        // eddy current and source current densities
-    CComplex Hc;        // Magnetization for regions with a PM.
+    complexd_t A;            // vector potential
+    complexd_t B1,B2;        // flux density
+    complexd_t mu1,mu2;    // permeability
+    complexd_t mu12;       // incremental permeability
+    complexd_t H1,H2;        // field intensity
+    complexd_t Je,Js;        // eddy current and source current densities
+    complexd_t Hc;        // Magnetization for regions with a PM.
     double c;            // conductivity
     double E;            // energy stored in the magnetic field
     double Ph;            // power dissipated by hysteresis

@@ -515,12 +515,12 @@ int FSolver::Static2D(CBigLinProb &L)
 
                 char magbuff[4096];
                 std::string str;
-                CComplex X;
+                complexd_t X;
                 int top1,top2,lua_error_code;
 
                 for (j = 0,X = 0; j<3; j++)
                 {
-                    X += (CComplex)(meshnode[n[j]].x + I * meshnode[n[j]].y);
+                    X += (complexd_t)(meshnode[n[j]].x + I * meshnode[n[j]].y);
                 }
                 X = X/units[LengthUnits]/3.;
                 // generate the string using boost::format

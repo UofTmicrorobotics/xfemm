@@ -157,7 +157,7 @@ public:
 
     //---- fsolver attributes:
     // used for proximity effect regions only.
-    CComplex ProximityMu;
+    complexd_t ProximityMu;
     int    Turns;    ///< number of turns
     bool bIsWound; ///< true, if Turns>1, but also in some other conditions; set by \c FSolver::GetFillFactor()
 
@@ -165,10 +165,10 @@ public:
     double MagDir;   ///< magnetization direction (\c deg), if constant. \sa MagDirFctn
     std::string MagDirFctn; ///< \brief Lua expression describing magnetization direction
     int Case;
-    CComplex  J,dVolts;
+    complexd_t  J,dVolts;
     // attributes used to keep track of wound coil properties...
     double FillFactor;
-    CComplex o,mu;
+    complexd_t o,mu;
 
     /**
      * @brief fromStream constructs a CMSolverBlockLabel from an input stream (usually an input file stream)

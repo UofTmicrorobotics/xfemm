@@ -124,14 +124,14 @@ int CFullMatrix::GaussSolve()
     return true;
 }
 
-CComplexFullMatrix::CComplexFullMatrix()
+complexd_tFullMatrix::complexd_tFullMatrix()
 {
     n=0;
     M=NULL;
     b=NULL;
 }
 
-CComplexFullMatrix::CComplexFullMatrix(int d)
+complexd_tFullMatrix::complexd_tFullMatrix(int d)
 {
     n=0;
     M=NULL;
@@ -139,7 +139,7 @@ CComplexFullMatrix::CComplexFullMatrix(int d)
     Create(d);
 }
 
-CComplexFullMatrix::~CComplexFullMatrix()
+complexd_tFullMatrix::~complexd_tFullMatrix()
 {
     if(n==0) return;
 
@@ -150,7 +150,7 @@ CComplexFullMatrix::~CComplexFullMatrix()
     n=0;
 }
 
-void CComplexFullMatrix::Wipe()
+void complexd_tFullMatrix::Wipe()
 {
     /* fills up a square matrix with zeros in every entry */
     int i,j;
@@ -164,29 +164,29 @@ void CComplexFullMatrix::Wipe()
 }
 
 
-int CComplexFullMatrix::Create(int d)
+int complexd_tFullMatrix::Create(int d)
 {
     int i;
 
-    M=(CComplex **)calloc(d,sizeof(CComplex *));
-    b=(CComplex *)calloc(d,sizeof(CComplex));
+    M=(complexd_t **)calloc(d,sizeof(complexd_t *));
+    b=(complexd_t *)calloc(d,sizeof(complexd_t));
     if ((M==NULL) || (b==NULL)) return false;
     for(i=0; i<d; i++)
     {
-        M[i]=(CComplex *)calloc(d,sizeof(CComplex));
+        M[i]=(complexd_t *)calloc(d,sizeof(complexd_t));
         if (M[i]==NULL) return false;
     }
     n=d;
     return true;
 }
 
-int CComplexFullMatrix::GaussSolve()
+int complexd_tFullMatrix::GaussSolve()
 {
     /* solves the linear system m x = b for x.  The result is returned
        in b, m is destroyed in the process */
 
     int i,j,k,q = 0;
-    CComplex max,f;
+    complexd_t max,f;
 
     for(i=0; i<n; i++)
     {

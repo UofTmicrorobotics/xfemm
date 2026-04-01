@@ -35,12 +35,12 @@ int FSolver::HarmonicAxisymmetric(CBigComplexLinProb &L,bool verbose)
 {
     int i,j,k,s,flag,ww,Iter=0;
     int pctr;
-    CComplex Mx[3][3],My[3][3],Mxy[3][3],Mn[3][3],Me[3][3],be[3];		// element matrices;
+    complexd_t Mx[3][3],My[3][3],Mxy[3][3],Mn[3][3],Me[3][3],be[3];		// element matrices;
     double l[3],p[3],q[3];		// element shape parameters;
     int n[3];					// numbers of nodes for a particular element;
     double a,r,t,x,y,B,w,res,lastres,ds,R,rn[3],g[3],a_hat,R_hat,vol,Cduct;
-    CComplex K,mu,dv,B1,B2,v[3],mu1,mu2,lag,halflag,deg45,Jv; //u[3],
-    CComplex **Mu,*V_old;
+    complexd_t K,mu,dv,B1,B2,v[3],mu1,mu2,lag,halflag,deg45,Jv; //u[3],
+    complexd_t **Mu,*V_old;
     double c=PI*4.e-05;
     double units[]= {2.54,0.1,1.,100.,0.00254,1.e-04};
     femmsolver::CMElement *El;
@@ -49,11 +49,11 @@ int FSolver::HarmonicAxisymmetric(CBigComplexLinProb &L,bool verbose)
     res=0;
 
 // #ifndef NEWTON
-    CComplex murel,muinc;
+    complexd_t murel,muinc;
 // #else
-    CComplex Mnh[3][3];
-    CComplex Mna[3][3];
-    CComplex Mns[3][3];
+    complexd_t Mnh[3][3];
+    complexd_t Mna[3][3];
+    complexd_t Mns[3][3];
 // #endif
 
     extRo*=units[LengthUnits];
@@ -78,18 +78,18 @@ int FSolver::HarmonicAxisymmetric(CBigComplexLinProb &L,bool verbose)
     // Go through and evaluate permeability for regions subject to prox effects
     for(i=0; i<NumBlockLabels; i++) GetFillFactor(i);
 
-    V_old=(CComplex *) calloc(NumNodes+NumCircProps,sizeof(CComplex));
+    V_old=(complexd_t *) calloc(NumNodes+NumCircProps,sizeof(complexd_t));
 
-    CComplex *CircInt1 = nullptr;
-    CComplex *CircInt2 = nullptr;
-    CComplex *CircInt3 = nullptr;
+    complexd_t *CircInt1 = nullptr;
+    complexd_t *CircInt2 = nullptr;
+    complexd_t *CircInt3 = nullptr;
 
     // check to see if any circuits have been defined and process them;
     if (NumCircProps>0)
     {
-        CircInt1=(CComplex *)calloc(NumCircProps,sizeof(CComplex));
-        CircInt2=(CComplex *)calloc(NumCircProps,sizeof(CComplex));
-        CircInt3=(CComplex *)calloc(NumCircProps,sizeof(CComplex));
+        CircInt1=(complexd_t *)calloc(NumCircProps,sizeof(complexd_t));
+        CircInt2=(complexd_t *)calloc(NumCircProps,sizeof(complexd_t));
+        CircInt3=(complexd_t *)calloc(NumCircProps,sizeof(complexd_t));
         for(i=0; i<NumEls; i++)
         {
             if(meshele[i].lbl>=0)
@@ -157,8 +157,8 @@ int FSolver::HarmonicAxisymmetric(CBigComplexLinProb &L,bool verbose)
     }
 
     // compute effective permeability for each block type;
-    Mu=(CComplex **)calloc(NumBlockProps,sizeof(CComplex *));
-    for(i=0; i<NumBlockProps; i++) Mu[i]=(CComplex *)calloc(2,sizeof(CComplex));
+    Mu=(complexd_t **)calloc(NumBlockProps,sizeof(complexd_t *));
+    for(i=0; i<NumBlockProps; i++) Mu[i]=(complexd_t *)calloc(2,sizeof(complexd_t));
 
     for(k=0; k<NumBlockProps; k++)
     {

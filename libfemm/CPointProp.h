@@ -64,8 +64,8 @@ public:
 
     CMPointProp();
 
-    CComplex J;   ///< \brief J: applied point current \code<I_re>, <I_im>\endcode
-    CComplex A;   ///< \brief A, magnetic vector potential \code<A_re>, <A_im>\endcode
+    complexd_t J;   ///< \brief J: applied point current \code<I_re>, <I_im>\endcode
+    complexd_t A;   ///< \brief A, magnetic vector potential \code<A_re>, <A_im>\endcode
 
     /**
      * @brief fromStream constructs a CPointProp from an input stream (usually an input file stream)

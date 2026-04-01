@@ -147,7 +147,7 @@ public:
     std::vector< femm::CMCircuit >      circproplist;
 
     // list of points in a user-defined contour;
-    std::vector< CComplex > contour;
+    std::vector< complexd_t > contour;
 
     // stuff that PTLOC needs
     std::vector< femmsolver::CMMeshNode >  *pmeshnode;
@@ -168,13 +168,13 @@ public:
     // void GetGapValues(CXYPlot &p, int PlotType, int npoints, int myAGE);
     void GetElementB(femmpostproc::CPostProcMElement &elm);
     void FindBoundaryEdges();
-    CComplex Ctr(int i) const;
+    complexd_t Ctr(int i) const;
     double ElmArea(int i) const;
     double ElmArea(femmpostproc::CPostProcMElement *elm) const;
     double ElmVolume(int i) const;
     //double ElmVolume(CElement *elm);
-    void GetPointB(const double x, const double y, CComplex &B1, CComplex &B2, const femmpostproc::CPostProcMElement &elm);
-    void GetNodalB(CComplex *b1, CComplex *b2,femmpostproc::CPostProcMElement &elm);
+    void GetPointB(const double x, const double y, complexd_t &B1, complexd_t &B2, const femmpostproc::CPostProcMElement &elm);
+    void GetNodalB(complexd_t *b1, complexd_t *b2,femmpostproc::CPostProcMElement &elm);
     /**
      * @brief Compute the block integral over selected blocks.
      *
@@ -218,22 +218,22 @@ public:
      * @param inttype The identifier of the block integral.
      * @return the requested block integral
      */
-    CComplex BlockIntegral(const int inttype);
-    void LineIntegral(int inttype, CComplex *z);
+    complexd_t BlockIntegral(const int inttype);
+    void LineIntegral(int inttype, complexd_t *z);
 
     int ClosestNode(const double x, const double y) const;
     int ClosestArcSegment(double x, double y) const;
-    void GetCircle(const femm::CArcSegment &asegm,CComplex &c, double &R) const;
-    double ShortestDistanceFromArc(const CComplex p, const femm::CArcSegment &arc) const;
+    void GetCircle(const femm::CArcSegment &asegm,complexd_t &c, double &R) const;
+    double ShortestDistanceFromArc(const complexd_t p, const femm::CArcSegment &arc) const;
     double ShortestDistanceFromSegment(double p, double q, int segm) const;
 
-    CComplex GetJA(int k,CComplex *J,CComplex *A) const;
-    CComplex PlnInt(double a, CComplex *u, CComplex *v) const;
-    CComplex AxiInt(double a, CComplex *u, CComplex *v,double *r) const;
+    complexd_t GetJA(int k,complexd_t *J,complexd_t *A) const;
+    complexd_t PlnInt(double a, complexd_t *u, complexd_t *v) const;
+    complexd_t AxiInt(double a, complexd_t *u, complexd_t *v,double *r) const;
     bool ScanPreferences();
     void BendContour(double angle, double anglestep);
 
-    CComplex HenrotteVector(int k) const;
+    complexd_t HenrotteVector(int k) const;
     bool IsKosher(int k) const;
     double AECF(int k) const;
     void GetFillFactor(int lbl);
@@ -242,31 +242,31 @@ public:
     int (*WarnMessage)(const char*, ...);
 //	void MsgBox(const char* message);
 
-    CComplex GetStrandedVoltageDrop(int lbl) const;
-    CComplex GetVoltageDrop(int circnum) const;
-    CComplex GetFluxLinkage(int circnum) const;
-    CComplex GetStrandedLinkage(int lbl) const;
-    CComplex GetSolidAxisymmetricLinkage(int lbl) const;
-    CComplex GetParallelLinkage(int numcirc) const;
-    CComplex GetParallelLinkageAlt(int numcirc) const;
-    void GetMu(CComplex b1, CComplex b2,CComplex &mu1, CComplex &mu2, int i);
+    complexd_t GetStrandedVoltageDrop(int lbl) const;
+    complexd_t GetVoltageDrop(int circnum) const;
+    complexd_t GetFluxLinkage(int circnum) const;
+    complexd_t GetStrandedLinkage(int lbl) const;
+    complexd_t GetSolidAxisymmetricLinkage(int lbl) const;
+    complexd_t GetParallelLinkage(int numcirc) const;
+    complexd_t GetParallelLinkageAlt(int numcirc) const;
+    void GetMu(complexd_t b1, complexd_t b2,complexd_t &mu1, complexd_t &mu2, int i);
     void GetMu(double b1, double b2, double &mu1, double &mu2, int i);
-    void GetMagnetization(int n, CComplex &M1, CComplex &M2);
+    void GetMagnetization(int n, complexd_t &M1, complexd_t &M2);
     void GetH(double b1, double b2, double &h1, double &h2, int k);
-    void GetH(CComplex b1, CComplex b2, CComplex &h1, CComplex &h2, int k);
+    void GetH(complexd_t b1, complexd_t b2, complexd_t &h1, complexd_t &h2, int k);
     int numElements() const override;
     int numNodes() const override;
-    FPProcError getGapHarmonics(const std::string myBdryName, const int n, CComplex &acc, CComplex &acs, CComplex &brc, CComplex &brs, CComplex &btc, CComplex &bts) const;
+    FPProcError getGapHarmonics(const std::string myBdryName, const int n, complexd_t &acc, complexd_t &acs, complexd_t &brc, complexd_t &brs, complexd_t &btc, complexd_t &bts) const;
     bool AGEBoundNumFromName(const std::string myBdryName, int &n) const;
     FPProcError numGapHarmonics(const std::string myBdryName, int &nh) const;
-    FPProcError getAGEflux(const std::string myBdryName, const double angle, CComplex &br, CComplex &bt) const;
-    FPProcError getGapA(const std::string myBdryName, double tta, CComplex &ac) const;
-    FPProcError gapTimeAvgStoredEnergyIntegral(const std::string myBdryName, CComplex &W) const;
-    FPProcError gapIncrementalForceIntegral(const std::string myBdryName, CComplex &fx, CComplex &fy) const;
-    FPProcError gapIncrementalTorqueIntegral(const std::string myBdryName, CComplex &tq) const;
-    FPProcError gap2XForceIntegral(const std::string myBdryName, CComplex &fx, CComplex &fy) const;
-    FPProcError gapDCForceIntegral(const std::string myBdryName, CComplex &fx, CComplex &fy) const;
-    FPProcError gap2XTorqueIntegral(const std::string myBdryName, CComplex &tq) const;
+    FPProcError getAGEflux(const std::string myBdryName, const double angle, complexd_t &br, complexd_t &bt) const;
+    FPProcError getGapA(const std::string myBdryName, double tta, complexd_t &ac) const;
+    FPProcError gapTimeAvgStoredEnergyIntegral(const std::string myBdryName, complexd_t &W) const;
+    FPProcError gapIncrementalForceIntegral(const std::string myBdryName, complexd_t &fx, complexd_t &fy) const;
+    FPProcError gapIncrementalTorqueIntegral(const std::string myBdryName, complexd_t &tq) const;
+    FPProcError gap2XForceIntegral(const std::string myBdryName, complexd_t &fx, complexd_t &fy) const;
+    FPProcError gapDCForceIntegral(const std::string myBdryName, complexd_t &fx, complexd_t &fy) const;
+    FPProcError gap2XTorqueIntegral(const std::string myBdryName, complexd_t &tq) const;
     FPProcError gapDCTorqueIntegral(const std::string myBdryName, double &tq) const;
 
 

@@ -250,7 +250,7 @@ bool FSolver::LoadProblemFile ()
                 // first time through was just to get MuMax from AC curve...
                 // -> backup Hdata and Bdata:
                 std::vector<double> oldBdata;
-                std::vector<CComplex> oldHdata;
+                std::vector<complexd_t> oldHdata;
                 oldBdata.reserve(prop.BHpoints);
                 oldHdata.reserve(prop.BHpoints);
                 std::copy(prop.Bdata.begin(), prop.Bdata.end(), oldBdata.begin());
@@ -1091,7 +1091,7 @@ void FSolver::GetFillFactor(int lbl)
     CMBlockLabel* bl= &labellist[lbl];
     double atot,awire=0,d,o,fill,dd,W,R=0,c1,c2;
     int i,wiretype;
-    CComplex ufd,ofd;
+    complexd_t ufd,ofd;
 
     if ((abs(bl->Turns)>1) || (blockproplist[labellist[lbl].BlockType].LamType>2))
         bl->bIsWound=true;

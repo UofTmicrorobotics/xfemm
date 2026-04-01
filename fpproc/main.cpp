@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
     string mystr;
     FPProc testFPProc;
-    CComplex out;
+    complexd_t out;
 
     char PathName[512];
 //    int i;

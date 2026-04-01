@@ -132,15 +132,15 @@ void CMMaterialProp::GetSlopes(double omega)
     int i,k;
     bool CurveOK=false;
     bool ProcessedLams=false;
-    CComplexFullMatrix L;
+    complexd_tFullMatrix L;
     double l1,l2;
-    CComplex *hn;
+    complexd_t *hn;
     double *bn;
-    CComplex mu;
+    complexd_t mu;
 
     L.Create(BHpoints);
     bn   =(double *)  calloc(BHpoints,sizeof(double));
-    hn   =(CComplex *)calloc(BHpoints,sizeof(CComplex));
+    hn   =(complexd_t *)calloc(BHpoints,sizeof(complexd_t));
     slope.reserve(BHpoints);
 
 
@@ -348,16 +348,16 @@ void CMMaterialProp::GetSlopes(double omega)
 }
 
 
-CComplex CMMaterialProp::LaminatedBH(double w, int i)
+complexd_t CMMaterialProp::LaminatedBH(double w, int i)
 {
     debug << "CMMaterialProp::LaminatedBH("<<w<<", "<<i<<")\n";
     int k,n,iter=0;
-    CComplex *m0,*m1,*b,*x;
+    complexd_t *m0,*m1,*b,*x;
     double L,o,d,ds,B,lastres;
     double res=0;
     double Relax=1;
-    CComplex mu,vo,vi,c,H;
-    CComplex Md,Mo;
+    complexd_t mu,vo,vi,c,H;
+    complexd_t Md,Mo;
     bool Converged=false;
 
     // Base the required element spacing on the skin depth
@@ -369,10 +369,10 @@ CComplex CMMaterialProp::LaminatedBH(double w, int i)
     n= ElementsPerSkinDepth * ((int) ceil(d/ds));
     L=d/((double) n);
 
-    x =(CComplex *)calloc(n+1,sizeof(CComplex));
-    b =(CComplex *)calloc(n+1,sizeof(CComplex));
-    m0=(CComplex *)calloc(n+1,sizeof(CComplex));
-    m1=(CComplex *)calloc(n+1,sizeof(CComplex));
+    x =(complexd_t *)calloc(n+1,sizeof(complexd_t));
+    b =(complexd_t *)calloc(n+1,sizeof(complexd_t));
+    m0=(complexd_t *)calloc(n+1,sizeof(complexd_t));
+    m1=(complexd_t *)calloc(n+1,sizeof(complexd_t));
 
     do{
         // make sure that the old stuff is wiped out;
@@ -458,15 +458,15 @@ CComplex CMMaterialProp::LaminatedBH(double w, int i)
     return mu;
 }
 
-CComplex CMMaterialProp::GetdHdB(const double B) const
+complexd_t CMMaterialProp::GetdHdB(const double B) const
 {
     double b,z,l;
-    CComplex h;
+    complexd_t h;
     int i;
 
     b=fabs(B);
 
-    if(BHpoints==0)    return CComplex(b/(mu_x*muo));
+    if(BHpoints==0)    return complexd_t(b/(mu_x*muo));
 
     if(b>Bdata[BHpoints-1])
         return slope[BHpoints-1];
@@ -482,18 +482,18 @@ CComplex CMMaterialProp::GetdHdB(const double B) const
             return h;
         }
 
-    return CComplex(0);
+    return complexd_t(0);
 }
 
 double CMMaterialProp::GetH(const double x) const
 {
-    return Re(GetH(CComplex(x)));
+    return Re(GetH(complexd_t(x)));
 }
 
-CComplex CMMaterialProp::GetH(const CComplex x) const
+complexd_t CMMaterialProp::GetH(const complexd_t x) const
 {
     double b,z,z2,l;
-    CComplex p,h;
+    complexd_t p,h;
     int i;
 
     b=abs(x);
@@ -677,11 +677,11 @@ double CMMaterialProp::DoCoEnergy(const double b1, const double b2)
 }
 
 
-double CMMaterialProp::DoEnergy(const CComplex b1, const CComplex b2)
+double CMMaterialProp::DoEnergy(const complexd_t b1, const complexd_t b2)
 {
     // This one is meant for the frequency!=0 case.
     // Fortunately, there's not so much effort in this case.
-    CComplex mu1,mu2,h1,h2;
+    complexd_t mu1,mu2,h1,h2;
 
     GetMu(b1,b2,mu1,mu2);
     h1=b1/(mu1*muo);
@@ -690,7 +690,7 @@ double CMMaterialProp::DoEnergy(const CComplex b1, const CComplex b2)
 
 }
 
-double CMMaterialProp::DoCoEnergy(const CComplex b1, const CComplex b2)
+double CMMaterialProp::DoCoEnergy(const complexd_t b1, const complexd_t b2)
 {
     return DoEnergy(b1,b2);
 }
@@ -719,13 +719,13 @@ void CMMaterialProp::toStream(ostream &) const
     assert(false && "CMMaterialProp::toStream() should never be called. Did you mean to call CMSolverMaterialProp::toStream()?");
 }
 
-void CMMaterialProp::GetMu(const CComplex b1, const CComplex b2,
-                           CComplex &mu1, CComplex &mu2)
+void CMMaterialProp::GetMu(const complexd_t b1, const complexd_t b2,
+                           complexd_t &mu1, complexd_t &mu2)
 {
     // gets the permeability, given a flux density
     // version for frequency!=0
 
-    CComplex biron;
+    complexd_t biron;
 
     // easiest case: the material is linear!
     if (BHpoints==0)
@@ -737,7 +737,7 @@ void CMMaterialProp::GetMu(const CComplex b1, const CComplex b2,
 
     // Rats! The material is nonlinear.
     else{
-        CComplex muiron;
+        complexd_t muiron;
 
         if(LamType==0){
             biron=sqrt(b1*conj(b1)+b2*conj(b2));
@@ -843,7 +843,7 @@ void CMMaterialProp::GetMu(const double b1, const double b2, double &mu1, double
     return;
 }
 
-void CMMaterialProp::incrementalPermeability(const double B, const double w, CComplex &mu1, CComplex &mu2)
+void CMMaterialProp::incrementalPermeability(const double B, const double w, complexd_t &mu1, complexd_t &mu2)
 {
     // B == flux density in Tesla
     // w == frequency in rad/s
@@ -869,13 +869,13 @@ void CMMaterialProp::incrementalPermeability(const double B, const double w, CCo
 
     if (Cduct!=0)
     {
-        const CComplex deg45=1+I;
+        const complexd_t deg45=1+I;
 
         // incremental permeability direction
         double mu = (muinc - (1.-LamFill))/LamFill;
-        CComplex halflag=exp(-I*Theta_hn*DEG*mu/(2.*MuMax));
+        complexd_t halflag=exp(-I*Theta_hn*DEG*mu/(2.*MuMax));
         double ds=sqrt(2./(0.4*PI*w*Cduct*mu));
-        CComplex K=halflag*deg45*Lam_d*0.001/(2.*ds);
+        complexd_t K=halflag*deg45*Lam_d*0.001/(2.*ds);
         mu1=(LamFill*mu*tanh(K)/K + (1.- LamFill));
 
         // normal permeability direction
@@ -896,7 +896,7 @@ void CMMaterialProp::incrementalPermeability(const double B, const double w, CCo
     }
 }
 
-CComplex CMMaterialProp::Get_v(double B)
+complexd_t CMMaterialProp::Get_v(double B)
 {
     if (B==0) return slope[0];
 
@@ -957,15 +957,15 @@ CMSolverMaterialProp::CMSolverMaterialProp( const CMSolverMaterialProp &other )
     Theta_m = other.Theta_m;    // magnetization direction, degrees;
 }
 
-CComplex CMSolverMaterialProp::GetH(double B)
+complexd_t CMSolverMaterialProp::GetH(double B)
 {
     double b,z,z2,l;
-    CComplex h;
+    complexd_t h;
     int i;
 
     b=fabs(B);
 
-    if(BHpoints==0)	return CComplex(b/(mu_x*muo));
+    if(BHpoints==0)	return complexd_t(b/(mu_x*muo));
 
     if(b>Bdata[BHpoints-1])
         return (Hdata[BHpoints-1] + slope[BHpoints-1]*(b-Bdata[BHpoints-1]));
@@ -983,11 +983,11 @@ CComplex CMSolverMaterialProp::GetH(double B)
             return h;
         }
 
-    return CComplex(0);
+    return complexd_t(0);
 }
 
 
-CComplex CMSolverMaterialProp::Get_dvB2(double B)
+complexd_t CMSolverMaterialProp::Get_dvB2(double B)
 {
     if (B==0) return 0;
 
@@ -998,17 +998,17 @@ void CMSolverMaterialProp::GetBHProps(double B, double &v, double &dv)
 {
     // version to use in the magnetostatic case in
     // which we know that v and dv ought to be real-valued.
-    CComplex vc,dvc;
+    complexd_t vc,dvc;
 
     GetBHProps(B,vc,dvc);
     v =Re(vc);
     dv=Re(dvc);
 }
 
-void CMSolverMaterialProp::GetBHProps(double B, CComplex &v, CComplex &dv)
+void CMSolverMaterialProp::GetBHProps(double B, complexd_t &v, complexd_t &dv)
 {
     double b,z,z2,l;
-    CComplex h,dh;
+    complexd_t h,dh;
     int i;
 
     b=fabs(B);
@@ -1059,16 +1059,16 @@ void CMSolverMaterialProp::GetBHProps(double B, CComplex &v, CComplex &dv)
 // this can't be immediately merged with femm::CMaterialProp,
 // because this uses the slightly different GetH implementation
 // from fsolver
-CComplex CMSolverMaterialProp::LaminatedBH(double w, int i)
+complexd_t CMSolverMaterialProp::LaminatedBH(double w, int i)
 {
     debug << "CMSolverMaterialProp::LaminatedBH("<<w<<", "<<i<<")\n";
     int k,n,iter=0;
-    CComplex *m0,*m1,*b,*x;
+    complexd_t *m0,*m1,*b,*x;
     double L,o,d,ds,B,lastres,res;
     res=0;
     double Relax=1;
-    CComplex mu,vo,vi,c,H;
-    CComplex Md,Mo;
+    complexd_t mu,vo,vi,c,H;
+    complexd_t Md,Mo;
     int Converged=false;
 
     // Base the required element spacing on the skin depth
@@ -1080,10 +1080,10 @@ CComplex CMSolverMaterialProp::LaminatedBH(double w, int i)
     n= ElementsPerSkinDepth * ((int) ceil(d/ds));
     L=d/((double) n);
 
-    x =(CComplex *)calloc(n+1,sizeof(CComplex));
-    b =(CComplex *)calloc(n+1,sizeof(CComplex));
-    m0=(CComplex *)calloc(n+1,sizeof(CComplex));
-    m1=(CComplex *)calloc(n+1,sizeof(CComplex));
+    x =(complexd_t *)calloc(n+1,sizeof(complexd_t));
+    b =(complexd_t *)calloc(n+1,sizeof(complexd_t));
+    m0=(complexd_t *)calloc(n+1,sizeof(complexd_t));
+    m1=(complexd_t *)calloc(n+1,sizeof(complexd_t));
 
     do
     {
@@ -1307,7 +1307,7 @@ CMSolverMaterialProp CMSolverMaterialProp::fromStream(std::istream &input, std::
                     for(int i=0; i<prop.BHpoints; i++)
                     {
                         double b;
-                        CComplex h;
+                        complexd_t h;
                         input >> b >> h.re;
                         prop.Bdata.push_back(b);
                         prop.Hdata.push_back(h);
@@ -1385,7 +1385,7 @@ CHMaterialProp::CHMaterialProp( const CHMaterialProp & other)
     }
 }
 
-CComplex CHMaterialProp::GetK(double t) const
+complexd_t CHMaterialProp::GetK(double t) const
 {
     int i,j;
 

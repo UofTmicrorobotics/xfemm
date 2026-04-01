@@ -74,7 +74,7 @@ public:
 
     virtual ~PostProcessor();
 
-    void addContourPoint(CComplex p);
+    void addContourPoint(complexd_t p);
     /**
      * @brief Adds a contour point at the closest input point to (x,y).
      *
@@ -113,7 +113,7 @@ public:
 
     double ElmArea(int i) const;
 
-    const std::vector<CComplex> &getContour() const;
+    const std::vector<complexd_t> &getContour() const;
 
     /**
      * @brief getMeshElement gets an element from meshelems.
@@ -243,7 +243,7 @@ protected:
     int **ConList;
 
     // list of points in a user-defined contour;
-    std::vector< CComplex > contour;
+    std::vector< complexd_t > contour;
 
     // member functions
     /**
@@ -268,10 +268,10 @@ protected:
      * @param p
      * @return
      * \internal
-     * - \femm42{femm/belaviewDoc.cpp,CbelaviewDoc::AECF(int,CComplex)}
+     * - \femm42{femm/belaviewDoc.cpp,CbelaviewDoc::AECF(int,complexd_t)}
      * \endinternal
      */
-    double AECF(const femmsolver::CElement *elem, CComplex p) const;
+    double AECF(const femmsolver::CElement *elem, complexd_t p) const;
 
     /**
      * @brief getNodalD computes D for node N
@@ -279,11 +279,11 @@ protected:
      * @param d the output parameter
      * @param N
      * \internal
-     * - \femm42{femm/belaviewDoc.cpp,CbelaviewDoc::GetNodalD(CComplex*,int)}
-     * - \femm42{femm/hviewDoc.cpp,ChviewDoc::GetNodalD(CComplex*,int)}
+     * - \femm42{femm/belaviewDoc.cpp,CbelaviewDoc::GetNodalD(complexd_t*,int)}
+     * - \femm42{femm/hviewDoc.cpp,ChviewDoc::GetNodalD(complexd_t*,int)}
      * \endinternal
      */
-    void getNodalD(CComplex *d, int N) const;
+    void getNodalD(complexd_t *d, int N) const;
 
     /**
      * @brief getPointD
@@ -297,7 +297,7 @@ protected:
      * - \femm42{femm/hviewDoc.cpp,ChviewDoc::GetPointD()}
      * \endinternal
      */
-    void getPointD(double x, double y, CComplex &D, const femmsolver::CElement &element) const;
+    void getPointD(double x, double y, complexd_t &D, const femmsolver::CElement &element) const;
 
     int InTriangle(double x, double y) const;
     // currently virtual until we merge hpproc version of it:
@@ -340,10 +340,10 @@ protected:
      */
     bool isSameMaterial(const femmsolver::CElement &e1, const femmsolver::CElement &e2) const;
 
-    CComplex Ctr(int i);
+    complexd_t Ctr(int i);
     double ElmArea(femmsolver::CElement *elm);
 
-    CComplex HenrotteVector(int k) const;
+    complexd_t HenrotteVector(int k) const;
     void FindBoundaryEdges();
 
     // pointer to function to call when issuing warning messages

@@ -85,16 +85,16 @@ public:
 
     virtual void clearSlopes();
     virtual void GetSlopes(double omega=0.);
-    virtual CComplex LaminatedBH(double w, int i);
+    virtual complexd_t LaminatedBH(double w, int i);
 
     double GetH(const double b) const;
-    CComplex GetH(const CComplex b) const;            // ``raw'' results
-    CComplex Get_v(double B);
-    virtual CComplex GetdHdB(const double B) const;
+    complexd_t GetH(const complexd_t b) const;            // ``raw'' results
+    complexd_t Get_v(double B);
+    virtual complexd_t GetdHdB(const double B) const;
     double GetB(const double h) const;
 
     void GetMu(const double b1, const double b2, double &mu1, double &mu2);
-    void GetMu(const CComplex b1, const CComplex b2, CComplex &mu1, CComplex &mu2);
+    void GetMu(const complexd_t b1, const complexd_t b2, complexd_t &mu1, complexd_t &mu2);
     /**
      * @brief Get the incremental permeability of a nonlinear material for use in incremental permeability formulation about DC offset.
      * @param B
@@ -104,10 +104,10 @@ public:
      *
      * \internal
      * ### FEMM reference source:
-     *  - \femm42{fkn/matprop.cpp,CMaterialProp::IncrementalPermeability(double B, double w, CComplex &mu1, CComplex &mu2)}
+     *  - \femm42{fkn/matprop.cpp,CMaterialProp::IncrementalPermeability(double B, double w, complexd_t &mu1, complexd_t &mu2)}
      * \endinternal
      */
-    void incrementalPermeability(const double B, const double w, CComplex &mu1, CComplex &mu2);
+    void incrementalPermeability(const double B, const double w, complexd_t &mu1, complexd_t &mu2);
 
     /**
      * @brief Get the incremental permeability of a nonlinear material for use in incremental permeability formulation about DC offset.
@@ -132,14 +132,14 @@ public:
     // that arise with laminated materials.
     double DoEnergy(const double bx, const double by);
     double DoCoEnergy(const double bx, const double by);
-    double DoEnergy(const CComplex bx, const CComplex by);
-    double DoCoEnergy(const CComplex b1, const CComplex b2);
+    double DoEnergy(const complexd_t bx, const complexd_t by);
+    double DoCoEnergy(const complexd_t b1, const complexd_t b2);
 
     double mu_x,mu_y;       // permeabilities, relative
     int BHpoints;           // number of points in the BH curve...
     std::vector<double>   Bdata;
-    std::vector<CComplex> Hdata;        // entries in B-H curve;
-    std::vector<CComplex> slope;        // slopes used in interpolation
+    std::vector<complexd_t> Hdata;        // entries in B-H curve;
+    std::vector<complexd_t> slope;        // slopes used in interpolation
     // of BHdata
     int    LamType;         // flag that tells how block is laminated;
     //  0 = not laminated or laminated in plane;
@@ -148,7 +148,7 @@ public:
     double LamFill;         // lamination fill factor, dimensionless;
     double H_c;             // magnetization, A/m
     double Nrg;
-    CComplex J;             // applied current density, MA/m^2
+    complexd_t J;             // applied current density, MA/m^2
     double Cduct;           // conductivity of the material, MS/m
     double Lam_d;           // lamination thickness, mm
     double Theta_hn;        // hysteresis angle, degrees
@@ -157,7 +157,7 @@ public:
     int    NStrands;        // number of strands per wire
     double WireD;           // strand diameter, mm
 
-    CComplex mu_fdx,mu_fdy; // complex permeability for harmonic problems;
+    complexd_t mu_fdx,mu_fdy; // complex permeability for harmonic problems;
 
     double MuMax; // maximum permeability for AC problems
     double Frequency;		// problem frequency in Hz, needed for incremental permeability problems
@@ -203,12 +203,12 @@ public:
     CMSolverMaterialProp();
     virtual ~CMSolverMaterialProp();
     CMSolverMaterialProp( const CMSolverMaterialProp & );
-    CComplex GetH(double B); // ill-matched override
-    CComplex Get_dvB2(double B);
-    void GetBHProps(double B, CComplex &v, CComplex &dv);
+    complexd_t GetH(double B); // ill-matched override
+    complexd_t Get_dvB2(double B);
+    void GetBHProps(double B, complexd_t &v, complexd_t &dv);
     void GetBHProps(double B, double &v, double &dv);
 
-    virtual CComplex LaminatedBH(double omega, int i) override;
+    virtual complexd_t LaminatedBH(double omega, int i) override;
 
     /**
      * @brief fromStream constructs a CMaterialProp from an input stream (usually an input file stream)
@@ -233,7 +233,7 @@ public:
 
     // properties for nonlinear conductivity
     int npts;			// number of points in the nonlinear conductivity curve
-    CComplex Kn[128];   // here, I'm being _very_ lazy by defining a fixed-length buffer for the
+    complexd_t Kn[128];   // here, I'm being _very_ lazy by defining a fixed-length buffer for the
                         // thermal conductivity data points.
 
     // Methods
@@ -242,7 +242,7 @@ public:
     CHMaterialProp();
     virtual ~CHMaterialProp();
     CHMaterialProp( const CHMaterialProp & );
-    CComplex GetK(double t) const;
+    complexd_t GetK(double t) const;
 
     /**
      * @brief fromStream constructs a CHMaterialProp from an input stream (usually an input file stream)

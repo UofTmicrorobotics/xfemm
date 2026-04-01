@@ -57,13 +57,13 @@ public:
     enum class StackInfoMode { CurrentFrameInfo, FullStackInfo };
     /**
      * @brief LuaInstance constructor
-     * Create a Lua instance and initialize it, adding the Lua standard libraries and the CComplex data type.
+     * Create a Lua instance and initialize it, adding the Lua standard libraries and the complexd_t data type.
      * @param stackSize the Lua stack size
      */
     LuaInstance( int stackSize=4096);
     /**
      * @brief LuaInstance
-     * Create a Lua instance and initialize it, adding the Lua standard libraries and the CComplex data type.
+     * Create a Lua instance and initialize it, adding the Lua standard libraries and the complexd_t data type.
      * @param state the state object for use by additional Lua command modules (e.g. LuaMagneticsCommands)
      * @param stackSize the Lua stack size
      */
@@ -106,14 +106,14 @@ public:
      * @param ok if not \c nullptr, this variable is set to \c true if \p varName could be retrieved, \c false otherwise.
      * @return The variable value, or 0 on error
      */
-    CComplex getGlobal( const std::string &varName, bool *ok=nullptr );
+    complexd_t getGlobal( const std::string &varName, bool *ok=nullptr );
 
     /**
      * @brief Set a global lua variable.
      * @param varName the name of the global variable
      * @param val the value to be stored
      */
-    void setGlobal(const std::string &varName, CComplex val );
+    void setGlobal(const std::string &varName, complexd_t val );
     /**
      * @brief getLuaState
      * @return a pointer to the Lua instance state.

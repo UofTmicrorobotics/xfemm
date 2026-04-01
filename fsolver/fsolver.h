@@ -151,6 +151,6 @@ private:
 
 /////////////////////////////////////////////////////////////////////////////
 
-double GetNewMu(double mu,int BHpoints, CComplex *BHdata,double muc,double B);
+double GetNewMu(double mu,int BHpoints, complexd_t *BHdata,double muc,double B);
 
 #endif

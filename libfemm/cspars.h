@@ -22,14 +22,14 @@
 #ifndef CSPARS_H
 #define CSPARS_H
 
-class CComplexEntry
+class complexd_tEntry
 {
 public:
 
-    CComplex x;				// value stored in the entry
+    complexd_t x;				// value stored in the entry
     int c;					// column that the entry lives in
-    CComplexEntry *next;	// pointer to next entry in the row;
-    CComplexEntry();
+    complexd_tEntry *next;	// pointer to next entry in the row;
+    complexd_tEntry();
 
 private:
 };
@@ -40,19 +40,19 @@ public:
 
     // data members
 
-    CComplex *P; 				// search direction
-    CComplex *U;
-    CComplex *R; 				// residual
-    CComplex *V;
-    CComplex *Z;
-    CComplex *b;				// RHS of linear equation
-    CComplex *uu;
-    CComplex *vv;
+    complexd_t *P; 				// search direction
+    complexd_t *U;
+    complexd_t *R; 				// residual
+    complexd_t *V;
+    complexd_t *Z;
+    complexd_t *b;				// RHS of linear equation
+    complexd_t *uu;
+    complexd_t *vv;
 
-    CComplexEntry **M;			// pointer to list of matrix entries;
-    CComplexEntry **Mh;			// Hermitian matrix arising from N-R algorithm;
-    CComplexEntry **Ma;			// Antihermitian matrix arising from N-R algorithm;
-    CComplexEntry **Ms;			// Additional complex-symmetric matrix arising from N-R algorithm;
+    complexd_tEntry **M;			// pointer to list of matrix entries;
+    complexd_tEntry **Mh;			// Hermitian matrix arising from N-R algorithm;
+    complexd_tEntry **Ma;			// Antihermitian matrix arising from N-R algorithm;
+    complexd_tEntry **Ms;			// Additional complex-symmetric matrix arising from N-R algorithm;
     int n;						// dimensions of the matrix;
     int bdw;					// optional bandwidth parameter;
     int bNewton;				// Flag which denotes whether or not there are entries in Mh or Ms;
@@ -65,19 +65,19 @@ public:
     CBigComplexLinProb();				// constructor
     ~CBigComplexLinProb();				// destructor
     int Create(int d, int bw, int nodes);	// initialize the problem
-    void Put(CComplex v, int p, int q, int k=0); // use to create/set entries in the matrix
-    CComplex Get(int p, int q, int k=0);
-    void AddTo(CComplex v, int p, int q);
-    void MultA(CComplex *X, CComplex *Y, int k=0);
-    void MultConjA(CComplex *X, CComplex *Y, int k=0);
-    CComplex Dot(CComplex *x, CComplex *y);
-    CComplex ConjDot(CComplex *x, CComplex *y);
-    void SetValue(int i, CComplex x);
+    void Put(complexd_t v, int p, int q, int k=0); // use to create/set entries in the matrix
+    complexd_t Get(int p, int q, int k=0);
+    void AddTo(complexd_t v, int p, int q);
+    void MultA(complexd_t *X, complexd_t *Y, int k=0);
+    void MultConjA(complexd_t *X, complexd_t *Y, int k=0);
+    complexd_t Dot(complexd_t *x, complexd_t *y);
+    complexd_t ConjDot(complexd_t *x, complexd_t *y);
+    void SetValue(int i, complexd_t x);
     void Periodicity(int i, int j);
     void AntiPeriodicity(int i, int j);
     void Wipe();
-    void MultPC(CComplex *X, CComplex *Y);
-    void MultAPPA(CComplex *X, CComplex *Y);
+    void MultPC(complexd_t *X, complexd_t *Y);
+    void MultAPPA(complexd_t *X, complexd_t *Y);
 
 
     // flag==false initializes solution to zero

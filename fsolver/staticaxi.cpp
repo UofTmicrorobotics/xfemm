@@ -355,7 +355,7 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
             {
                 char magbuff[4096];
                 std::string str;
-                CComplex X;
+                complexd_t X;
                 int top1,top2;
                 for (j=0,X=0; j<3; j++) X+=(meshnode[n[j]].x + I*meshnode[n[j]].y);
                 X=X/units[LengthUnits]/3.;

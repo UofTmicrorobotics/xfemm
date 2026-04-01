@@ -30,7 +30,7 @@
 #define nrm(X) sqrt(Re(ConjDot(X,X)))
 
 
-CComplexEntry::CComplexEntry()
+complexd_tEntry::complexd_tEntry()
 {
     next=NULL;
     x=0;
@@ -49,7 +49,7 @@ CBigComplexLinProb::~CBigComplexLinProb()
     if (n==0) return;
 
     int i;
-    CComplexEntry *uo,*ui;
+    complexd_tEntry *uo,*ui;
 
     free(b);
     free(P);
@@ -122,20 +122,20 @@ int CBigComplexLinProb::Create(int d, int bw, int nodes)
 
     bdw=bw;
     NumNodes=nodes;
-    b=(CComplex *)calloc(d,sizeof(CComplex));
-    V=(CComplex *)calloc(d,sizeof(CComplex));
-    P=(CComplex *)calloc(d,sizeof(CComplex));
-    R=(CComplex *)calloc(d,sizeof(CComplex));
-    U=(CComplex *)calloc(d,sizeof(CComplex));
-    Z=(CComplex *)calloc(d,sizeof(CComplex));
-    uu=(CComplex *)calloc(d,sizeof(CComplex));
-    vv=(CComplex *)calloc(d,sizeof(CComplex));
+    b=(complexd_t *)calloc(d,sizeof(complexd_t));
+    V=(complexd_t *)calloc(d,sizeof(complexd_t));
+    P=(complexd_t *)calloc(d,sizeof(complexd_t));
+    R=(complexd_t *)calloc(d,sizeof(complexd_t));
+    U=(complexd_t *)calloc(d,sizeof(complexd_t));
+    Z=(complexd_t *)calloc(d,sizeof(complexd_t));
+    uu=(complexd_t *)calloc(d,sizeof(complexd_t));
+    vv=(complexd_t *)calloc(d,sizeof(complexd_t));
     n=d;
 
-    M=(CComplexEntry **)calloc(d,sizeof(CComplexEntry *));
+    M=(complexd_tEntry **)calloc(d,sizeof(complexd_tEntry *));
     for(i=0; i<d; i++)
     {
-        M[i] = new CComplexEntry;
+        M[i] = new complexd_tEntry;
         M[i]->c = i;
     }
 
@@ -144,9 +144,9 @@ int CBigComplexLinProb::Create(int d, int bw, int nodes)
     return 1;
 }
 
-void CBigComplexLinProb::Put(CComplex v, int p, int q, int k)
+void CBigComplexLinProb::Put(complexd_t v, int p, int q, int k)
 {
-    CComplexEntry *e,*l = NULL;
+    complexd_tEntry *e,*l = NULL;
     int i;
 
     if(q<p)
@@ -163,24 +163,24 @@ void CBigComplexLinProb::Put(CComplex v, int p, int q, int k)
     {
         bNewton=true;
 
-        Mh=(CComplexEntry **)calloc(n,sizeof(CComplexEntry *));
+        Mh=(complexd_tEntry **)calloc(n,sizeof(complexd_tEntry *));
         for(i=0; i<n; i++)
         {
-            Mh[i] = new CComplexEntry;
+            Mh[i] = new complexd_tEntry;
             Mh[i]->c = i;
         }
 
-        Ma=(CComplexEntry **)calloc(n,sizeof(CComplexEntry *));
+        Ma=(complexd_tEntry **)calloc(n,sizeof(complexd_tEntry *));
         for(i=0; i<n; i++)
         {
-            Ma[i] = new CComplexEntry;
+            Ma[i] = new complexd_tEntry;
             Ma[i]->c = i;
         }
 
-        Ms=(CComplexEntry **)calloc(n,sizeof(CComplexEntry *));
+        Ms=(complexd_tEntry **)calloc(n,sizeof(complexd_tEntry *));
         for(i=0; i<n; i++)
         {
-            Ms[i] = new CComplexEntry;
+            Ms[i] = new complexd_tEntry;
             Ms[i]->c = i;
         }
     }
@@ -213,7 +213,7 @@ void CBigComplexLinProb::Put(CComplex v, int p, int q, int k)
         return;
     }
 
-    CComplexEntry *m = new CComplexEntry;
+    complexd_tEntry *m = new complexd_tEntry;
 
     if((e->next == NULL) && (q > e->c))
     {
@@ -232,9 +232,9 @@ void CBigComplexLinProb::Put(CComplex v, int p, int q, int k)
     return;
 }
 
-CComplex CBigComplexLinProb::Get(int p, int q, int k)
+complexd_t CBigComplexLinProb::Get(int p, int q, int k)
 {
-    CComplexEntry *e;
+    complexd_tEntry *e;
     bool flip = false;
 
     if(q<p)
@@ -249,15 +249,15 @@ CComplex CBigComplexLinProb::Get(int p, int q, int k)
     switch(k)
     {
     case 1:
-        if (bNewton==false) return CComplex(0,0);
+        if (bNewton==false) return complexd_t(0,0);
         e=Mh[p];
         break;
     case 2:
-        if (bNewton==false) return CComplex(0,0);
+        if (bNewton==false) return complexd_t(0,0);
         e=Ms[p];
         break;
     case 3:
-        if (bNewton==false) return CComplex(0,0);
+        if (bNewton==false) return complexd_t(0,0);
         e=Ma[p];
         break;
     default:
@@ -279,18 +279,18 @@ CComplex CBigComplexLinProb::Get(int p, int q, int k)
     }
 
     // if no entry in the list, this entry must be zero...
-    return CComplex(0,0);
+    return complexd_t(0,0);
 }
 
-void CBigComplexLinProb::AddTo(CComplex v, int p, int q)
+void CBigComplexLinProb::AddTo(complexd_t v, int p, int q)
 {
 	Put(Get(p,q)+v,p,q);
 }
 
-void CBigComplexLinProb::MultA(CComplex *X, CComplex *Y, int k)
+void CBigComplexLinProb::MultA(complexd_t *X, complexd_t *Y, int k)
 {
     int i;
-    CComplexEntry *e;
+    complexd_tEntry *e;
 
     for(i=0; i<n; i++) Y[i]=0;
 
@@ -359,10 +359,10 @@ void CBigComplexLinProb::MultA(CComplex *X, CComplex *Y, int k)
     }
 }
 
-void CBigComplexLinProb::MultConjA(CComplex *X, CComplex *Y, int k)
+void CBigComplexLinProb::MultConjA(complexd_t *X, complexd_t *Y, int k)
 {
     int i;
-    CComplexEntry *e;
+    complexd_tEntry *e;
 
     for(i=0; i<n; i++) Y[i]=0;
 
@@ -403,7 +403,7 @@ void CBigComplexLinProb::MultConjA(CComplex *X, CComplex *Y, int k)
     }
 }
 
-void CBigComplexLinProb::MultAPPA(CComplex *X, CComplex *Y)
+void CBigComplexLinProb::MultAPPA(complexd_t *X, complexd_t *Y)
 {
     int i;
     MultA(X,Z);
@@ -414,10 +414,10 @@ void CBigComplexLinProb::MultAPPA(CComplex *X, CComplex *Y)
     for(i=0; i<n; i++) Y[i].im=-Y[i].im;
 }
 
-CComplex CBigComplexLinProb::Dot(CComplex *x, CComplex *y)
+complexd_t CBigComplexLinProb::Dot(complexd_t *x, complexd_t *y)
 {
     int i;
-    CComplex z;
+    complexd_t z;
 
     z=0;
     for(i=0; i<n; i++) z+=x[i]*y[i];
@@ -425,10 +425,10 @@ CComplex CBigComplexLinProb::Dot(CComplex *x, CComplex *y)
     return z;
 }
 
-CComplex CBigComplexLinProb::ConjDot(CComplex *x, CComplex *y)
+complexd_t CBigComplexLinProb::ConjDot(complexd_t *x, complexd_t *y)
 {
     int i;
-    CComplex z;
+    complexd_t z;
 
     z=0;
     for(i=0; i<n; i++) z+=x[i].Conj()*y[i];
@@ -436,7 +436,7 @@ CComplex CBigComplexLinProb::ConjDot(CComplex *x, CComplex *y)
     return z;
 }
 
-void CBigComplexLinProb::MultPC(CComplex *X, CComplex *Y)
+void CBigComplexLinProb::MultPC(complexd_t *X, complexd_t *Y)
 {
     int i;
 
@@ -445,8 +445,8 @@ void CBigComplexLinProb::MultPC(CComplex *X, CComplex *Y)
 
 
     // SSOR preconditioner
-    CComplex c;
-    CComplexEntry *e;
+    complexd_t c;
+    complexd_tEntry *e;
 
     c= Lambda*(2.-Lambda);
     for(i=0; i<n; i++) Y[i]=X[i]*c;
@@ -479,10 +479,10 @@ void CBigComplexLinProb::MultPC(CComplex *X, CComplex *Y)
 
 }
 
-void CBigComplexLinProb::SetValue(int i, CComplex x)
+void CBigComplexLinProb::SetValue(int i, complexd_t x)
 {
     int k,fst,lst;
-    CComplex z;
+    complexd_t z;
 
     if(bdw==0)
     {
@@ -505,7 +505,7 @@ void CBigComplexLinProb::SetValue(int i, CComplex x)
         if(z!=0)
         {
             b[k]-=(z*x);
-            if(i!=k) Put(CComplex(0,0),k,i);
+            if(i!=k) Put(complexd_t(0,0),k,i);
         }
 
         if (bNewton)
@@ -514,14 +514,14 @@ void CBigComplexLinProb::SetValue(int i, CComplex x)
             if(z!=0)
             {
                 if (i!=k) b[k]=b[k]-(z*x);
-                Put(CComplex(0,0),k,i,1);
+                Put(complexd_t(0,0),k,i,1);
             }
 
             z=Get(k,i,2);
             if(z!=0)
             {
                 if (i!=k) b[k]=b[k]-(z*conj(x));
-                Put(CComplex(0,0),k,i,2);
+                Put(complexd_t(0,0),k,i,2);
             }
 
             z=Get(k,i,3);
@@ -529,7 +529,7 @@ void CBigComplexLinProb::SetValue(int i, CComplex x)
             {
 //				if (i!=k) b[k]=b[k]-(-z*conj(x));
                 if (i!=k) b[k]=b[k]-(z*conj(x));
-                Put(CComplex(0,0),k,i,3);
+                Put(complexd_t(0,0),k,i,3);
             }
         }
     }
@@ -539,7 +539,7 @@ void CBigComplexLinProb::SetValue(int i, CComplex x)
 void CBigComplexLinProb::Wipe()
 {
     int i;
-    CComplexEntry *e;
+    complexd_tEntry *e;
 
     for(i=0; i<n; i++)
     {
@@ -592,7 +592,7 @@ void CBigComplexLinProb::Wipe()
 void CBigComplexLinProb::AntiPeriodicity(int i, int j)
 {
     int k,fst,lst,h;
-    CComplex v1,v2,c;
+    complexd_t v1,v2,c;
 
 #ifdef KLUDGE
     int tmpbdw=bdw;
@@ -677,7 +677,7 @@ void CBigComplexLinProb::AntiPeriodicity(int i, int j)
 void CBigComplexLinProb::Periodicity(int i, int j)
 {
     int k,fst,lst,h;
-    CComplex v1,v2,c;
+    complexd_t v1,v2,c;
 
 #ifdef KLUDGE
     int tmpbdw=bdw;
@@ -764,7 +764,7 @@ void CBigComplexLinProb::Periodicity(int i, int j)
 int CBigComplexLinProb::PCGSQStart()
 {
     int i,k;
-    CComplex res,res_new,del,rho,pAp;
+    complexd_t res,res_new,del,rho,pAp;
 
     // quick check for most obvious sign of singularity;
     for(i=0; i<n; i++) if((M[i]->x.re==0) && (M[i]->x.im==0))
@@ -822,7 +822,7 @@ int CBigComplexLinProb::PCGSQStart()
 int CBigComplexLinProb::PBCGSolve(int flag)
 {
     int i;
-    CComplex res,res_new,del,rho,pAp;
+    complexd_t res,res_new,del,rho,pAp;
     double er,normb;
     int prg2,prg1=0;
 
@@ -897,15 +897,15 @@ int CBigComplexLinProb::PBCGSolve(int flag)
 int CBigComplexLinProb::BiCGSTAB(int flag)
 {
     double er,normb;
-    CComplex om,alf,rho1,rho2,bta;
-    CComplex *P2,*R2,*Z2,*t;
+    complexd_t om,alf,rho1,rho2,bta;
+    complexd_t *P2,*R2,*Z2,*t;
     int i,j,k;
 //    CStdString out;
 
-    P2=(CComplex *)calloc(n,sizeof(CComplex));
-    Z2=(CComplex *)calloc(n,sizeof(CComplex));
-    R2=(CComplex *)calloc(n,sizeof(CComplex));
-    t =(CComplex *)calloc(n,sizeof(CComplex));
+    P2=(complexd_t *)calloc(n,sizeof(complexd_t));
+    Z2=(complexd_t *)calloc(n,sizeof(complexd_t));
+    R2=(complexd_t *)calloc(n,sizeof(complexd_t));
+    t =(complexd_t *)calloc(n,sizeof(complexd_t));
 
     // initialize progress bar;
 //	TheView->m_prog1.SetPos(0);
@@ -986,11 +986,11 @@ int CBigComplexLinProb::KludgeSolve(int flag)
     int i,k;
     double er,normb,c;
 //	CStdString out; // doesn't appear to be used
-    CComplex *borig, *v, *r;
+    complexd_t *borig, *v, *r;
 
-    borig=(CComplex *)calloc(n,sizeof(CComplex));
-    v    =(CComplex *)calloc(n,sizeof(CComplex));
-    r    =(CComplex *)calloc(n,sizeof(CComplex));
+    borig=(complexd_t *)calloc(n,sizeof(complexd_t));
+    v    =(complexd_t *)calloc(n,sizeof(complexd_t));
+    r    =(complexd_t *)calloc(n,sizeof(complexd_t));
 
     // if flag is false, initialize V with zeros;
     if (flag==0) for(i=0; i<n; i++) V[i]=0;

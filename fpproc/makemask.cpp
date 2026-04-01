@@ -170,10 +170,10 @@ bool FPProc::MakeMask()
 	// the force calculation
 	if(nodeproplist.size()>0)
 	{
-		CComplex *p;
+		complexd_t *p;
 		int npts;
 
-		p=(CComplex *)calloc(nodelist.size(),sizeof(CComplex));
+		p=(complexd_t *)calloc(nodelist.size(),sizeof(complexd_t));
 		for(i=0,npts=0;i<(int)nodelist.size();i++)
 			if(nodelist[i].BoundaryMarker>=0)
 			{

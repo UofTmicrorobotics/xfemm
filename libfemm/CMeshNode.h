@@ -44,7 +44,7 @@ public:
     double msk;
 
     double GetDistance(const double xo, const double yo) const;
-    CComplex CC() const;
+    complexd_t CC() const;
 
     /**
      * @brief Q boundary flag
@@ -70,7 +70,7 @@ public:
      * @return a CMMeshNode
      */
     static CMMeshNode fromStream( std::istream &input, std::ostream &err = std::cerr );
-    CComplex A;
+    complexd_t A;
     double Aprev;
 };
 

@@ -241,8 +241,8 @@ double fmesher::defaultMeshSizeHeuristics(const std::vector<std::unique_ptr<CNod
         return -1;
 
     // compute minimum and maximum x/y values
-    CComplex min=nodelst[0]->CC();
-    CComplex max=min;
+    complexd_t min=nodelst[0]->CC();
+    complexd_t max=min;
     for(const auto &node: nodelst)
     {
         if (node->x < min.re) min.re = node->x;
@@ -271,8 +271,8 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
 
         const CNode &n0 = *problem.nodelist[line.n0];
         const CNode &n1 = *problem.nodelist[line.n1];
-        const CComplex a0 = n0.CC();
-        const CComplex a1 = n1.CC();
+        const complexd_t a0 = n0.CC();
+        const complexd_t a1 = n1.CC();
         // create working copy:
         CSegment segm = line;
         // use the cnt flag to carry a notation
@@ -304,7 +304,7 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
 //                int l = (int) nodelst.size();
 //
 //                // first part
-//                CComplex a2 = a0 + dL * (a1-a0) / abs(a1-a0);
+//                complexd_t a2 = a0 + dL * (a1-a0) / abs(a1-a0);
 //                CNode node1 (a2.re, a2.im);
 //                nodelst.push_back(node1.clone());
 //                segm.n0 = line.n0;
@@ -325,7 +325,7 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
 //                linelst.push_back(segm.clone());
 
 // add extra points at a distance of dL from the ends of the line.
-                CComplex a2;
+                complexd_t a2;
                 CNode node;
                 int l = 0;
 
@@ -368,7 +368,7 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
         else{
             for(int j=0; j<numParts; j++)
             {
-                CComplex a2 = a0 + (a1-a0)*((double) (j+1)) / ((double) numParts);
+                complexd_t a2 = a0 + (a1-a0)*((double) (j+1)) / ((double) numParts);
                 CNode node (a2.re, a2.im);
                 if(j == 0){
                     // first part -> n0 == line.n0
@@ -427,12 +427,12 @@ void fmesher::discretizeInputArcSegments(const FemmProblem &problem, std::vector
 
         int numParts=(int) ceil(arc.ArcLength/arc.MaxSideLength);
 
-        CComplex center;
+        complexd_t center;
         double R=0;
         problem.getCircle(arc,center,R);
 
-        CComplex a1=exp(I*arc.ArcLength*PI/(((double) numParts)*180.));
-        CComplex a2=problem.nodelist[arc.n0]->CC();
+        complexd_t a1=exp(I*arc.ArcLength*PI/(((double) numParts)*180.));
+        complexd_t a2=problem.nodelist[arc.n0]->CC();
 
         if(numParts==1){
             linelst.push_back(segm.clone());
@@ -830,8 +830,8 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
     int i, j, k, n;
     int l,n0,n1,n2;
     double z,R,dL;
-    CComplex a0,a1,a2,c;
-    CComplex b0,b1,b2;
+    complexd_t a0,a1,a2,c;
+    complexd_t b0,b1,b2;
     char instring[1024];
     //string s;
     string plyname;
@@ -1525,7 +1525,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
             int s0,s1;
             int p0[2],p1[2];
             CNode node0,node1;
-            CComplex bgn0,bgn1,c0,c1,d0,d1;
+            complexd_t bgn0,bgn1,c0,c1,d0,d1;
             double r0,r1;
 
             s0 = pbclst[n]->seg[0];

@@ -112,14 +112,14 @@ public:
          * <TotalAmpsre> <TotalAmpsim>
          * \endverbatim
          */
-    CComplex  Amps;
+    complexd_t  Amps;
 
-    CComplex dVolts;
+    complexd_t dVolts;
     int OrigCirc;
 
     // some member variables used to store some results
-    CComplex J;
-    CComplex dV;
+    complexd_t J;
+    complexd_t dV;
     int Case;
 
     /**

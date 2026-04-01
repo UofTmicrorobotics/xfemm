@@ -322,10 +322,10 @@ public:
      * @brief Intersect two arcs.
      * @param arc0
      * @param arc1
-     * @param p intersection points, packed as CComplex (output variable)
+     * @param p intersection points, packed as complexd_t (output variable)
      * @return the number of valid intersections (between 0 and 2 inclusive)
      */
-    int getArcArcIntersection(const femm::CArcSegment &arc0, const femm::CArcSegment &arc1, CComplex *p) const;
+    int getArcArcIntersection(const femm::CArcSegment &arc0, const femm::CArcSegment &arc1, complexd_t *p) const;
     /**
      * @brief look at points, block labels, and arcs to get bounding box.
      * @param x
@@ -337,10 +337,10 @@ public:
     /**
      * @brief getCircle computes the matching circle to an arc segment.
      * @param arc the arc segment
-     * @param c the center of the circle, packed as CComplex (output variable)
+     * @param c the center of the circle, packed as complexd_t (output variable)
      * @param R the radius of the circle (output variable)
      */
-    void getCircle(const femm::CArcSegment &arc,CComplex &c, double &R) const;
+    void getCircle(const femm::CArcSegment &arc,complexd_t &c, double &R) const;
 
     /**
      * @brief GetIntersection between a line and a segment.
@@ -359,10 +359,10 @@ public:
      * @brief intersection between line and arc segment
      * @param seg the line segment
      * @param arc the arc segment
-     * @param p the intersection point(s), packed as CComplex (output variable)
+     * @param p the intersection point(s), packed as complexd_t (output variable)
      * @return the number of intersections
      */
-    int getLineArcIntersection(const femm::CSegment &seg, const femm::CArcSegment &arc, CComplex *p) const;
+    int getLineArcIntersection(const femm::CSegment &seg, const femm::CArcSegment &arc, complexd_t *p) const;
 
     /**
      * @brief The document title.
@@ -407,7 +407,7 @@ public:
      * @param ncopies number of copies
      * @param selector
      */
-    void rotateCopy(CComplex c, double dt, int ncopies, femm::EditMode selector);
+    void rotateCopy(complexd_t c, double dt, int ncopies, femm::EditMode selector);
 
     /**
      * @brief Rotate the selected objects of the selected type.
@@ -415,7 +415,7 @@ public:
      * @param t angle
      * @param selector
      */
-    void rotateMove(CComplex c, double t, femm::EditMode selector);
+    void rotateMove(complexd_t c, double t, femm::EditMode selector);
 
     /**
      * @brief Scale the selected objects relative to a base point
@@ -446,7 +446,7 @@ public:
      * @param arc the arc segment index
      * @return the shortest distance
      */
-    double shortestDistanceFromArc(CComplex p, const femm::CArcSegment &arc) const;
+    double shortestDistanceFromArc(complexd_t p, const femm::CArcSegment &arc) const;
 
     /**
      * @brief Translate copies of the selected objects of the selected type.
@@ -467,8 +467,8 @@ public:
 
     int ClosestNode(const double x, const double y) const;
     int ClosestArcSegment(double x, double y) const;
-    void GetCircle(const femm::CArcSegment &asegm,CComplex &c, double &R) const;
-    double ShortestDistanceFromArc(const CComplex p, const femm::CArcSegment &arc) const;
+    void GetCircle(const femm::CArcSegment &asegm,complexd_t &c, double &R) const;
+    double ShortestDistanceFromArc(const complexd_t p, const femm::CArcSegment &arc) const;
     double ShortestDistanceFromSegment(double p, double q, int segm) const;
 
 
