@@ -333,7 +333,7 @@ bool FMesher::LoadMesh(string PathName)
                 segm.x = n[p];
                 segm.y = n[q];
 
-                if (j  != 0)
+                if (j  != complexd_t(0.0, 0.0))
                 {
                     meshline[nl++] = MAKE_UNIQUE<femm::IntPoint>(segm);
                 }
