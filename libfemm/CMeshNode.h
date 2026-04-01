@@ -44,7 +44,7 @@ public:
     double msk;
 
     double GetDistance(const double xo, const double yo) const;
-    complexd_t CC() const;
+    complexd_t conj() const;
 
     /**
      * @brief Q boundary flag

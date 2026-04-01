@@ -241,7 +241,7 @@ double fmesher::defaultMeshSizeHeuristics(const std::vector<std::unique_ptr<CNod
         return -1;
 
     // compute minimum and maximum x/y values
-    complexd_t min=nodelst[0]->CC();
+    complexd_t min=nodelst[0]->conj();
     complexd_t max=min;
     for(const auto &node: nodelst)
     {
@@ -271,8 +271,8 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
 
         const CNode &n0 = *problem.nodelist[line.n0];
         const CNode &n1 = *problem.nodelist[line.n1];
-        const complexd_t a0 = n0.CC();
-        const complexd_t a1 = n1.CC();
+        const complexd_t a0 = n0.conj();
+        const complexd_t a1 = n1.conj();
         // create working copy:
         CSegment segm = line;
         // use the cnt flag to carry a notation
@@ -432,7 +432,7 @@ void fmesher::discretizeInputArcSegments(const FemmProblem &problem, std::vector
         problem.getCircle(arc,center,R);
 
         complexd_t a1=exp(I*arc.ArcLength*PI/(((double) numParts)*180.));
-        complexd_t a2=problem.nodelist[arc.n0]->CC();
+        complexd_t a2=problem.nodelist[arc.n0]->conj();
 
         if(numParts==1){
             linelst.push_back(segm.clone());
@@ -1434,10 +1434,10 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
                 k = 1;
             }
             else{
-                a0 = problem->nodelist[problem->linelist[s0]->n0]->CC();
-                a1 = problem->nodelist[problem->linelist[s0]->n1]->CC();
-                b0 = problem->nodelist[problem->linelist[s1]->n0]->CC();
-                b1 = problem->nodelist[problem->linelist[s1]->n1]->CC();
+                a0 = problem->nodelist[problem->linelist[s0]->n0]->conj();
+                a1 = problem->nodelist[problem->linelist[s0]->n1]->conj();
+                b0 = problem->nodelist[problem->linelist[s1]->n0]->conj();
+                b1 = problem->nodelist[problem->linelist[s1]->n1]->conj();
                 z = abs(a1-a0);
                 k = (int) std::ceil(z/problem->linelist[s0]->MaxSideLength);
             }
@@ -1541,26 +1541,26 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
             problem->getCircle(*problem->arclist[s1],c1,r1);
 
             if (problem->arclist[s0]->NormalDirection ==0){
-                bgn0 = problem->nodelist[problem->arclist[s0]->n0]->CC();
+                bgn0 = problem->nodelist[problem->arclist[s0]->n0]->conj();
                 d0 = exp(I*problem->arclist[s0]->ArcLength*PI/(((double) k)*180.));
                 p0[0] = problem->arclist[s0]->n0;
                 p0[1] = problem->arclist[s0]->n1;
             }
             else{
-                bgn0 = problem->nodelist[problem->arclist[s0]->n1]->CC();
+                bgn0 = problem->nodelist[problem->arclist[s0]->n1]->conj();
                 d0 = exp(-I*problem->arclist[s0]->ArcLength*PI/(((double) k)*180.));
                 p0[0] = problem->arclist[s0]->n1;
                 p0[1] = problem->arclist[s0]->n0;
             }
 
             if (problem->arclist[s1]->NormalDirection!=0){
-                bgn1 = problem->nodelist[problem->arclist[s1]->n0]->CC();
+                bgn1 = problem->nodelist[problem->arclist[s1]->n0]->conj();
                 d1 = exp(I*problem->arclist[s1]->ArcLength*PI/(((double) k)*180.));
                 p1[0] = problem->arclist[s1]->n0;
                 p1[1] = problem->arclist[s1]->n1;
             }
             else{
-                bgn1 = problem->nodelist[problem->arclist[s1]->n1]->CC();
+                bgn1 = problem->nodelist[problem->arclist[s1]->n1]->conj();
                 d1 = exp(-I*problem->arclist[s1]->ArcLength*PI/(((double) k)*180.));
                 p1[0] = problem->arclist[s1]->n1;
                 p1[1] = problem->arclist[s1]->n0;
@@ -1885,14 +1885,14 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 			a2=exp(I*(j*agelst[k]->totalArcLength+agelst[k]->OuterAngle)*DEGREE);
 			for(i=1;i<=n;i++)
 			{
-				a0=a1*(nodelst[agelst[k]->nodeNums[i]]->CC()-agelst[k]->agc); // position of the shifted mesh node
+				a0=a1*(nodelst[agelst[k]->nodeNums[i]]->conj()-agelst[k]->agc); // position of the shifted mesh node
 				z=toDegrees(a0)/dtta;
 
 				InnerRing[kk].n0=agelst[k]->nodeNums[i];
 				InnerRing[kk].w0=z;
 				InnerRing[kk].w1=dL;
 
-				a0=a2*(nodelst[agelst[k]->nodeNums[i+n]]->CC()-agelst[k]->agc); // position of the shifted mesh node
+				a0=a2*(nodelst[agelst[k]->nodeNums[i+n]]->conj()-agelst[k]->agc); // position of the shifted mesh node
 				z=toDegrees(a0)/dtta;
 
 				OuterRing[kk].n0=agelst[k]->nodeNums[i+n];

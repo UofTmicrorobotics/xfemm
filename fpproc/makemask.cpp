@@ -177,14 +177,14 @@ bool FPProc::MakeMask()
 		for(i=0,npts=0;i<(int)nodelist.size();i++)
 			if(nodelist[i].BoundaryMarker>=0)
 			{
-				p[npts]=nodelist[i].CC();
+				p[npts]=nodelist[i].conj();
 				npts++;
 			}
 
 		if(npts>0)
 			for(i=0;i<NumNodes;i++)
 				for(j=0;j<npts;j++)
-					if(abs(p[j]-meshnode[i].CC())<1.e-8)
+					if(abs(p[j]-meshnode[i].conj())<1.e-8)
 					{
 						if (L.V[i]<0) L.V[i]=0.;
 						npts--;

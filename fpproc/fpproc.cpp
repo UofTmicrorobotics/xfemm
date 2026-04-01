@@ -4149,7 +4149,7 @@ complexd_t temp;
                           2.*std::real(B1*conj(B2))*std::real(c))/(2.*muo);
 
                     for(c=0,k=0; k<3; k++)
-                        c+=meshnode[meshelem[i].p[k]].CC()*LengthConv[LengthUnits]/3.;
+                        c+=meshnode[meshelem[i].p[k]].conj()*LengthConv[LengthUnits]/3.;
 
                     y=std::real(c)*F2 -std::imag(c)*F1;
                     if(Frequency!=0) y/=2.;
@@ -4168,7 +4168,7 @@ complexd_t temp;
                     F2 = (((B2*B2) - (B1*B1))*std::imag(c) + 2.*B1*B2*std::real(c))/(4.*muo);
 
                     for(c=0,k=0; k<3; k++)
-                        c+=meshnode[meshelem[i].p[k]].CC()*LengthConv[LengthUnits]/3;
+                        c+=meshnode[meshelem[i].p[k]].conj()*LengthConv[LengthUnits]/3;
 
                     z+=a*(std::real(c)*F2 -std::imag(c)*F1)*AECF(i);
 

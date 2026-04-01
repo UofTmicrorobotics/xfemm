@@ -68,9 +68,9 @@ CNode::~CNode()
 {
 }
 
-complexd_t femm::CNode::CC() const
+complexd_t femm::CNode::conj() const
 {
-    return complexd_t(x,y);
+    return std::conj(complexd_t(x,y));
 }
 
 double femm::CNode::GetDistance(const double xo, const double yo) const

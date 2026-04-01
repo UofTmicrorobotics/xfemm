@@ -28,6 +28,7 @@
 #define FEMM_CNODE_H
 
 #include "complex_type.h"
+
 #include <iostream>
 #include <memory>
 #include <string>
@@ -84,7 +85,7 @@ public:
      * @brief CC
      * @return the coordinates as a complex number
      */
-    complexd_t CC() const;
+    complexd_t conj() const;
     void ToggleSelect();
 
     /**

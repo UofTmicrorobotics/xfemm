@@ -52,7 +52,7 @@ CMeshNode::CMeshNode()
 {
 }
 
-complexd_t CMeshNode::CC() const
+complexd_t CMeshNode::conj() const
 {
     return (x+I*y);
 }

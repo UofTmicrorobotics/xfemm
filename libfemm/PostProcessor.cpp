@@ -593,14 +593,14 @@ bool PostProcessor::makeMask()
         for(int i=0;i<(int)problem->nodelist.size();i++)
             if(problem->nodelist[i]->BoundaryMarker>=0)
             {
-                p[npts]=problem->nodelist[i]->CC();
+                p[npts]=problem->nodelist[i]->conj();
                 npts++;
             }
 
         if(npts>0)
             for(int i=0;i<NumNodes;i++)
                 for(int j=0;j<npts;j++)
-                    if(abs(p[j]-meshnodes[i]->CC())<1.e-8)
+                    if(abs(p[j]-meshnodes[i]->conj())<1.e-8)
                     {
                         if (L.V[i]<0) L.V[i]=0.;
                         npts--;
@@ -1005,8 +1005,8 @@ void PostProcessor::getNodalD(complexd_t *d, int N) const
             // if the angle is shallow enough, we can just do the regular thing;
             // Otherwise, we punt.
             complexd_t x,y;
-            x=meshnodes[lf]->CC()-meshnodes[j]->CC(); x/=abs(x);
-            y=meshnodes[j]->CC()-meshnodes[rt]->CC(); y/=abs(y);
+            x=meshnodes[lf]->conj()-meshnodes[j]->conj(); x/=abs(x);
+            y=meshnodes[j]->conj()-meshnodes[rt]->conj(); y/=abs(y);
             if(std::abs(arg(x/y))>10.0001*PI/180.)
             {
                 // if the angle is greater than 10 degrees, punt;
@@ -1070,7 +1070,7 @@ void PostProcessor::getNodalD(complexd_t *d, int N) const
                 {
                     const auto bprop = reinterpret_cast<CSMaterialProp*>(problem->blockproplist[elem->blk].get());
                     d[i] = bprop->ex * Ex * eo + I * bprop->ey * Ey * eo;
-                    d[i]/=AECF(elem,meshnodes[j]->CC());
+                    d[i]/=AECF(elem,meshnodes[j]->conj());
                 }
                     break;
                 case FileType::HeatFlowFile:

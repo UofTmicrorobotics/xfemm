@@ -370,7 +370,7 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
         if (nodelist.size()<2) t=1.e-08;
         else{
             complexd_t p0,p1;
-            p0 = nodelist[0]->CC();
+            p0 = nodelist[0]->conj();
             p1 = p0;
             for (int i=1; i<(int)nodelist.size(); i++)
             {
@@ -412,8 +412,8 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
 
             //	MsgBox("d=%g dmin=%g",d,dmin);
             // what is the purpose of this test?
-            //	if (abs(nodelist[i]->CC()-nodelist[asegm.n0]->CC())<2.*dmin) d=2.*dmin;
-            //	if (abs(nodelist[i]->CC()-nodelist[asegm.n1]->CC())<2.*dmin) d=2.*dmin;
+            //	if (abs(nodelist[i]->conj()-nodelist[asegm.n0]->conj())<2.*dmin) d=2.*dmin;
+            //	if (abs(nodelist[i]->conj()-nodelist[asegm.n1]->conj())<2.*dmin) d=2.*dmin;
 
 
             if (d<dmin){
@@ -606,7 +606,7 @@ bool femm::FemmProblem::addSegment(int n0, int n1, const femm::CSegment *parsegm
             t = 1.e-08;
         else{
             complexd_t p0,p1;
-            p0 = nodelist[0]->CC();
+            p0 = nodelist[0]->conj();
             p1 = p0;
             for (int i=1; i<(int)nodelist.size(); i++)
             {
@@ -632,7 +632,7 @@ bool femm::FemmProblem::addSegment(int n0, int n1, const femm::CSegment *parsegm
     double d,dmin;
     unselectAll();
     if (tol==0)
-        dmin = abs(nodelist[n1]->CC()-nodelist[n0]->CC())*1.e-05;
+        dmin = abs(nodelist[n1]->conj()-nodelist[n0]->conj())*1.e-05;
     else dmin = tol;
 
     for (int i=0, k=linelist.size()-1; i<(int)nodelist.size(); i++)
@@ -640,8 +640,8 @@ bool femm::FemmProblem::addSegment(int n0, int n1, const femm::CSegment *parsegm
         if( (i!=n0) && (i!=n1) )
         {
             d=shortestDistanceFromSegment(nodelist[i]->x,nodelist[i]->y,k);
-            if (abs(nodelist[i]->CC()-nodelist[n0]->CC())<dmin) d=2.*dmin;
-            if (abs(nodelist[i]->CC()-nodelist[n1]->CC())<dmin) d=2.*dmin;
+            if (abs(nodelist[i]->conj()-nodelist[n0]->conj())<dmin) d=2.*dmin;
+            if (abs(nodelist[i]->conj()-nodelist[n1]->conj())<dmin) d=2.*dmin;
             if (d<dmin){
                 linelist[k]->ToggleSelect();
                 deleteSelectedSegments();
@@ -979,11 +979,11 @@ bool femm::FemmProblem::createRadius(int n, double r)
         getCircle(*arclist[arc[0]],c,rc);
 
         // get the locations of the endpoints of the segment;
-        p0=nodelist[n]->CC();
+        p0=nodelist[n]->conj();
         if(linelist[seg[0]]->n0==n)
-            p1=nodelist[linelist[seg[0]]->n1]->CC();
+            p1=nodelist[linelist[seg[0]]->n1]->conj();
         else
-            p1=nodelist[linelist[seg[0]]->n0]->CC();
+            p1=nodelist[linelist[seg[0]]->n0]->conj();
 
         u=(p1-p0)/abs(p1-p0);  // unit vector along the line
         q=p0 + u*std::real((c-p0)/u); // closest point on line to center of circle
@@ -1071,13 +1071,13 @@ bool femm::FemmProblem::createRadius(int n, double r)
         double phi,len;
         CArcSegment ar;
 
-        if (linelist[seg[0]]->n0==n) p1=nodelist[linelist[seg[0]]->n1]->CC();
-        else p1=nodelist[linelist[seg[0]]->n0]->CC();
+        if (linelist[seg[0]]->n0==n) p1=nodelist[linelist[seg[0]]->n1]->conj();
+        else p1=nodelist[linelist[seg[0]]->n0]->conj();
 
-        if (linelist[seg[1]]->n0==n) p2=nodelist[linelist[seg[1]]->n1]->CC();
-        else p2=nodelist[linelist[seg[1]]->n0]->CC();
+        if (linelist[seg[1]]->n0==n) p2=nodelist[linelist[seg[1]]->n1]->conj();
+        else p2=nodelist[linelist[seg[1]]->n0]->conj();
 
-        p0=nodelist[n]->CC();
+        p0=nodelist[n]->conj();
 
         // get the angle between the lines
         phi=arg((p2-p0)/(p1-p0));
@@ -1088,7 +1088,7 @@ bool femm::FemmProblem::createRadius(int n, double r)
         // check to see if the points are in the wrong order
         // and fix it if they are.
         if (phi<0){
-            p0=p1; p1=p2; p2=p0; p0=nodelist[n]->CC();
+            p0=p1; p1=p2; p2=p0; p0=nodelist[n]->conj();
             std::swap(seg[0],seg[1]);
             phi=fabs(phi);
         }
@@ -1157,7 +1157,7 @@ bool femm::FemmProblem::createRadius(int n, double r)
             p[k+1]=((1-x[k])*c-I*d[k])*(c2-c1)/abs(c2-c1) + c1;
         }
 
-        c0=nodelist[n]->CC();
+        c0=nodelist[n]->conj();
 
         int j=0;
         for(int k=0;k<8;k++)
@@ -1362,7 +1362,7 @@ void femm::FemmProblem::enforcePSLG(double tol)
             d = 1.e-08;
         else
         {
-            complexd_t p0 = newnodelist[0]->CC();
+            complexd_t p0 = newnodelist[0]->conj();
             complexd_t p1 = p0;
             for (int i=1; i<(int)newnodelist.size(); i++)
             {
@@ -1565,10 +1565,10 @@ bool femm::FemmProblem::getIntersection(int n0, int n1, int segm, double *xi, do
 
     // Get a definition of "real small" based on the lengths
     // of the lines of interest;
-    p0=nodelist[linelist[segm]->n0]->CC();
-    p1=nodelist[linelist[segm]->n1]->CC();
-    q0=nodelist[n0]->CC();
-    q1=nodelist[n1]->CC();
+    p0=nodelist[linelist[segm]->n0]->conj();
+    p1=nodelist[linelist[segm]->n1]->conj();
+    q0=nodelist[n0]->conj();
+    q1=nodelist[n1]->conj();
     ee = (std::min)(abs(p1-p0),abs(q1-q0))*1.0e-8;
 
     // Rotate and scale the prospective line
@@ -1590,7 +1590,7 @@ bool femm::FemmProblem::getIntersection(int n0, int n1, int segm, double *xi, do
     if((x < ee) || (x > (1.0 - ee))) return false;
 
     // return resulting intersection point
-    p0 = (1.0 - z)*nodelist[n0]->CC() + z*nodelist[n1]->CC();
+    p0 = (1.0 - z)*nodelist[n0]->conj() + z*nodelist[n1]->conj();
     *xi=std::real(p0);
     *yi=std::imag(p0);
 
@@ -1655,8 +1655,8 @@ double femm::FemmProblem::lengthOfLine(int i) const
 
 double femm::FemmProblem::lengthOfLine(const femm::CSegment &seg) const
 {
-    return abs(nodelist[seg.n0]->CC()-
-            nodelist[seg.n1]->CC());
+    return abs(nodelist[seg.n0]->conj()-
+            nodelist[seg.n1]->conj());
 }
 
 void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, femm::EditMode selector)
