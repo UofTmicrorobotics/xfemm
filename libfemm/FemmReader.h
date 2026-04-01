@@ -146,33 +146,5 @@ protected:
     bool handleToken(const std::string &token, std::istream &input, std::ostream &err) override;
 };
 
-class HeatFlowReader : public FemmReader<
-        femm::CHPointProp
-        , femm::CHBoundaryProp
-        , femm::CHMaterialProp
-        , femm::CHConductor
-        , femm::CHBlockLabel
-        >
-{
-public:
-    HeatFlowReader(std::shared_ptr<FemmProblem> problem, std::ostream &errorpipe);
-    HeatFlowReader(std::shared_ptr<FemmProblem> problem, SolutionReader *r, std::ostream &errorpipe);
-protected:
-    bool handleToken(const std::string &token, std::istream &input, std::ostream &err) override;
-};
-
-class ElectrostaticsReader : public FemmReader<
-        femm::CSPointProp
-        , femm::CSBoundaryProp
-        , femm::CSMaterialProp
-        , femm::CSCircuit
-        , femm::CSBlockLabel
-        >
-{
-public:
-    ElectrostaticsReader(std::shared_ptr<FemmProblem> problem, std::ostream &errorpipe);
-    ElectrostaticsReader(std::shared_ptr<FemmProblem> problem, SolutionReader *r, std::ostream &errorpipe);
-};
-} //namespace
 
 #endif

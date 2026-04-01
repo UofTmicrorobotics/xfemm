@@ -68,14 +68,6 @@ int main(int argc, char ** argv)
     {
         MagneticsReader femReader (MeshObj.problem, std::cerr);
         status = femReader.parse(FilePath);
-    } else if (MeshObj.problem->filetype == FileType::HeatFlowFile)
-    {
-        HeatFlowReader fehReader (MeshObj.problem, std::cerr);
-        status = fehReader.parse(FilePath);
-    } else if (MeshObj.problem->filetype == FileType::ElectrostaticsFile)
-    {
-        ElectrostaticsReader feeReader (MeshObj.problem, std::cerr);
-        status = feeReader.parse(FilePath);
     } else {
         std::cout << "File type not supported!" << std::endl;
     }
