@@ -156,28 +156,36 @@ CMBoundaryProp CMBoundaryProp::fromStream(std::istream &input, std::ostream &err
             if( token == "<c0>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.c0.re, err);
+                double real_part;
+                parseValue(input, real_part, err);
+                prop.c0 = complexd_t(real_part, prop.c0.imag());
                 continue;
             }
 
             if( token == "<c1>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.c1.re, err);
+                double real_part;
+                parseValue(input, real_part, err);
+                prop.c1 = complexd_t(real_part, prop.c1.imag());
                 continue;
             }
 
             if( token == "<c0i>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.c0.im, err);
+                double imag_part;
+                parseValue(input, imag_part, err);
+                prop.c0 = complexd_t(prop.c0.real(), imag_part);
                 continue;
             }
 
             if( token == "<c1i>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.c1.im, err);
+                double imag_part;
+                parseValue(input, imag_part, err);
+                prop.c1 = complexd_t(prop.c1.real(), imag_part);
                 continue;
             }
 
@@ -219,10 +227,10 @@ void CMBoundaryProp::toStream(ostream &out) const
     out << "    <A_1> = " << A1 << "\n";
     out << "    <A_2> = " << A2 << "\n";
     out << "    <Phi> = " << phi << "\n";
-    out << "    <c0> = " << c0.re << "\n";
-    out << "    <c0i> = " << c0.im << "\n";
-    out << "    <c1> = " << c1.re << "\n";
-    out << "    <c1i> = " << c1.im << "\n";
+    out << "    <c0> = " << c0.real() << "\n";
+    out << "    <c0i> = " << c0.imag() << "\n";
+    out << "    <c1> = " << c1.real() << "\n";
+    out << "    <c1i> = " << c1.imag() << "\n";
     out << "    <Mu_ssd> = " << Mu << "\n";
     out << "    <Sigma_ssd> = " << Sig << "\n";
     out << "    <innerangle> = " << InnerAngle << "\n";

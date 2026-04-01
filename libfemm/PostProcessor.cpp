@@ -190,7 +190,7 @@ void PostProcessor::addContourPointFromNode(double mx, double my)
         if (y==z)
             return;
 
-        int n1 = problem->closestNode(y.re,y.im);
+        int n1 = problem->closestNode(y.real(),y.imag());
         complexd_t x(problem->nodelist[n1]->x,problem->nodelist[n1]->y);
 
         //check to see if this point and the last point are ends of an
@@ -325,7 +325,7 @@ int femm::PostProcessor::InTriangle(double x, double y) const
         if (lo < 0)   lo = sz - 1;
 
         complexd_t hiCtr = meshelems[hi]->ctr;
-        z = (hiCtr.re - x) * (hiCtr.re - x) + (hiCtr.im - y) * (hiCtr.im - y);
+        z = (hiCtr.real() - x) * (hiCtr.real() - x) + (hiCtr.imag() - y) * (hiCtr.imag() - y);
 
         if (z <= meshelems[hi]->rsqr)
         {
@@ -337,7 +337,7 @@ int femm::PostProcessor::InTriangle(double x, double y) const
         }
 
         complexd_t loCtr = meshelems[lo]->ctr;
-        z = (loCtr.re-x)*(loCtr.re-x) + (loCtr.im-y)*(loCtr.im-y);
+        z = (loCtr.real()-x)*(loCtr.real()-x) + (loCtr.imag()-y)*(loCtr.imag()-y);
 
         if (z <= meshelems[lo]->rsqr)
         {
@@ -814,7 +814,7 @@ void femm::PostProcessor::bendContour(double angle, double anglestep)
     // add the points on the contour
     for(k=1; k<=n; k++)
     {
-        contour.push_back( c + (a0 - c) * exp(k * I * dtta) );
+        contour.push_back( c + (a0 - c) * exp((double)k * I * dtta) );
     }
 }
 
@@ -1078,7 +1078,7 @@ void PostProcessor::getNodalD(complexd_t *d, int N) const
                     const auto nodej = reinterpret_cast<femmsolver::CHMeshNode*>(meshnodes[j].get());
                     const auto bprop = reinterpret_cast<CHMaterialProp*>(problem->blockproplist[elem->blk].get());
                     complexd_t kn=bprop->GetK(nodej->T);
-                    d[i]= Re(kn)*Ex + I*Im(kn)*Ey;
+                    d[i]= std::real(kn)*Ex + I*std::imag(kn)*Ey;
                 }
                     break;
                 default:
@@ -1115,7 +1115,7 @@ void femm::PostProcessor::FindBoundaryEdges()
     {
         for(j = 0; j < 3; j ++)
         {
-            if(meshelems[i]->n[j] == 0)
+            if(meshelems[i]->n[j]  == 0)
             {
                 // Get this edge's org and dest node index,
                 orgi = meshelems[i]->p[plus1mod3[j]];

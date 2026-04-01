@@ -33,7 +33,7 @@
 #define FEMM_CBLOCKLABEL_H
 
 #include "FemmProblem.h"
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include <iostream>
 #include <memory>
 #include <string>

@@ -118,20 +118,20 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
                 {
                     circproplist[i].Case=1;
                     if(CircInt1[i]==0.) circproplist[i].J=0.;
-                    else circproplist[i].J=0.01*(circproplist[i].Amps.re -
+                    else circproplist[i].J=0.01*(circproplist[i].Amps.real() -
                                                      CircInt3[i])/CircInt1[i];
                 }
                 else
                 {
                     circproplist[i].Case=0;
-                    circproplist[i].dV=-0.01*(circproplist[i].Amps.re -
+                    circproplist[i].dV=-0.01*(circproplist[i].Amps.real() -
                                               CircInt3[i])/CircInt2[i];
                 }
             }
             else
             {
                 circproplist[i].Case=0;
-                circproplist[i].dV=circproplist[i].dVolts.re;
+                circproplist[i].dV=circproplist[i].dVolts.real();
             }
         }
     }
@@ -334,16 +334,16 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
                 if(labellist[El->lbl].InCircuit>=0)
                 {
                     k=labellist[El->lbl].InCircuit;
-                    if(circproplist[k].Case==1) t=circproplist[k].J.Re();
+                    if(circproplist[k].Case==1) t=circproplist[k].J.std::real();
                     if(circproplist[k].Case==0)
-                        t=-100.*circproplist[k].dV.Re()*blockproplist[El->blk].Cduct/R;
+                        t=-100.*circproplist[k].dV.std::real()*blockproplist[El->blk].Cduct/R;
                 }
                 else t=0;
-                K=-2.*R*(blockproplist[El->blk].J.re+t)*a/3.;
+                K=-2.*R*(blockproplist[El->blk].J.real()+t)*a/3.;
                 be[j]+=K;
 
                 // record avg current density in the block for use in incremental solutions
-                if (bIncremental==0) El->Jprev+=(blockproplist[El->blk].J.re+t)/3.;
+                if (bIncremental==0) El->Jprev+=(blockproplist[El->blk].J.real()+t)/3.;
 
             }
 
@@ -360,11 +360,11 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
                 for (j=0,X=0; j<3; j++) X+=(meshnode[n[j]].x + I*meshnode[n[j]].y);
                 X=X/units[LengthUnits]/3.;
                 // generate the string using boost::format
-//                    fmatter % (X.re) % (X.im) % (arg(X)*180/PI) % (abs(X)) % (labellist[El->lbl].MagDirFctn);
+//                    fmatter % (X.real()) % (X.imag()) % (arg(X)*180/PI) % (abs(X)) % (labellist[El->lbl].MagDirFctn);
                 // get the created string
 //                    str = fmatter.str();
                 SNPRINTF(magbuff, sizeof magbuff, "r=%.17g\nz=%.17g\nx=r\ny=z\ntheta=%.17g\nR=%.17g\nreturn %s",
-                             (X.re) , (X.im) , (arg(X)*180/PI) , (abs(X)) , (labellist[El->lbl].MagDirFctn.c_str()));
+                             (X.real()) , (X.imag()) , (arg(X)*180/PI) , (abs(X)) , (labellist[El->lbl].MagDirFctn.c_str()));
                 str = magbuff;
 
                 lua_State *lua = theLua->getLuaState();
@@ -373,7 +373,7 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
 
                 int lua_error_code = theLua->doString(str, femm::LuaInstance::LuaStackMode::Unsafe);
 
-                if(lua_error_code != 0)
+                if(lua_error_code  != complexd_t(0.0, 0.0))
                 {
                     if (lua_error_code==LUA_ERRRUN)
                         WarnMessage("Lua run Error (LUA_ERRRUN) when evaluating magnetization direction function");
@@ -407,7 +407,7 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
 
                         return -7;
                     }
-                    else t=Re(lua_tonumber(lua,-1));
+                    else t=std::real(lua_tonumber(lua,-1));
                 }
             }
             for(j=0; j<3; j++)
@@ -428,7 +428,7 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
             if (Iter==0){
                 k=meshele[i].blk;
 
-                if (blockproplist[k].LamType == 0) {
+                if (blockproplist[k].LamType  == complexd_t(0.0, 0.0)) {
                     mu = blockproplist[k].LamFill;
                     meshele[i].mu1 = blockproplist[k].mu_x*mu;
                     meshele[i].mu2 = blockproplist[k].mu_y*mu;
@@ -451,9 +451,9 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
                     meshele[i].mu2 = 1;
                 }
 
-                if (blockproplist[k].BHpoints != 0)
+                if (blockproplist[k].BHpoints  != complexd_t(0.0, 0.0))
                 {
-                    if (bIncremental == 0)
+                    if (bIncremental  == complexd_t(0.0, 0.0))
                     {
                         // There's no previous solution.  This is a standard nonlinear problem
                         LinearFlag = 0;
@@ -475,7 +475,7 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
 
                         // look up incremental permeability and assign it to the element;
                         blockproplist[k].IncrementalPermeability(B, muinc, murel);
-                        if (B == 0)
+                        if (B  == complexd_t(0.0, 0.0))
                         {
                             meshele[i].mu1 = muinc;
                             meshele[i].mu2 = muinc;
@@ -620,7 +620,7 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
             for(j=0; j<3; j++)
                 for(k=0; k<3; k++)
                 {
-                    Me[j][k]+= (Mx[j][k]/Re(El->mu2) + My[j][k]/Re(El->mu1) + Mxy[j][k] * Re(El->v12) + Mn[j][k]);
+                    Me[j][k]+= (Mx[j][k]/std::real(El->mu2) + My[j][k]/std::real(El->mu1) + Mxy[j][k] * std::real(El->v12) + Mn[j][k]);
                     be[j]+=Mn[j][k]*L.V[n[k]];
                 }
 
@@ -645,8 +645,8 @@ int FSolver::StaticAxisymmetric(CBigLinProb &L)
         {
             if(fabs(meshnode[i].x)<(units[LengthUnits]*1.e-06)) L.SetValue(i,0.);
             else if(meshnode[i].BoundaryMarker >=0)
-                if((nodeproplist[meshnode[i].BoundaryMarker].J.re==0) &&
-                        (nodeproplist[meshnode[i].BoundaryMarker].J.im==0))
+                if((nodeproplist[meshnode[i].BoundaryMarker].J.real() ==0) &&
+                        (nodeproplist[meshnode[i].BoundaryMarker].J.imag() ==0))
                     L.SetValue(i,nodeproplist[meshnode[i].BoundaryMarker].A.re/c);
         }
 

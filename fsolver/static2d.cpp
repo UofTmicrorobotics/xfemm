@@ -127,7 +127,7 @@ int FSolver::Static2D(CBigLinProb &L)
 
                     CircInt2[labellist[El->lbl].InCircuit] += a * Cduct;
 
-                    CircInt3[labellist[El->lbl].InCircuit] += blockproplist[El->blk].J.re * a * 100.;
+                    CircInt3[labellist[El->lbl].InCircuit] += blockproplist[El->blk].J.real() * a * 100.;
                 }
             }
         }
@@ -147,21 +147,21 @@ int FSolver::Static2D(CBigLinProb &L)
                     }
                     else
                     {
-                        circproplist[i].J = 0.01*(circproplist[i].Amps.re -
+                        circproplist[i].J = 0.01*(circproplist[i].Amps.real() -
                                                   CircInt3[i])/CircInt1[i];
                     }
                 }
                 else
                 {
                     circproplist[i].Case = 0;
-                    circproplist[i].dV = -0.01*(circproplist[i].Amps.re -
+                    circproplist[i].dV = -0.01*(circproplist[i].Amps.real() -
                                                 CircInt3[i])/CircInt2[i];
                 }
             }
             else
             {
                 circproplist[i].Case = 0;
-                circproplist[i].dV = circproplist[i].dVolts.re;
+                circproplist[i].dV = circproplist[i].dVolts.real();
             }
         }
     }
@@ -489,21 +489,21 @@ int FSolver::Static2D(CBigLinProb &L)
 
                     if(circproplist[k].Case==1)
                     {
-                        t = circproplist[k].J.Re();
+                        t = circproplist[k].J.std::real();
                     }
 
                     if(circproplist[k].Case==0)
                     {
-                        t = -circproplist[k].dV.Re()*blockproplist[El->blk].Cduct;
+                        t = -circproplist[k].dV.std::real()*blockproplist[El->blk].Cduct;
                     }
                 }
 
-                K = -(blockproplist[El->blk].J.re+t)*a/3.;
+                K = -(blockproplist[El->blk].J.real()+t)*a/3.;
 
                 be[j]+=K;
 
                 // record avg current density in the block for use in incremental solutions
-                if (bIncremental==MS_LEGACY_FALSE) El->Jprev+=(blockproplist[El->blk].J.Re()+t)/3.;
+                if (bIncremental==MS_LEGACY_FALSE) El->Jprev+=(blockproplist[El->blk].J.std::real()+t)/3.;
             }
 
             // contribution to be from magnetization in the block;
@@ -524,11 +524,11 @@ int FSolver::Static2D(CBigLinProb &L)
                 }
                 X = X/units[LengthUnits]/3.;
                 // generate the string using boost::format
-//                    fmatter % (X.re) % (X.im) % (arg(X)*180/PI) % (abs(X)) % (labellist[El->lbl].MagDirFctn);
+//                    fmatter % (X.real()) % (X.imag()) % (arg(X)*180/PI) % (abs(X)) % (labellist[El->lbl].MagDirFctn);
                 // get the created string
 //                    str = fmatter.str();
                 SNPRINTF(magbuff, sizeof magbuff, "x=%.17g\ny=%.17g\nr=x\nz=y\ntheta=%.17g\nR=%.17g\nreturn %s",
-                              (X.re) , (X.im) , (arg(X)*180/PI) , (abs(X)) , (labellist[El->lbl].MagDirFctn.c_str()));
+                              (X.real()) , (X.imag()) , (arg(X)*180/PI) , (abs(X)) , (labellist[El->lbl].MagDirFctn.c_str()));
                 str = magbuff;
                 lua_State * lua = theLua->getLuaState();
 
@@ -536,7 +536,7 @@ int FSolver::Static2D(CBigLinProb &L)
 
                 lua_error_code = theLua->doString(str, femm::LuaInstance::LuaStackMode::Unsafe);
 
-                if(lua_error_code != 0)
+                if(lua_error_code  != complexd_t(0.0, 0.0))
                 {
                     if (lua_error_code==LUA_ERRRUN)
                         WarnMessage("Lua run Error (LUA_ERRRUN) when evaluating magnetization direction function");
@@ -574,7 +574,7 @@ int FSolver::Static2D(CBigLinProb &L)
                     }
                     else
                     {
-                        t = Re(lua_tonumber(lua,-1));
+                        t = std::real(lua_tonumber(lua,-1));
                     }
 
                     lua_pop(lua, 1);
@@ -630,7 +630,7 @@ int FSolver::Static2D(CBigLinProb &L)
                     meshele[i].mu2 = 1;
                 }
 
-                if (blockproplist[k].BHpoints != 0)
+                if (blockproplist[k].BHpoints  != complexd_t(0.0, 0.0))
                 {
                     if (bIncremental == MS_LEGACY_FALSE)
                     {
@@ -655,7 +655,7 @@ int FSolver::Static2D(CBigLinProb &L)
                         // look up incremental permeability and assign it to the element;
                         blockproplist[k].IncrementalPermeability(B, muinc, murel);
 
-                        if (B == 0)
+                        if (B  == complexd_t(0.0, 0.0))
                         {
                             meshele[i].mu1 = muinc;
                             meshele[i].mu2 = muinc;
@@ -800,7 +800,7 @@ int FSolver::Static2D(CBigLinProb &L)
             for (j = 0; j<3; j++)
                 for (k = 0; k<3; k++)
                 {
-                    Me[j][k]+= (Mx[j][k]/Re(El->mu2) + My[j][k]/Re(El->mu1) + Mxy[j][k] * Re(El->v12) + Mn[j][k]);
+                    Me[j][k]+= (Mx[j][k]/std::real(El->mu2) + My[j][k]/std::real(El->mu1) + Mxy[j][k] * std::real(El->v12) + Mn[j][k]);
                     be[j]+=Mn[j][k]*L.V[n[k]];
                 }
 
@@ -820,7 +820,7 @@ int FSolver::Static2D(CBigLinProb &L)
         {
             if(meshnode[i].BoundaryMarker>=0)
             {
-                L.b[i]+=(0.01*nodeproplist[meshnode[i].BoundaryMarker].J.re);
+                L.b[i]+=(0.01*nodeproplist[meshnode[i].BoundaryMarker].J.real());
             }
         }
 
@@ -829,10 +829,10 @@ int FSolver::Static2D(CBigLinProb &L)
         {
             if(meshnode[i].BoundaryMarker >=0)
             {
-                if((nodeproplist[meshnode[i].BoundaryMarker].J.re==0) &&
-                        (nodeproplist[meshnode[i].BoundaryMarker].J.im==0))
+                if((nodeproplist[meshnode[i].BoundaryMarker].J.real() ==0) &&
+                        (nodeproplist[meshnode[i].BoundaryMarker].J.imag() ==0))
                 {
-                    L.SetValue(i,nodeproplist[meshnode[i].BoundaryMarker].A.re / c);
+                    L.SetValue(i,nodeproplist[meshnode[i].BoundaryMarker].A.real() / c);
                 }
             }
         }
@@ -1113,9 +1113,9 @@ int FSolver::WriteStatic2D(CBigLinProb &L)
     	fprintf(fp,"%i\n",NumCircPropsOrig);
     	for(i=0;i<NumCircPropsOrig;i++){
     		if (circproplist[i].Case==0)
-    			fprintf(fp,"0	%.17g\n",circproplist[i].dV.Re());
+    			fprintf(fp,"0	%.17g\n",circproplist[i].dV.std::real());
     		if (circproplist[i].Case==1)
-    			fprintf(fp,"1	%.17g\n",circproplist[i].J.Re());
+    			fprintf(fp,"1	%.17g\n",circproplist[i].J.std::real());
     	}
     */
 
@@ -1137,12 +1137,12 @@ int FSolver::WriteStatic2D(CBigLinProb &L)
         {
             if (circproplist[i].Case==0)
             {
-                fprintf(fp,"0\t%.17g\n",circproplist[i].dV.Re());
+                fprintf(fp,"0\t%.17g\n",circproplist[i].dV.std::real());
             }
 
             if (circproplist[i].Case==1)
             {
-                fprintf(fp,"1\t%.17g\n",circproplist[i].J.Re());
+                fprintf(fp,"1\t%.17g\n",circproplist[i].J.std::real());
             }
         }
     }
@@ -1170,8 +1170,8 @@ int FSolver::WriteStatic2D(CBigLinProb &L)
                  agelist[i].ri,
                  agelist[i].ro,
                  agelist[i].totalArcLength,
-                 agelist[i].agc.re,
-                 agelist[i].agc.im,
+                 agelist[i].agc.real(),
+                 agelist[i].agc.imag(),
                  agelist[i].totalArcElements,
                  agelist[i].InnerShift,
                  agelist[i].OuterShift );

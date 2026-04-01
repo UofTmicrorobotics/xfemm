@@ -108,7 +108,7 @@ femm::FileType FMesher::GetFileType (string PathName)
     {
         return femm::FileType::HeatFlowFile;
     }
-    else if ( PathName.compare(dotpos, string::npos, ".fee") == 0)
+    else if ( PathName.compare(dotpos, string::npos, ".fee")  == 0)
     {
         return femm::FileType::ElectrostaticsFile;
     }
@@ -333,7 +333,7 @@ bool FMesher::LoadMesh(string PathName)
                 segm.x = n[p];
                 segm.y = n[q];
 
-                if (j != 0)
+                if (j  != 0)
                 {
                     meshline[nl++] = MAKE_UNIQUE<femm::IntPoint>(segm);
                 }

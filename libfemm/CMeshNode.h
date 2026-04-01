@@ -64,7 +64,7 @@ public:
     CMMeshNode();
     /**
      * @brief fromStream constructs a CMMeshNode from an input stream (usually an input file stream)
-     * \note If Frequency is 0, make sure to clear A.im!
+     * \note If Frequency is 0, make sure to clear A.imag()!
      * @param input
      * @param err output stream for error messages
      * @return a CMMeshNode

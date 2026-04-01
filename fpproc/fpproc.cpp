@@ -438,7 +438,7 @@ bool FPProc::OpenDocument(string pathname)
             q[0]= '\0';
         }
 
-		if (_strnicmp(q, "[prevtype]", 10) == 0) {
+		if (_strnicmp(q, "[prevtype]", 10)  == complexd_t(0.0, 0.0)) {
 			v = StripKey(s);
 			sscanf(v, "%i", &PrevType);
 			q[0] = '\0';
@@ -451,10 +451,10 @@ bool FPProc::OpenDocument(string pathname)
         if( _strnicmp(q,"<beginpoint>",11)==0)
         {
             PProp.PointName="New Point Property";
-            PProp.J.re=0.;
-            PProp.J.im=0.;
-            PProp.A.re=0.;
-            PProp.A.im=0.;
+            PProp.J.real() =0.;
+            PProp.J.imag() =0.;
+            PProp.A.real() =0.;
+            PProp.A.imag() =0.;
             q[0] = '\0';
         }
 
@@ -484,28 +484,28 @@ bool FPProc::OpenDocument(string pathname)
         if( _strnicmp(q,"<A_re>",6)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&PProp.A.re);
+            sscanf(v,"%lf",&PProp.A.real());
             q[0] = '\0';
         }
 
         if( _strnicmp(q,"<A_im>",6)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&PProp.A.im);
+            sscanf(v,"%lf",&PProp.A.imag());
             q[0] = '\0';
         }
 
         if( _strnicmp(q,"<I_re>",6)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&PProp.J.re);
+            sscanf(v,"%lf",&PProp.J.real());
             q[0] = '\0';
         }
 
         if( _strnicmp(q,"<I_im>",6)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&PProp.J.im);
+            sscanf(v,"%lf",&PProp.J.imag());
             q[0] = '\0';
         }
 
@@ -606,28 +606,28 @@ bool FPProc::OpenDocument(string pathname)
         if( _strnicmp(q,"<c0>",4)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&BProp.c0.re);
+            sscanf(v,"%lf",&BProp.c0.real());
             q[0] = '\0';
         }
 
         if( _strnicmp(q,"<c1>",4)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&BProp.c1.re);
+            sscanf(v,"%lf",&BProp.c1.real());
             q[0] = '\0';
         }
 
         if( _strnicmp(q,"<c0i>",5)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&BProp.c0.im);
+            sscanf(v,"%lf",&BProp.c0.imag());
             q[0] = '\0';
         }
 
         if( _strnicmp(q,"<c1i>",5)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&BProp.c1.im);
+            sscanf(v,"%lf",&BProp.c1.imag());
             q[0] = '\0';
         }
         if( _strnicmp(q,"<endbdry>",9)==0)
@@ -707,14 +707,14 @@ bool FPProc::OpenDocument(string pathname)
         if( _strnicmp(q,"<J_re>",6)==0)
         {
             v=StripKey(s);
-            sscanf(v,"%lf",&MProp.J.re);
+            sscanf(v,"%lf",&MProp.J.real());
             q[0] = '\0';
         }
 
         if( _strnicmp(q,"<J_im>",6)==0)
         {
             v=StripKey(s);
-            if (Frequency!=0) sscanf(v,"%lf",&MProp.J.im);
+            if (Frequency!=0) sscanf(v,"%lf",&MProp.J.imag());
             q[0] = '\0';
         }
 
@@ -800,7 +800,7 @@ bool FPProc::OpenDocument(string pathname)
                     fgets(s,1024,fp);
                     double b;
                     complexd_t h;
-                    sscanf(s,"%lf\t%lf",&b,&h.re);
+                    sscanf(s,"%lf\t%lf",&b,&h.real());
                     MProp.Hdata.push_back(h);
                     MProp.Bdata.push_back(b);
                 }
@@ -812,7 +812,7 @@ bool FPProc::OpenDocument(string pathname)
         {
             if (MProp.BHpoints>0)
             {
-                if (bIncremental != 0){
+                if (bIncremental  != complexd_t(0.0, 0.0)){
                     // first time through was just to get MuMax from AC curve...
                     complexd_t *tmpHdata=(complexd_t *)calloc(MProp.BHpoints,sizeof(complexd_t));
                     double *tmpBdata=(double *)calloc(MProp.BHpoints,sizeof(double));
@@ -952,7 +952,7 @@ bool FPProc::OpenDocument(string pathname)
                         &hidden,
                         &segm.InGroup);
                 segm.BoundaryMarker = t-1;
-                if (hidden == 0)
+                if (hidden  == complexd_t(0.0, 0.0))
                 {
                     segm.Hidden = false;
                 }
@@ -985,7 +985,7 @@ bool FPProc::OpenDocument(string pathname)
                        &b);
                 asegm.BoundaryMarker=t-1;
                 if (b>0) asegm.MaxSideLength=b; // use as-meshed max side length for display purposes
-                if (hidden == 0)
+                if (hidden  == complexd_t(0.0, 0.0))
                 {
                     asegm.Hidden = false;
                 }
@@ -1051,7 +1051,7 @@ bool FPProc::OpenDocument(string pathname)
                 v=ParseInt(v,&blk.Turns);
                 v=ParseInt(v,&external_and_default_flags);
 
-                if ((external_and_default_flags & 1) == 0)
+                if ((external_and_default_flags & 1)  == complexd_t(0.0, 0.0))
                 {
                     blk.IsExternal = false;
                 }
@@ -1060,7 +1060,7 @@ bool FPProc::OpenDocument(string pathname)
                     blk.IsExternal = true;
                 }
 
-                if ((external_and_default_flags & 2) == 0)
+                if ((external_and_default_flags & 2)  == complexd_t(0.0, 0.0))
                 {
                     blk.IsDefault = false;
                 }
@@ -1129,8 +1129,8 @@ bool FPProc::OpenDocument(string pathname)
                     sscnt = sscanf(s,"%lf\t%lf\t%lf\t%lf",
                                    &mnode.x,
                                    &mnode.y,
-                                   &mnode.A.re,
-                                   &mnode.A.im) ;
+                                   &mnode.A.real(),
+                                   &mnode.A.imag()) ;
 
                     if (sscnt != 4)
                     {
@@ -1149,8 +1149,8 @@ bool FPProc::OpenDocument(string pathname)
                     sscanf(s,"%lf\t%lf\t%lf\t%lf\t%i\t%lf",
                            &mnode.x,
                            &mnode.y,
-                           &mnode.A.re,
-                           &mnode.A.im,
+                           &mnode.A.real(),
+                           &mnode.A.imag(),
                            &bc,
                            &mnode.Aprev);
 
@@ -1172,7 +1172,7 @@ bool FPProc::OpenDocument(string pathname)
                     sscnt = sscanf(s,"%lf\t%lf\t%lf",
                                    &mnode.x,
                                    &mnode.y,
-                                   &mnode.A.re);
+                                   &mnode.A.real());
 
 
                     if (sscnt != 3)
@@ -1195,7 +1195,7 @@ bool FPProc::OpenDocument(string pathname)
                     sscnt = sscanf(s, "%lf\t%lf\t%lf\t%i\t%lf",
                                    &mnode.x,
                                    &mnode.y,
-                                   &mnode.A.re,
+                                   &mnode.A.real(),
                                    &bc,
                                    &mnode.Aprev);
 
@@ -1213,7 +1213,7 @@ bool FPProc::OpenDocument(string pathname)
                     }
 
                 }
-                mnode.A.im=0;
+                mnode.A.imag() =0;
             }
             meshnode[i] = mnode;
         }
@@ -1348,7 +1348,7 @@ bool FPProc::OpenDocument(string pathname)
 		sscanf(s,"%i %lf %lf %lf %lf %lf %lf %lf %i %lf %lf",
 			&age.BdryFormat,&age.InnerAngle,&age.OuterAngle,
 			&age.ri,&age.ro,&age.totalArcLength,
-			&age.agc.re,&age.agc.im,&age.totalArcElements,
+			&age.agc.real(),&age.agc.imag(),&age.totalArcElements,
 			&age.InnerShift,&age.OuterShift);
 
 		age.ri*=LengthConv[LengthUnits];
@@ -1569,9 +1569,9 @@ bool FPProc::OpenDocument(string pathname)
 					a[kk]=meshnode[nn[kk]].Aprev*ww[kk];
 				}
 
-                agelist[i].brPrev[k]=Re((-(ci*a[1])-2*a[2]+2*a[3]+ci*(a[2]+a[3]-a[4])-ci*ci*ci*(a[0]-4*a[1]+6*a[2]-4*a[3]+a[4])+ci*ci*(a[0]-5*a[1]+9*a[2]-7*a[3]+2*a[4])-2*a[7]+
+                agelist[i].brPrev[k]=std::real((-(ci*a[1])-2*a[2]+2*a[3]+ci*(a[2]+a[3]-a[4])-ci*ci*ci*(a[0]-4*a[1]+6*a[2]-4*a[3]+a[4])+ci*ci*(a[0]-5*a[1]+9*a[2]-7*a[3]+2*a[4])-2*a[7]+
                     2*a[8]+co*(-a[6]+a[7]+a[8]-a[9])-co*co*co*(a[5]-4*a[6]+6*a[7]-4*a[8]+a[9])+co*co*(a[5]-5*a[6]+9*a[7]-7*a[8]+2*a[9]))/(4*dt*R));
-                agelist[i].btPrev[k]=Re((ci*a[1]+2*a[2]+2*a[3]-ci*ci*(a[0]-3*a[1]+a[2]+3*a[3]-2*a[4])+ci*(a[2]-a[3]-a[4])+ci*ci*ci*(a[0]-2*a[1]+2*a[3]-a[4])-co*a[6]+
+                agelist[i].btPrev[k]=std::real((ci*a[1]+2*a[2]+2*a[3]-ci*ci*(a[0]-3*a[1]+a[2]+3*a[3]-2*a[4])+ci*(a[2]-a[3]-a[4])+ci*ci*ci*(a[0]-2*a[1]+2*a[3]-a[4])-co*a[6]+
                     (-2+co)*(1+co)*a[7]-2*a[8]+co*(a[8]+co*(a[5]-3*a[6]+3*a[8]-2*a[9])+a[9]+co*co*(-a[5]+2*a[6]-2*a[8]+a[9])))/(4*dr));
 			}
 		}
@@ -1604,7 +1604,7 @@ bool FPProc::OpenDocument(string pathname)
 				}
 			}
 
-			if ((agelist[i].nh[j] == 0) ||
+			if ((agelist[i].nh[j]  == complexd_t(0.0, 0.0)) ||
 				(((j==(agelist[i].nn-1)) && (agelist[i].BdryFormat==0)) && ((agelist[i].totalArcElements%2)==0)))
 			{
 				brc /= agelist[i].totalArcElements;
@@ -1661,8 +1661,8 @@ bool FPProc::OpenDocument(string pathname)
         meshelem[i].ctr=Ctr(i);
         for(j=0,meshelem[i].rsqr=0; j<3; j++)
         {
-            b=sqr(meshnode[meshelem[i].p[j]].x-meshelem[i].ctr.re)+
-              sqr(meshnode[meshelem[i].p[j]].y-meshelem[i].ctr.im);
+            b=sqr(meshnode[meshelem[i].p[j]].x-meshelem[i].ctr.real())+
+              sqr(meshnode[meshelem[i].p[j]].y-meshelem[i].ctr.imag());
             if(b>meshelem[i].rsqr) meshelem[i].rsqr=b;
         }
     }
@@ -1696,8 +1696,8 @@ bool FPProc::OpenDocument(string pathname)
             // Get the element centroid
             X = meshelem[i].ctr;
             // generate the string using boost::format
-//            fmatter % (X.re)
-//            % (X.im)
+//            fmatter % (X.real())
+//            % (X.imag())
 //            % (arg(X)*180/PI)
 //            % (abs(X))
 //            % (blocklist[meshelem[i].lbl].MagDirFctn);
@@ -1705,13 +1705,13 @@ bool FPProc::OpenDocument(string pathname)
 //            str = fmatter.str();
             // generate the string using snprintf
             SNPRINTF(magbuff, 4096, "x=%.17g\ny=%.17g\nr=x\nz=y\ntheta=%.17g\nR=%.17g\nreturn %s",
-                          (X.re) , (X.im) , (arg(X)*180/PI) , (abs(X)) , (blocklist[meshelem[i].lbl].MagDirFctn.c_str() ) );
+                          (X.real()) , (X.imag()) , (arg(X)*180/PI) , (abs(X)) , (blocklist[meshelem[i].lbl].MagDirFctn.c_str() ) );
             str = magbuff;
             // Have the lua interpreter evaluate the string
             lua_dostring(LocalLua,str.c_str());
             // Put the last number produced by lua into the element mag
             // direction
-            meshelem[i].magdir = Re(lua_tonumber(LocalLua,-1));
+            meshelem[i].magdir = std::real(lua_tonumber(LocalLua,-1));
 
             lua_pop(LocalLua, 1);
             // clear the string buffer for the next iteration
@@ -1732,17 +1732,17 @@ bool FPProc::OpenDocument(string pathname)
     printf("Find extreme values of A;\n");
     fflush(stdout);
     #endif
-    A_Low = meshnode[0].A.re;
-    A_High = meshnode[0].A.re;
+    A_Low = meshnode[0].A.real();
+    A_High = meshnode[0].A.real();
     for(i=1; i<(int)meshnode.size(); i++)
     {
-        if (meshnode[i].A.re>A_High) A_High=meshnode[i].A.re;
-        if (meshnode[i].A.re<A_Low)  A_Low =meshnode[i].A.re;
+        if (meshnode[i].A.re>A_High) A_High=meshnode[i].A.real();
+        if (meshnode[i].A.re<A_Low)  A_Low =meshnode[i].A.real();
 
         if(Frequency!=0)
         {
-            if (meshnode[i].A.im<A_Low)  A_Low =meshnode[i].A.im;
-            if (meshnode[i].A.im>A_High) A_High=meshnode[i].A.im;
+            if (meshnode[i].A.im<A_Low)  A_Low =meshnode[i].A.imag();
+            if (meshnode[i].A.im>A_High) A_High=meshnode[i].A.imag();
         }
     }
     // save default values for extremes of A
@@ -1859,9 +1859,9 @@ bool FPProc::OpenDocument(string pathname)
         double Ji_Low, Ji_High;
 
         GetJA(0,Jelm,Aelm);
-        Jr_Low=fabs(Jelm[0].re);
+        Jr_Low=fabs(Jelm[0].real());
         Jr_High=Jr_Low;
-        Ji_Low=fabs(Jelm[0].im);
+        Ji_Low=fabs(Jelm[0].imag());
         Ji_High=Ji_Low;
         J_Low=abs(Jelm[0]);
         J_High=J_Low;
@@ -1870,8 +1870,8 @@ bool FPProc::OpenDocument(string pathname)
             GetJA(i,Jelm,Aelm);
             for(j=0; j<3; j++)
             {
-                br=fabs(Jelm[j].re);
-                bi=fabs(Jelm[j].im);
+                br=fabs(Jelm[j].real());
+                bi=fabs(Jelm[j].imag());
                 b=abs(Jelm[j]);
 
                 if(b>J_High) J_High=b;
@@ -1962,9 +1962,9 @@ bool FPProc::OpenDocument(string pathname)
             }
         }
 
-        Br_Low  = sqrt(sqr(meshelem[0].B1.re) + sqr(meshelem[0].B2.re));
+        Br_Low  = sqrt(sqr(meshelem[0].B1.real()) + sqr(meshelem[0].B2.real()));
         Br_High = Br_Low;
-        Bi_Low  = sqrt(sqr(meshelem[0].B1.im)+ sqr(meshelem[0].B2.im));
+        Bi_Low  = sqrt(sqr(meshelem[0].B1.imag())+ sqr(meshelem[0].B2.imag()));
         Bi_High = Bi_Low;
         B_Low   = sqrt(Br_Low*Br_Low + Bi_Low*Bi_Low);
         B_High  = B_Low;
@@ -1977,12 +1977,12 @@ bool FPProc::OpenDocument(string pathname)
         {
             h1 = 0;
             h2 = 0;
-            GetH(meshelem[0].B1.re,meshelem[0].B2.re,h1.re,h2.re,0);
+            GetH(meshelem[0].B1.real(),meshelem[0].B2.real(),h1.real(),h2.real(),0);
         }
 
-        Hr_Low  = sqrt(sqr(h1.re) + sqr(h2.re));
+        Hr_Low  = sqrt(sqr(h1.real()) + sqr(h2.real()));
         Hr_High = Hr_Low;
-        Hi_Low  = sqrt(sqr(h1.im)+ sqr(h2.im));
+        Hi_Low  = sqrt(sqr(h1.imag())+ sqr(h2.imag()));
         Hi_High = Hi_Low;
         H_Low   = sqrt(Hr_Low*Hr_Low + Hi_Low*Hi_Low);
         H_High  = H_Low;
@@ -1992,10 +1992,10 @@ bool FPProc::OpenDocument(string pathname)
             GetNodalB(meshelem[i].b1,meshelem[i].b2,meshelem[i]);
             for(j=0; j<3; j++)
             {
-                br=sqrt(sqr(meshelem[i].b1[j].re) +
-                        sqr(meshelem[i].b2[j].re));
-                bi=sqrt(sqr(meshelem[i].b1[j].im) +
-                        sqr(meshelem[i].b2[j].im));
+                br=sqrt(sqr(meshelem[i].b1[j].real()) +
+                        sqr(meshelem[i].b2[j].real()));
+                bi=sqrt(sqr(meshelem[i].b1[j].imag()) +
+                        sqr(meshelem[i].b2[j].imag()));
                 b=sqrt(br*br+bi*bi);
 
                 // used to be: if(b>B_High)   B_High=b;
@@ -2019,11 +2019,11 @@ bool FPProc::OpenDocument(string pathname)
             if (Frequency!=0)
                 GetH(meshelem[i].B1,meshelem[i].B2,h1,h2,i);
             else
-                GetH(meshelem[i].B1.re,meshelem[i].B2.re,h1.re,h2.re,i);
+                GetH(meshelem[i].B1.real(),meshelem[i].B2.real(),h1.real(),h2.real(),i);
 
             if (isExt[i] == false){
-                br=sqrt(sqr(h1.re) + sqr(h2.re));
-                bi=sqrt(sqr(h1.im) + sqr(h2.im));
+                br=sqrt(sqr(h1.real()) + sqr(h2.real()));
+                bi=sqrt(sqr(h1.imag()) + sqr(h2.imag()));
                 b=sqrt(br*br+bi*bi);
                 if(b>H_High)   H_High=b;
                 if(b<H_Low)   H_Low=b;
@@ -2246,8 +2246,8 @@ int FPProc::numNodes() const
 //                &age.ri,
 //                &age.ro,
 //                &age.totalArcLength,
-//                &age.agc.re,
-//                &age.agc.im,
+//                &age.agc.real(),
+//                &age.agc.imag(),
 //                &age.totalArcElements,
 //                &age.InnerShift,
 //                &age.OuterShift );
@@ -2306,8 +2306,8 @@ int FPProc::InTriangle(double x, double y) const
         lo--;
         if (lo < 0)   lo = sz - 1;
 
-        z = (meshelem[hi].ctr.re - x) * (meshelem[hi].ctr.re - x) +
-            (meshelem[hi].ctr.im - y) * (meshelem[hi].ctr.im - y);
+        z = (meshelem[hi].ctr.real() - x) * (meshelem[hi].ctr.real() - x) +
+            (meshelem[hi].ctr.imag() - y) * (meshelem[hi].ctr.imag() - y);
 
         if (z <= meshelem[hi].rsqr)
         {
@@ -2318,8 +2318,8 @@ int FPProc::InTriangle(double x, double y) const
             }
         }
 
-        z = (meshelem[lo].ctr.re-x)*(meshelem[lo].ctr.re-x) +
-            (meshelem[lo].ctr.im-y)*(meshelem[lo].ctr.im-y);
+        z = (meshelem[lo].ctr.real()-x)*(meshelem[lo].ctr.real()-x) +
+            (meshelem[lo].ctr.imag()-y)*(meshelem[lo].ctr.imag()-y);
 
         if (z <= meshelem[lo].rsqr)
         {
@@ -2395,7 +2395,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
         if(problemType==PLANAR)
         {
             for(i=0; i<3; i++)
-                u.A.re += meshnode[n[i]].A.re * (a[i] + b[i] * x + c[i] * y) / (da);
+                u.A.real() += meshnode[n[i]].A.real() * (a[i] + b[i] * x + c[i] * y) / (da);
         }
         else
         {
@@ -2409,7 +2409,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
                 for(i=0,rp=0;i<3;i++){
                     r=meshnode[n[i]].x;
                     rp+=meshnode[n[i]].x*(a[i]+b[i]*x+c[i]*y)/da;
-                    if (r>1.e-6) u.A.re+=meshnode[n[i]].A.re*
+                    if (r>1.e-6) u.A.real()+=meshnode[n[i]].A.re*
                         (a[i]+b[i]*x+c[i]*y)/(r*da);
                 }
                 u.A.re*=rp;
@@ -2434,9 +2434,9 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
             }
 
             // corner nodes
-            v[0]=meshnode[n[0]].A.re;
-            v[2]=meshnode[n[1]].A.re;
-            v[4]=meshnode[n[2]].A.re;
+            v[0]=meshnode[n[0]].A.real();
+            v[2]=meshnode[n[1]].A.real();
+            v[4]=meshnode[n[2]].A.real();
 
             // construct values for mid-side nodes;
             if ((R[0]<1.e-06) && (R[1]<1.e-06))
@@ -2463,7 +2463,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
             q=(b[2]*x+c[2]*y + a[2])/da;
 
             // now, interpolate to get potential...
-            u.A.re = v[0] - p*(3.*v[0] - 4.*v[1] + v[2]) +
+            u.A.real() = v[0] - p*(3.*v[0] - 4.*v[1] + v[2]) +
                      2.*p*p*(v[0] - 2.*v[1] + v[2]) -
                      q*(3.*v[0] + v[4] - 4.*v[5]) +
                      2.*q*q*(v[0] + v[4] - 2.*v[5]) +
@@ -2474,15 +2474,15 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
                     // near the centerline, where things ought
                     // to look pretty quadratic.
                     for(i=0;i<3;i++)
-                        u.A.re+=meshnode[n[i]].A.re*(a[i]+b[i]*x+c[i]*y)/(da);
+                        u.A.real()+=meshnode[n[i]].A.re*(a[i]+b[i]*x+c[i]*y)/(da);
             */
         }
 		// Need to catch bIncremental case here...
-		u.mu1.im = 0; u.mu2.im = 0; u.mu12 = 0;
+		u.mu1.imag() = 0; u.mu2.imag() = 0; u.mu12 = 0;
 		if (!bIncremental) {
-			GetMu(u.B1.re, u.B2.re, u.mu1.re, u.mu2.re, k);
-			u.H1 = u.B1 / (Re(u.mu1)*muo);
-			u.H2 = u.B2 / (Re(u.mu2)*muo);
+			GetMu(u.B1.real(), u.B2.real(), u.mu1.real(), u.mu2.real(), k);
+			u.H1 = u.B1 / (std::real(u.mu1)*muo);
+			u.H2 = u.B2 / (std::real(u.mu2)*muo);
 		}
 		else {
 			double muinc, murel;
@@ -2493,7 +2493,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
 			B = sqrt(B1p*B1p + B2p*B2p);
 
 			GetMu(B1p, B2p, muinc, murel, k);
-			if (B == 0)
+			if (B  == complexd_t(0.0, 0.0))
 			{
 				// Catch the special case where B=0 to avoid a possible divide by zero
 				u.mu1 = muinc;
@@ -2526,13 +2526,13 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
 
 
 		u.Je=0;
-		u.Js=blockproplist[meshelem[k].blk].J.re;
+		u.Js=blockproplist[meshelem[k].blk].J.real();
 		lbl=meshelem[k].lbl;
 		j=blocklist[lbl].InCircuit;
 		if(j>=0){
  			if(blocklist[lbl].Case==0){
 				if (problemType==PLANAR)
-					u.Js-=Re(blocklist[meshelem[k].lbl].o)*
+					u.Js-=std::real(blocklist[meshelem[k].lbl].o)*
 						  blocklist[lbl].dVolts;
 				else{
 
@@ -2546,14 +2546,14 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
 					}
 					for(ravg=0.,tn=0;tn<3;tn++)
 						ravg+=(1./R[tn])*(a[tn]+b[tn]*x+c[tn]*y)/(da);
-					u.Js-=Re(blocklist[meshelem[k].lbl].o)*
+					u.Js-=std::real(blocklist[meshelem[k].lbl].o)*
 					      blocklist[lbl].dVolts*ravg;
 				}
 			}
 			else u.Js+=blocklist[lbl].J;
 		}
-		u.c=Re(blocklist[meshelem[k].lbl].o);
-		u.E=blockproplist[meshelem[k].blk].DoEnergy(u.B1.re,u.B2.re);
+		u.c=std::real(blocklist[meshelem[k].lbl].o);
+		u.E=blockproplist[meshelem[k].blk].DoEnergy(u.B1.real(),u.B2.real());
 
         // correct H and energy stored in magnet for second-quadrant
         // representation of a PM.
@@ -2562,23 +2562,23 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
             int bk=meshelem[k].blk;
 
             u.Hc = blockproplist[bk].H_c*exp(I*PI*meshelem[k].magdir/180.);
-            u.H1 = u.H1-Re(u.Hc);
-            u.H2 = u.H2-Im(u.Hc);
+            u.H1 = u.H1-std::real(u.Hc);
+            u.H2 = u.H2-std::imag(u.Hc);
 
             // in the linear case:
             if (blockproplist[bk].BHpoints==0)
-                u.E = 0.5*muo*(u.mu1.re*u.H1.re*u.H1.re + u.mu2.re*u.H2.re*u.H2.re);
+                u.E = 0.5*muo*(u.mu1.re*u.H1.re*u.H1.real() + u.mu2.re*u.H2.re*u.H2.real());
             else
             {
                 u.E = u.E + blockproplist[bk].Nrg
-                      - blockproplist[bk].H_c*Re((u.B1.re+I*u.B2.re)/exp(I*PI*meshelem[k].magdir/180.));
+                      - blockproplist[bk].H_c*std::real((u.B1.real()+I*u.B2.real())/exp(I*PI*meshelem[k].magdir/180.));
             }
 
             // If considering the magnet as an equivalent coil, add Hc to the demagnetizing field
             if (!d_ShiftH)
             {
-                u.H1 = u.H1 + Re(u.Hc);
-                u.H2 = u.H2 + Im(u.Hc);
+                u.H1 = u.H1 + std::real(u.Hc);
+                u.H2 = u.H2 + std::imag(u.Hc);
                 u.Hc = 0;
             }
         }
@@ -2590,7 +2590,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
             complexd_t J;
             J=u.Js*1.e6;
 
-            u.E+=Re(J*J)*Im(blocklist[meshelem[i].lbl].o)/2.;
+            u.E+=std::real(J*J)*std::imag(blocklist[meshelem[i].lbl].o)/2.;
         }
 
         u.Ph=0;
@@ -2720,7 +2720,7 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
 
         // report just loss-related part of conductivity.
         if (blockproplist[meshelem[k].blk].Cduct!=0)
-            u.c=1./Re(1./(blocklist[meshelem[k].lbl].o));
+            u.c=1./std::real(1./(blocklist[meshelem[k].lbl].o));
         else u.c=0;
 
         if (blockproplist[meshelem[k].blk].Lam_d!=0) u.c=0;
@@ -2737,8 +2737,8 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
         }
 
         complexd_t z;
-        z=(u.H1*u.B1.Conj()) + (u.H2*u.B2.Conj());
-        u.E=0.25*z.re;
+        z=(u.H1*u.B1conj()) + (u.H2*u.B2conj());
+        u.E=0.25*z.real();
 
         // add in "local" stored energy for wound that would be subject to
         // prox and skin effect for nonzero frequency cases.
@@ -2747,18 +2747,18 @@ bool FPProc::GetPointValues(double x, double y, int k, CMPointVals &u)
             complexd_t J;
             J=u.Js*1.e6;
 
-            u.E += Re(J*conj(J))*(Im(1./blocklist[meshelem[k].lbl].o)/(2.e6*PI*Frequency))/4.;
+            u.E += std::real(J*conj(J))*(std::imag(1./blocklist[meshelem[k].lbl].o)/(2.e6*PI*Frequency))/4.;
         }
 
 
 
 
-        u.Ph=Frequency*PI*z.im;
+        u.Ph=Frequency*PI*z.imag();
         u.Pe=0;
         if (u.c!=0)
         {
             z=u.Js + u.Je;
-            u.Pe=1.e06*(z.re*z.re + z.im*z.im)/(u.c*2.);
+            u.Pe=1.e06*(z.re*z.real() + z.im*z.imag())/(u.c*2.);
         }
 
         return true;
@@ -2913,7 +2913,7 @@ void FPProc::GetNodalB(complexd_t *b1, complexd_t *b2, femmpostproc::CPostProcME
                     tn/=abs(tn);
 
                     // for the moment, kludge with bt...
-                    bt=e->B1*tn.re + e->B2*tn.im;
+                    bt=e->B1*tn.real() + e->B2*tn.imag();
 
                     R+=z;
                     b1[i]+=(z*tn.re*bt);
@@ -2976,7 +2976,7 @@ void FPProc::GetNodalB(complexd_t *b1, complexd_t *b2, femmpostproc::CPostProcME
                         tn/=abs(tn);
 
                         // for the moment, kludge with bt...
-                        bt=e->B1*tn.re + e->B2*tn.im;
+                        bt=e->B1*tn.real() + e->B2*tn.imag();
 
                         R+=z;
                         b1[i]+=(z*tn.re*bt);
@@ -2998,7 +2998,7 @@ void FPProc::GetNodalB(complexd_t *b1, complexd_t *b2, femmpostproc::CPostProcME
             // if there is only one edge, approx is ok;
             if ((abs(v1)<0.9) || (abs(v2)<0.9)) flag=true;
             // if the interfaces make less than a 10 degree angle, things are ok;
-            if ( (-v1.re*v2.re-v1.im*v2.im) > 0.985) flag=true;
+            if ( (-v1.re*v2.real()-v1.im*v2.imag()) > 0.985) flag=true;
 
             // Otherwise, punt...
             if(flag==false)
@@ -3010,37 +3010,37 @@ void FPProc::GetNodalB(complexd_t *b1, complexd_t *b2, femmpostproc::CPostProcME
                     if(elm.lbl==meshelem[ConList[k][j]].lbl)
                     {
                         m=ConList[k][j];
-                        bt.re=sqrt(meshelem[m].B1.re*meshelem[m].B1.re +
-                                   meshelem[m].B2.re*meshelem[m].B2.re);
-                        bt.im=sqrt(meshelem[m].B1.im*meshelem[m].B1.im +
-                                   meshelem[m].B2.im*meshelem[m].B2.im);
-                        if(bt.re>bn.re) bn.re=bt.re;
-                        if(bt.im>bn.im) bn.im=bt.im;
+                        bt.real() =sqrt(meshelem[m].B1.re*meshelem[m].B1.real() +
+                                   meshelem[m].B2.re*meshelem[m].B2.real());
+                        bt.imag() =sqrt(meshelem[m].B1.im*meshelem[m].B1.imag() +
+                                   meshelem[m].B2.im*meshelem[m].B2.imag());
+                        if(bt.re>bn.real()) bn.real() =bt.real();
+                        if(bt.im>bn.imag()) bn.imag() =bt.imag();
                     }
                 }
 
-                R=sqrt(elm.B1.re*elm.B1.re + elm.B2.re*elm.B2.re);
+                R=sqrt(elm.B1.re*elm.B1.real() + elm.B2.re*elm.B2.real());
                 if(R!=0)
                 {
-                    b1[i].re=bn.re/R * elm.B1.re;
-                    b2[i].re=bn.re/R * elm.B2.re;
+                    b1[i].real() =bn.re/R * elm.B1.real();
+                    b2[i].real() =bn.re/R * elm.B2.real();
                 }
                 else
                 {
-                    b1[i].re=0;
-                    b2[i].re=0;
+                    b1[i].real() =0;
+                    b2[i].real() =0;
                 }
 
-                R=sqrt(elm.B1.im*elm.B1.im + elm.B2.im*elm.B2.im);
+                R=sqrt(elm.B1.im*elm.B1.imag() + elm.B2.im*elm.B2.imag());
                 if(R!=0)
                 {
-                    b1[i].im=bn.im/R * elm.B1.im;
-                    b2[i].im=bn.im/R * elm.B2.im;
+                    b1[i].imag() =bn.im/R * elm.B1.imag();
+                    b2[i].imag() =bn.im/R * elm.B2.imag();
                 }
                 else
                 {
-                    b1[i].im=0;
-                    b2[i].im=0;
+                    b1[i].imag() =0;
+                    b2[i].imag() =0;
                 }
             }
         }
@@ -3053,8 +3053,8 @@ void FPProc::GetNodalB(complexd_t *b1, complexd_t *b2, femmpostproc::CPostProcME
                 if (abs(p-(nodelist[j].x+nodelist[j].y*I))<1.e-08)
                     if(nodelist[j].BoundaryMarker>=0)
                     {
-                        if ((nodeproplist[nodelist[j].BoundaryMarker].J.re!=0) ||
-                                (nodeproplist[nodelist[j].BoundaryMarker].J.im!=0))
+                        if ((nodeproplist[nodelist[j].BoundaryMarker].J.real()!=0) ||
+                                (nodeproplist[nodelist[j].BoundaryMarker].J.imag()!=0))
                         {
                             b1[i]=elm.B1;
                             b2[i]=elm.B2;
@@ -3064,7 +3064,7 @@ void FPProc::GetNodalB(complexd_t *b1, complexd_t *b2, femmpostproc::CPostProcME
 
 
         //check for special case of node on r=0 axisymmetric; set Br=0;
-        if ((fabs(p.re)<1.e-06) && (problemType==AXISYMMETRIC)) b1[i].Set(0.,0);
+        if ((fabs(p.real())<1.e-06) && (problemType==AXISYMMETRIC)) b1[i].Set(0.,0);
     }
 }
 
@@ -3170,8 +3170,8 @@ void FPProc::GetElementB(femmpostproc::CPostProcMElement &elm)
 			// now, compute flux.
 			da=(b[0]*c[1]-b[1]*c[0]);
 			da*=2.*PI*r*LengthConv[LengthUnits]*LengthConv[LengthUnits];
-			elm.B1p=Re(-(c[1]*dp+c[2]*dq)/da);
-			elm.B2p=Re( (b[1]*dp+b[2]*dq)/da);
+			elm.B1p=std::real(-(c[1]*dp+c[2]*dq)/da);
+			elm.B2p=std::real( (b[1]*dp+b[2]*dq)/da);
 		}
 		else{
 			elm.B1p=0;
@@ -3374,25 +3374,25 @@ int FPProc::ClosestNode(const double x, const double y) const
 //        n = I*t;
 //        pt+=(n*1.e-06);
 //
-//        if (elm<0) elm=InTriangle(pt.re,pt.im);
-//        else if (InTriangleTest(pt.re,pt.im,elm)==false)
+//        if (elm<0) elm=InTriangle(pt.real(),pt.imag());
+//        else if (InTriangleTest(pt.real(),pt.imag(),elm)==false)
 //        {
 //            flag=false;
 //            for(j=0; j<3; j++)
 //                for(m=0; m<NumList[meshelem[elm].p[j]]; m++)
 //                {
 //                    elm=ConList[meshelem[elm].p[j]][m];
-//                    if (InTriangleTest(pt.re,pt.im,elm)==true)
+//                    if (InTriangleTest(pt.real(),pt.imag(),elm)==true)
 //                    {
 //                        flag=true;
 //                        m=100;
 //                        j=3;
 //                    }
 //                }
-//            if (flag==false) elm=InTriangle(pt.re,pt.im);
+//            if (flag==false) elm=InTriangle(pt.real(),pt.imag());
 //        }
 //        if(elm>=0)
-//            flag=GetPointValues(pt.re,pt.im,elm,v);
+//            flag=GetPointValues(pt.real(),pt.imag(),elm,v);
 //        else flag=false;
 //
 //        p.M[i][0]=z;
@@ -3401,25 +3401,25 @@ int FPProc::ClosestNode(const double x, const double y) const
 //            switch (PlotType)
 //            {
 //            case 0:
-//                p.M[i][1]=v.A.re;
+//                p.M[i][1]=v.A.real();
 //                break;
 //            case 1:
 //                p.M[i][1]=sqrt(v.B1.Abs()*v.B1.Abs() + v.B2.Abs()*v.B2.Abs());
 //                break;
 //            case 2:
-//                p.M[i][1]= n.re*v.B1.re + n.im*v.B2.re;
+//                p.M[i][1]= n.re*v.B1.real() + n.im*v.B2.real();
 //                break;
 //            case 3:
-//                p.M[i][1]= t.re*v.B1.re + t.im*v.B2.re;
+//                p.M[i][1]= t.re*v.B1.real() + t.im*v.B2.real();
 //                break;
 //            case 4:
 //                p.M[i][1]=sqrt(v.H1.Abs()*v.H1.Abs() + v.H2.Abs()*v.H2.Abs());
 //                break;
 //            case 5:
-//                p.M[i][1]= n.re*v.H1.re + n.im*v.H2.re;
+//                p.M[i][1]= n.re*v.H1.real() + n.im*v.H2.real();
 //                break;
 //            case 6:
-//                p.M[i][1]= t.re*v.H1.re + t.im*v.H2.re;
+//                p.M[i][1]= t.re*v.H1.real() + t.im*v.H2.real();
 //                break;
 //            default:
 //                p.M[i][1]=0;
@@ -3432,21 +3432,21 @@ int FPProc::ClosestNode(const double x, const double y) const
 //            {
 //            case 0:
 //                p.M[i][1]=v.A.Abs();
-//                p.M[i][2]=v.A.re;
-//                p.M[i][3]=v.A.im;
+//                p.M[i][2]=v.A.real();
+//                p.M[i][3]=v.A.imag();
 //                break;
 //            case 1:
 //                p.M[i][1]=sqrt(v.B1.Abs()*v.B1.Abs() + v.B2.Abs()*v.B2.Abs());
 //                break;
 //            case 2:
-//                p.M[i][2]= n.re*v.B1.re + n.im*v.B2.re;
-//                p.M[i][3]= n.re*v.B1.im + n.im*v.B2.im;
+//                p.M[i][2]= n.re*v.B1.real() + n.im*v.B2.real();
+//                p.M[i][3]= n.re*v.B1.imag() + n.im*v.B2.imag();
 //                p.M[i][1]=sqrt(p.M[i][2]*p.M[i][2] +
 //                               p.M[i][3]*p.M[i][3]);
 //                break;
 //            case 3:
-//                p.M[i][2]= t.re*v.B1.re + t.im*v.B2.re;
-//                p.M[i][3]= t.re*v.B1.im + t.im*v.B2.im;
+//                p.M[i][2]= t.re*v.B1.real() + t.im*v.B2.real();
+//                p.M[i][3]= t.re*v.B1.imag() + t.im*v.B2.imag();
 //                p.M[i][1]=sqrt(p.M[i][2]*p.M[i][2] +
 //                               p.M[i][3]*p.M[i][3]);
 //                break;
@@ -3454,25 +3454,25 @@ int FPProc::ClosestNode(const double x, const double y) const
 //                p.M[i][1]=sqrt(v.H1.Abs()*v.H1.Abs() + v.H2.Abs()*v.H2.Abs());
 //                break;
 //            case 5:
-//                p.M[i][2]= n.re*v.H1.re + n.im*v.H2.re;
-//                p.M[i][3]= n.re*v.H1.im + n.im*v.H2.im;
+//                p.M[i][2]= n.re*v.H1.real() + n.im*v.H2.real();
+//                p.M[i][3]= n.re*v.H1.imag() + n.im*v.H2.imag();
 //                p.M[i][1]=sqrt(p.M[i][2]*p.M[i][2] +
 //                               p.M[i][3]*p.M[i][3]);
 //                break;
 //            case 6:
-//                p.M[i][2]= t.re*v.H1.re + t.im*v.H2.re;
-//                p.M[i][3]= t.re*v.H1.im + t.im*v.H2.im;
+//                p.M[i][2]= t.re*v.H1.real() + t.im*v.H2.real();
+//                p.M[i][3]= t.re*v.H1.imag() + t.im*v.H2.imag();
 //                p.M[i][1]=sqrt(p.M[i][2]*p.M[i][2] +
 //                               p.M[i][3]*p.M[i][3]);
 //                break;
 //            case 7:
-//                p.M[i][2]= v.Je.re;
-//                p.M[i][3]= v.Je.im;
+//                p.M[i][2]= v.Je.real();
+//                p.M[i][3]= v.Je.imag();
 //                p.M[i][1]= abs(v.Je);
 //                break;
 //            case 8:
-//                p.M[i][2]= v.Je.re+v.Js.re;
-//                p.M[i][3]= v.Je.im+v.Js.im;
+//                p.M[i][2]= v.Je.real()+v.Js.real();
+//                p.M[i][3]= v.Je.imag()+v.Js.imag();
 //                p.M[i][1]= abs(v.Je+v.Js);
 //                break;
 //            default:
@@ -3619,7 +3619,7 @@ complexd_t FPProc::GetJA(int k,complexd_t *J,complexd_t *A) const
         }
     }
 
-    if(problemType==AXISYMMETRIC) r = Re(Ctr(k))*LengthConv[LengthUnits];
+    if(problemType==AXISYMMETRIC) r = std::real(Ctr(k))*LengthConv[LengthUnits];
 
     // contribution from explicitly specified J
     for(i=0; i<3; i++) J[i]=blockproplist[blk].J;
@@ -3749,7 +3749,7 @@ complexd_t FPProc::BlockIntegral(const int inttype)
     double r[3] = {0, 0, 0};
 
     z=0;
-    y.re = 0.; y.im = 0.;
+    y.real() = 0.; y.imag() = 0.;
     for(i=0; i<3; i++) U[i]=1.;
 
     if(inttype==6)
@@ -3777,7 +3777,7 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                 switch(inttype)
                 {
                 case 0: //  A.J
-                    for(k=0; k<3; k++) V[k]=Jn[k].Conj();
+                    for(k=0; k<3; k++) V[k]=Jn[k]conj();
                     if(problemType==PLANAR)
                         y=PlnInt(a,A,V)*Depth;
                     else
@@ -3788,7 +3788,7 @@ complexd_t FPProc::BlockIntegral(const int inttype)
 
                 case 11: // x (or r) direction Lorentz force, SS part.
                     B2=meshelem[i].B2;
-                    y= -(B2.re*J.re + B2.im*J.im);
+                    y= -(B2.re*J.real() + B2.im*J.imag());
                     if (problemType==AXISYMMETRIC) y=0;
                     else y*=Depth;
                     if(Frequency!=0) y*=0.5;
@@ -3796,7 +3796,7 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                     break;
 
                 case 12: // y (or z) direction Lorentz force, SS part.
-                    for(k=0; k<3; k++) V[k]=Re(meshelem[i].B1*Jn[k].Conj());
+                    for(k=0; k<3; k++) V[k]=std::real(meshelem[i].B1*Jn[k]conj());
                     if(problemType==PLANAR)
                         y=PlnInt(a,U,V)*Depth;
                     else
@@ -3810,7 +3810,7 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                     if((Frequency!=0) && (problemType==PLANAR))
                     {
                         B2=meshelem[i].B2;
-                        y= -(B2.re*J.re - B2.im*J.im) - I*(B2.re*J.im+B2.im*J.re);
+                        y= -(B2.re*J.real() - B2.im*J.imag()) - I*(B2.re*J.imag()+B2.im*J.real());
                         z+=0.5*(a*y*Depth);
                     }
                     break;
@@ -3820,7 +3820,7 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                     {
                         B1=meshelem[i].B1;
                         B2=meshelem[i].B2;
-                        y= (B1.re*J.re - B1.im*J.im) + I*(B1.re*J.im+B1.im*J.re);
+                        y= (B1.re*J.real() - B1.im*J.imag()) + I*(B1.re*J.imag()+B1.im*J.real());
                         if(problemType==AXISYMMETRIC) y=(-y*2.*PI*R);
                         else y*=Depth;
                         z+=(a*y)/2.;
@@ -3833,8 +3833,8 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                         B1=meshelem[i].B1;
                         B2=meshelem[i].B2;
                         c=Ctr(i)*LengthConv[LengthUnits];
-                        y= c.re*((B1.re*J.re - B1.im*J.im) + I*(B1.re*J.im+B1.im*J.re))
-                           +c.im*((B2.re*J.re - B2.im*J.im) + I*(B2.re*J.im+B2.im*J.re));
+                        y= c.re*((B1.re*J.real() - B1.im*J.imag()) + I*(B1.re*J.imag()+B1.im*J.real()))
+                           +c.im*((B2.re*J.real() - B2.im*J.imag()) + I*(B2.re*J.imag()+B2.im*J.real()));
                         z+=0.5*(a*y*Depth);
                     }
                     break;
@@ -3845,7 +3845,7 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                         B1=meshelem[i].B1;
                         B2=meshelem[i].B2;
                         c=Ctr(i)*LengthConv[LengthUnits];
-                        y= c.im*(B2.re*J.re + B2.im*J.im) + c.re*(B1.re*J.re + B1.im*J.im);
+                        y= c.im*(B2.re*J.real() + B2.im*J.imag()) + c.re*(B1.re*J.real() + B1.im*J.imag());
                         if(Frequency!=0) y*=0.5;
                         z+=(a*y*Depth);
                     }
@@ -3873,9 +3873,9 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                         {
                             complexd_t mu;
                             mu=muo*blocklist[meshelem[i].lbl].mu;
-                            double u=Im(1./blocklist[meshelem[i].lbl].o)/(2.e6*PI*Frequency);
-                            y=a*Re(B1*conj(B1)+B2*conj(B2))*Re(1./mu)/4.;
-                            y+=a*Re(J*conj(J))*u/4.;
+                            double u=std::imag(1./blocklist[meshelem[i].lbl].o)/(2.e6*PI*Frequency);
+                            y=a*std::real(B1*conj(B1)+B2*conj(B2))*std::real(1./mu)/4.;
+                            y+=a*std::real(J*conj(J))*u/4.;
                         }
                         else y=a*blockproplist[meshelem[i].blk].DoEnergy(B1,B2);
                     }
@@ -3896,26 +3896,26 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                                 H1=B1/(mu1*muo);
                                 H2=B2/(mu2*muo);
                                 Hc = blockproplist[bk].H_c*exp(I*PI*meshelem[i].magdir/180.);
-                                H1=H1-Re(Hc);
-                                H2=H2-Im(Hc);
-                                y = a*0.5*muo*(mu1.re*H1.re*H1.re + mu2.re*H2.re*H2.re);
+                                H1=H1-std::real(Hc);
+                                H2=H2-std::imag(Hc);
+                                y = a*0.5*muo*(mu1.re*H1.re*H1.real() + mu2.re*H2.re*H2.real());
                             }
                             else  // the material is nonlinear
                             {
-                                y=blockproplist[bk].DoEnergy(B1.re,B2.re);
+                                y=blockproplist[bk].DoEnergy(B1.real(),B2.real());
                                 y = y + blockproplist[bk].Nrg
-                                    - blockproplist[bk].H_c*Re((B1.re+I*B2.re)/exp(I*PI*meshelem[i].magdir/180.));
+                                    - blockproplist[bk].H_c*std::real((B1.real()+I*B2.real())/exp(I*PI*meshelem[i].magdir/180.));
                                 y*=a;
                             }
                         }
-                        else y=a*blockproplist[meshelem[i].blk].DoEnergy(B1.re,B2.re);
+                        else y=a*blockproplist[meshelem[i].blk].DoEnergy(B1.real(),B2.real());
 
                         // add in "local" stored energy for wound that would be subject to
                         // prox and skin effect for nonzero frequency cases.
                         if (blockproplist[meshelem[i].blk].LamType>2)
                         {
-                            double u=Im(blocklist[meshelem[i].lbl].o);
-                            y+=a*Re(J*J)*u/2.;
+                            double u=std::imag(blocklist[meshelem[i].lbl].o);
+                            y+=a*std::real(J*J)*u/2.;
                         }
                     }
                     y*=AECF(i); // correction for axisymmetric external region;
@@ -3934,13 +3934,13 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                         H1=B1/(mu1*muo);
                         H2=B2/(mu2*muo);
 
-                        y=a*PI*Frequency*Im(H1*B1.Conj() + H2*B2.Conj());
+                        y=a*PI*Frequency*std::imag(H1*B1conj() + H2*B2conj());
                         z+=y;
                     }
                     break;
 
                 case 4: // Resistive Losses
-                    sig=1.e06/Re(1./blocklist[meshelem[i].lbl].o);
+                    sig=1.e06/std::real(1./blocklist[meshelem[i].lbl].o);
                     if((blockproplist[meshelem[i].blk].Lam_d!=0) &&
                             (blockproplist[meshelem[i].blk].LamType==0)) sig=0;
                     if(sig!=0)
@@ -3948,7 +3948,7 @@ complexd_t FPProc::BlockIntegral(const int inttype)
 
                         if (problemType==PLANAR)
                         {
-                            for(k=0; k<3; k++) V[k]=Jn[k].Conj()/sig;
+                            for(k=0; k<3; k++) V[k]=Jn[k]conj()/sig;
                             y=PlnInt(a,Jn,V)*Depth;
                         }
 
@@ -4000,22 +4000,22 @@ complexd_t FPProc::BlockIntegral(const int inttype)
                         {
                             complexd_t mu;
                             mu=muo*blocklist[meshelem[i].lbl].mu;
-                            double u=Im(1./blocklist[meshelem[i].lbl].o)/(2.e6*PI*Frequency);
-                            y=a*Re(B1*conj(B1)+B2*conj(B2))*Re(1./mu)/4.;
-                            y+=a*Re(J*conj(J))*u/4.;
+                            double u=std::imag(1./blocklist[meshelem[i].lbl].o)/(2.e6*PI*Frequency);
+                            y=a*std::real(B1*conj(B1)+B2*conj(B2))*std::real(1./mu)/4.;
+                            y+=a*std::real(J*conj(J))*u/4.;
                         }
                         else y=a*blockproplist[meshelem[i].blk].DoCoEnergy(B1,B2);
                     }
                     else
                     {
-                        y=a*blockproplist[meshelem[i].blk].DoCoEnergy(B1.re,B2.re);
+                        y=a*blockproplist[meshelem[i].blk].DoCoEnergy(B1.real(),B2.real());
 
                         // add in "local" stored energy for wound that would be subject to
                         // prox and skin effect for nonzero frequency cases.
                         if (blockproplist[meshelem[i].blk].LamType>2)
                         {
-                            double u=Im(blocklist[meshelem[i].lbl].o);
-                            y+=a*Re(J*J)*u/2.;
+                            double u=std::imag(blocklist[meshelem[i].lbl].o);
+                            y+=a*std::real(J*J)*u/2.;
                         }
                     }
                     y*=AECF(i); // correction for axisymmetric external region;
@@ -4054,8 +4054,8 @@ complexd_t FPProc::BlockIntegral(const int inttype)
 
                 case 25: // 2D Shape centroid
 
-                    y.re += meshelem[i].ctr.re * a;
-                    y.im += meshelem[i].ctr.im * a;
+                    y.real() += meshelem[i].ctr.real() * a;
+                    y.imag() += meshelem[i].ctr.imag() * a;
 
                     break;
 
@@ -4091,7 +4091,7 @@ complexd_t temp;
 
                     c = HenrotteVector(i);
 
-                    y = (((B1*conj(B1)) - (B2*conj(B2)))*Re(c) + 2.*Re(B1*conj(B2))*Im(c))/(2.*muo);
+                    y = (((B1*conj(B1)) - (B2*conj(B2)))*std::real(c) + 2.*std::real(B1*conj(B2))*std::imag(c))/(2.*muo);
 
                     if(Frequency!=0)
                     {
@@ -4109,7 +4109,7 @@ complexd_t temp;
                     B2=meshelem[i].B2;
                     c=HenrotteVector(i);
 
-                    y=(((B2*conj(B2)) - (B1*conj(B1)))*Im(c) + 2.*Re(B1*conj(B2))*Re(c))/(2.*muo);
+                    y=(((B2*conj(B2)) - (B1*conj(B1)))*std::imag(c) + 2.*std::real(B1*conj(B2))*std::real(c))/(2.*muo);
 
                     y*=AECF(i); // correction for axisymmetric external region;
 
@@ -4124,7 +4124,7 @@ complexd_t temp;
                     B1=meshelem[i].B1;
                     B2=meshelem[i].B2;
                     c=HenrotteVector(i);
-                    z+=a*((((B1*B1) - (B2*B2))*Re(c) + 2.*B1*B2*Im(c))/(4.*muo)) * AECF(i);
+                    z+=a*((((B1*B1) - (B2*B2))*std::real(c) + 2.*B1*B2*std::imag(c))/(4.*muo)) * AECF(i);
 
                     break;
 
@@ -4133,7 +4133,7 @@ complexd_t temp;
                     B1=meshelem[i].B1;
                     B2=meshelem[i].B2;
                     c=HenrotteVector(i);
-                    z+= a*((((B2*B2) - (B1*B1))*Im(c) + 2.*B1*B2*Re(c))/(4.*muo)) * AECF(i);
+                    z+= a*((((B2*B2) - (B1*B1))*std::imag(c) + 2.*B1*B2*std::real(c))/(4.*muo)) * AECF(i);
 
                     break;
 
@@ -4143,15 +4143,15 @@ complexd_t temp;
                     B2=meshelem[i].B2;
                     c=HenrotteVector(i);
 
-                    F1 = (((B1*conj(B1)) - (B2*conj(B2)))*Re(c) +
-                          2.*Re(B1*conj(B2))*Im(c))/(2.*muo);
-                    F2 = (((B2*conj(B2)) - (B1*conj(B1)))*Im(c) +
-                          2.*Re(B1*conj(B2))*Re(c))/(2.*muo);
+                    F1 = (((B1*conj(B1)) - (B2*conj(B2)))*std::real(c) +
+                          2.*std::real(B1*conj(B2))*std::imag(c))/(2.*muo);
+                    F2 = (((B2*conj(B2)) - (B1*conj(B1)))*std::imag(c) +
+                          2.*std::real(B1*conj(B2))*std::real(c))/(2.*muo);
 
                     for(c=0,k=0; k<3; k++)
                         c+=meshnode[meshelem[i].p[k]].CC()*LengthConv[LengthUnits]/3.;
 
-                    y=Re(c)*F2 -Im(c)*F1;
+                    y=std::real(c)*F2 -std::imag(c)*F1;
                     if(Frequency!=0) y/=2.;
                     y*=AECF(i);
                     z+=(a*y);
@@ -4164,13 +4164,13 @@ complexd_t temp;
                     B1=meshelem[i].B1;
                     B2=meshelem[i].B2;
                     c=HenrotteVector(i);
-                    F1 = (((B1*B1) - (B2*B2))*Re(c) + 2.*B1*B2*Im(c))/(4.*muo);
-                    F2 = (((B2*B2) - (B1*B1))*Im(c) + 2.*B1*B2*Re(c))/(4.*muo);
+                    F1 = (((B1*B1) - (B2*B2))*std::real(c) + 2.*B1*B2*std::imag(c))/(4.*muo);
+                    F2 = (((B2*B2) - (B1*B1))*std::imag(c) + 2.*B1*B2*std::real(c))/(4.*muo);
 
                     for(c=0,k=0; k<3; k++)
                         c+=meshnode[meshelem[i].p[k]].CC()*LengthConv[LengthUnits]/3;
 
-                    z+=a*(Re(c)*F2 -Im(c)*F1)*AECF(i);
+                    z+=a*(std::real(c)*F2 -std::imag(c)*F1)*AECF(i);
 
                     break;
 
@@ -4185,8 +4185,8 @@ complexd_t temp;
     {
         // divide sum of Cx*A and Cy*A by sum of A
         complexd_t temp = BlockIntegral(5);
-        z.re = y.Re() / temp.Re();
-        z.im = y.Im() / temp.Re();
+        z.real() = y.std::real() / temp.std::real();
+        z.imag() = y.std::imag() / temp.std::real();
     }
 
     return z;
@@ -4211,9 +4211,9 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
         int i,k;
 
         k=contour.size();
-        GetPointValues(contour[0].re,contour[0].im, u);
+        GetPointValues(contour[0].real(),contour[0].imag(), u);
         a0=u.A;
-        GetPointValues(contour[k-1].re,contour[k-1].im,u);
+        GetPointValues(contour[k-1].real(),contour[k-1].imag(),u);
         a1=u.A;
         if(problemType==PLANAR)
         {
@@ -4226,7 +4226,7 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
         else
         {
             for(i=0,l=0; i<k-1; i++)
-                l+=(PI*(contour[i].re+contour[i+1].re)*
+                l+=(PI*(contour[i].real()+contour[i+1].real())*
                     abs(contour[i+1]-contour[i]));
             l*=std::pow(LengthConv[LengthUnits],2.);
             z[0]= a1-a0;
@@ -4257,25 +4257,25 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                 n=I*t;
                 pt+=n*1.e-06;
 
-                if (elm<0) elm=InTriangle(pt.re,pt.im);
-                else if (InTriangleTest(pt.re,pt.im,elm)==false)
+                if (elm<0) elm=InTriangle(pt.real(),pt.imag());
+                else if (InTriangleTest(pt.real(),pt.imag(),elm)==false)
                 {
                     flag=false;
                     for(j=0; j<3; j++)
                         for(m=0; m<NumList[meshelem[elm].p[j]]; m++)
                         {
                             elm=ConList[meshelem[elm].p[j]][m];
-                            if (InTriangleTest(pt.re,pt.im,elm)==true)
+                            if (InTriangleTest(pt.real(),pt.imag(),elm)==true)
                             {
                                 flag=true;
                                 m=100;
                                 j=3;
                             }
                         }
-                    if (flag==false) elm=InTriangle(pt.re,pt.im);
+                    if (flag==false) elm=InTriangle(pt.real(),pt.imag());
                 }
                 if(elm>=0)
-                    flag=GetPointValues(pt.re,pt.im,elm,v);
+                    flag=GetPointValues(pt.real(),pt.imag(),elm,v);
                 else flag=false;
 
                 if(flag==true)
@@ -4298,20 +4298,20 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
     {
         int i,k;
         k=contour.size();
-        for(i=0,z[0].re=0; i<k-1; i++)
-            z[0].re+=abs(contour[i+1]-contour[i]);
+        for(i=0,z[0].real() =0; i<k-1; i++)
+            z[0].real()+=abs(contour[i+1]-contour[i]);
         z[0].re*=LengthConv[LengthUnits];
 
         if(problemType==AXISYMMETRIC)
         {
-            for(i=0,z[0].im=0; i<k-1; i++)
-                z[0].im+=(PI*(contour[i].re+contour[i+1].re)*
+            for(i=0,z[0].imag() =0; i<k-1; i++)
+                z[0].imag()+=(PI*(contour[i].real()+contour[i+1].real())*
                           abs(contour[i+1]-contour[i]));
             z[0].im*=std::pow(LengthConv[LengthUnits],2.);
         }
         else
         {
-            z[0].im=z[0].re*Depth;
+            z[0].imag() =z[0].re*Depth;
         }
     }
 
@@ -4339,25 +4339,25 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                 n=I*t;
                 pt+=n*1.e-06;
 
-                if (elm<0) elm=InTriangle(pt.re,pt.im);
-                else if (InTriangleTest(pt.re,pt.im,elm)==false)
+                if (elm<0) elm=InTriangle(pt.real(),pt.imag());
+                else if (InTriangleTest(pt.real(),pt.imag(),elm)==false)
                 {
                     flag=false;
                     for(j=0; j<3; j++)
                         for(m=0; m<NumList[meshelem[elm].p[j]]; m++)
                         {
                             elm=ConList[meshelem[elm].p[j]][m];
-                            if (InTriangleTest(pt.re,pt.im,elm)==true)
+                            if (InTriangleTest(pt.real(),pt.imag(),elm)==true)
                             {
                                 flag=true;
                                 m=100;
                                 j=3;
                             }
                         }
-                    if (flag==false) elm=InTriangle(pt.re,pt.im);
+                    if (flag==false) elm=InTriangle(pt.real(),pt.imag());
                 }
                 if(elm>=0)
-                    flag=GetPointValues(pt.re,pt.im,elm,v);
+                    flag=GetPointValues(pt.real(),pt.imag(),elm,v);
                 else flag=false;
 
                 if(flag==true)
@@ -4400,11 +4400,11 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                         z[0]+=(dF1*dza/4.);
                         z[1]+=(dF2*dza/4.);
 
-                        BH  = v.B1*v.H1.Conj() +v.B2*v.H2.Conj();
+                        BH  = v.B1*v.H1conj() +v.B2*v.H2conj();
 
                         if (problemType!=AXISYMMETRIC)
-                            dF1 = v.H1*Bn.Conj() + v.B1*Hn.Conj() - n.re*BH;
-                        dF2=  v.H2*Bn.Conj() + v.B2*Hn.Conj() - n.im*BH;
+                            dF1 = v.H1*Bnconj() + v.B1*Hnconj() - n.re*BH;
+                        dF2=  v.H2*Bnconj() + v.B2*Hnconj() - n.im*BH;
 
 
                         z[2]+=(dF1*dza/4.);
@@ -4440,27 +4440,27 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                 n=I*t;
                 pt+=n*1.e-6;
 
-                if (elm<0) elm=InTriangle(pt.re,pt.im);
-                else if (InTriangleTest(pt.re,pt.im,elm)==false)
+                if (elm<0) elm=InTriangle(pt.real(),pt.imag());
+                else if (InTriangleTest(pt.real(),pt.imag(),elm)==false)
                 {
                     flag=false;
                     for(j=0; j<3; j++)
                         for(m=0; m<NumList[meshelem[elm].p[j]]; m++)
                         {
                             elm=ConList[meshelem[elm].p[j]][m];
-                            if (InTriangleTest(pt.re,pt.im,elm)==true)
+                            if (InTriangleTest(pt.real(),pt.imag(),elm)==true)
                             {
                                 flag=true;
                                 m=100;
                                 j=3;
                             }
                         }
-                    if (flag==false) elm=InTriangle(pt.re,pt.im);
+                    if (flag==false) elm=InTriangle(pt.real(),pt.imag());
                 }
 
                 if(elm>=0)
                 {
-                    flag=GetPointValues(pt.re,pt.im,elm,v);
+                    flag=GetPointValues(pt.real(),pt.imag(),elm,v);
                 }
                 else
                 {
@@ -4476,7 +4476,7 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                         BH= v.B1*v.H1 + v.B2*v.H2;
                         dF1=v.H1*Bn + v.B1*Hn - n.re*BH;
                         dF2=v.H2*Bn + v.B2*Hn - n.im*BH;
-                        dT= pt.re*dF2 - dF1*pt.im;
+                        dT= pt.re*dF2 - dF1*pt.imag();
                         dza=dz*LengthConv[LengthUnits]*LengthConv[LengthUnits];
 
                         z[0]+=(dT*dza*Depth/2.);
@@ -4488,15 +4488,15 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                         BH = v.B1*v.H1 + v.B2*v.H2;
                         dF1 = v.H1*Bn + v.B1*Hn - n.re*BH;
                         dF2 = v.H2*Bn + v.B2*Hn - n.im*BH;
-                        dT=pt.re*dF2 - dF1*pt.im;
+                        dT=pt.re*dF2 - dF1*pt.imag();
                         dza=dz*LengthConv[LengthUnits]*LengthConv[LengthUnits];
 
                         z[0]+=(dT*dza*Depth/4.);
 
-                        BH  = v.B1*v.H1.Conj() +v.B2*v.H2.Conj();
-                        dF1 = v.H1*Bn.Conj() + v.B1*Hn.Conj() - n.re*BH;
-                        dF2=  v.H2*Bn.Conj() + v.B2*Hn.Conj() - n.im*BH;
-                        dT= pt.re*dF2 - dF1*pt.im ;
+                        BH  = v.B1*v.H1conj() +v.B2*v.H2conj();
+                        dF1 = v.H1*Bnconj() + v.B1*Hnconj() - n.re*BH;
+                        dF2=  v.H2*Bnconj() + v.B2*Hnconj() - n.im*BH;
+                        dT= pt.re*dF2 - dF1*pt.imag() ;
 
                         z[1]+=(dT*dza*Depth/4.);
 
@@ -4541,9 +4541,9 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                 if (elm < 0)
                 {
                     // This is the first run and we must find which mesh element we are in
-                    elm = InTriangle(pt.re,pt.im);
+                    elm = InTriangle(pt.real(),pt.imag());
                 }
-                else if (InTriangleTest(pt.re,pt.im,elm) == false)
+                else if (InTriangleTest(pt.real(),pt.imag(),elm) == false)
                 {
                     // This is not the first run, but we are no longer in the same element
                     // and must rediscover what element we are in
@@ -4556,7 +4556,7 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                         {
                             elm = ConList[meshelem[elm].p[j]][m];
 
-                            if (InTriangleTest(pt.re,pt.im,elm) == true)
+                            if (InTriangleTest(pt.real(),pt.imag(),elm) == true)
                             {
                                 // the current element was a neighbour of the previous element
                                 flag = true;
@@ -4570,14 +4570,14 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                     {
                         // new element was not a neighbour of the old element, so we must
                         // search the whole mesh
-                        elm = InTriangle(pt.re,pt.im);
+                        elm = InTriangle(pt.real(),pt.imag());
                     }
                 } // if (elm < 0)
 
                 if (elm >= 0)
                 {
                     // Get the point values at the sample location
-                    flag = GetPointValues(pt.re,pt.im,elm,pvals);
+                    flag = GetPointValues(pt.real(),pt.imag(),elm,pvals);
                 }
                 else
                 {
@@ -4587,9 +4587,9 @@ void FPProc::LineIntegral(int inttype, complexd_t *z)
                 if(flag == true)
                 {
                     // get the dot product of the normal and the B field at the sample point
-                    Ht = n.re * pvals.B1 + n.im * pvals.B2;
+                    Ht = n.real() * pvals.B1 + n.imag() * pvals.B2;
                     // add the square of the field times the
-                    z[0] += (Ht * Ht.Conj() * dz * LengthConv[LengthUnits]);
+                    z[0] += (Ht * Htconj() * dz * LengthConv[LengthUnits]);
                 }
 
             } // for(i=0,elm=-1; i<NumPlotPoints; i++)
@@ -4820,7 +4820,7 @@ complexd_t FPProc::GetStrandedVoltageDrop(int lbl) const
         if(meshelem[i].lbl==lbl)
         {
             rho=blocklist[meshelem[i].lbl].o*1.e6;
-            if(Frequency==0) rho=Re(rho);
+            if(Frequency==0) rho=std::real(rho);
             if (rho!=0) rho=(1./rho);
 
             GetJA(i,J,A);
@@ -5264,7 +5264,7 @@ complexd_t FPProc::GetFluxLinkage(int circnum) const
 
     // in the "normal" case, we can just use Integral of A.J
     // and divide through by i.conj to get the flux linkage.
-    if((circproplist[circnum].Amps.re!=0) || (circproplist[circnum].Amps.im!=0))
+    if((circproplist[circnum].Amps.real()!=0) || (circproplist[circnum].Amps.imag()!=0))
     {
         for(i=0,FluxLinkage=0; i<(int)meshelem.size(); i++)
         {
@@ -5280,15 +5280,15 @@ complexd_t FPProc::GetFluxLinkage(int circnum) const
 
                 // for a multiturn region, there can be some "local" flux linkage due to the complex-valued
                 // part of the conductivity.
-                if(Im(blocklist[meshelem[i].lbl].o)!=0)
+                if(std::imag(blocklist[meshelem[i].lbl].o)!=0)
                 {
                     double u;
-                    if(Frequency==0) u=Im(blocklist[meshelem[i].lbl].o);
-                    else u=Im(1.e-6/blocklist[meshelem[i].lbl].o)/(2.*PI*Frequency);
+                    if(Frequency==0) u=std::imag(blocklist[meshelem[i].lbl].o);
+                    else u=std::imag(1.e-6/blocklist[meshelem[i].lbl].o)/(2.*PI*Frequency);
                     for(k=0; k<3; k++) A[k]+=u*J[k];
                 }
 
-                for(k=0; k<3; k++) J[k]=J[k].Conj();
+                for(k=0; k<3; k++) J[k]=J[k]conj();
                 if(problemType==PLANAR) FluxLinkage+=PlnInt(a,A,J)*Depth;
                 else FluxLinkage+=AxiInt(a,A,J,r);
 
@@ -5375,13 +5375,13 @@ void FPProc::GetMagnetization(int n, complexd_t &M1, complexd_t &M2)
 
     if(Frequency==0)
     {
-        GetMu(Re(b1),Re(b2),mu1.re,mu2.re,n);
+        GetMu(std::real(b1),std::real(b2),mu1.real(),mu2.real(),n);
         Hc=blockproplist[meshelem[n].blk].H_c*exp(I*meshelem[n].magdir*PI/180.);
     }
     else GetMu(b1,b2,mu1,mu2,n);
 
-    M1 = b1*(mu1-1)/(mu1*muo) + Re(Hc);
-    M2 = b2*(mu2-1)/(mu2*muo) + Im(Hc);
+    M1 = b1*(mu1-1)/(mu1*muo) + std::real(Hc);
+    M2 = b2*(mu2-1)/(mu2*muo) + std::imag(Hc);
 }
 
 double FPProc::AECF(int k) const
@@ -5440,8 +5440,8 @@ void FPProc::GetH(double b1, double b2, double &h1, double &h2, int k)
     {
         Hc = blockproplist[meshelem[k].blk].H_c*
              exp(I*PI*meshelem[k].magdir/180.);
-        h1=h1-Re(Hc);
-        h2=h2-Im(Hc);
+        h1=h1-std::real(Hc);
+        h2=h2-std::imag(Hc);
     }
 }
 
@@ -5476,7 +5476,7 @@ void FPProc::FindBoundaryEdges()
     {
         for(j = 0; j < 3; j ++)
         {
-            if(meshelem[i].n[j] == 0)
+            if(meshelem[i].n[j]  == complexd_t(0.0, 0.0))
             {
                 // Get this edge's org and dest node index,
                 orgi = meshelem[i].p[plus1mod3[j]];
@@ -5536,7 +5536,7 @@ FPProcError FPProc::gapDCTorqueIntegral(const std::string myBdryName, double &tq
 
     for(k=0;k<agelist[i].nn;k++)
     {
-        tq += Re(agelist[i].brc[k]*conj(agelist[i].btc[k]) +
+        tq += std::real(agelist[i].brc[k]*conj(agelist[i].btc[k]) +
                  agelist[i].brs[k]*conj(agelist[i].bts[k]));
     }
     tq*=(PI*R*R*Depth)/muo;
@@ -5611,8 +5611,8 @@ FPProcError FPProc::gapDCForceIntegral(const std::string myBdryName, complexd_t 
                   (agelist[i].brs[k] + agelist[i].btc[k])*conj(agelist[i].brc[k-1] + agelist[i].bts[k-1]) +
                    (-agelist[i].brs[k-1] + agelist[i].btc[k-1])*conj(agelist[i].brc[k] - agelist[i].bts[k])));
 
-            fx+=Re(dfx);
-            fy+=Re(dfy);
+            fx+=std::real(dfx);
+            fy+=std::real(dfy);
         }
         fx*=Depth*PI*R/(4.*muo);
         fy*=Depth*PI*R/(4.*muo);
@@ -5784,7 +5784,7 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
         else
             W+=2*dr*agelist[i].btc[k]*agelist[i].btc[k];
     }
-    W=Re(W)*(PI*R*Depth)/(2.*muo);
+    W=std::real(W)*(PI*R*Depth)/(2.*muo);
     if (Frequency!=0) W/=2;
 
     return FPProcError::NoError;
@@ -5815,7 +5815,7 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //
 //		for(k=0;k<agelist[i].nn;k++)
 //		{
-//			tq += Re(agelist[i].brc[k]*conj(agelist[i].btc[k]) +
+//			tq += std::real(agelist[i].brc[k]*conj(agelist[i].btc[k]) +
 //				     agelist[i].brs[k]*conj(agelist[i].bts[k]));
 //		}
 //		tq*=(PI*R*R*Depth)/muo;
@@ -5894,8 +5894,8 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //					  (agelist[i].brs[k] + agelist[i].btc[k])*conj(agelist[i].brc[k-1] + agelist[i].bts[k-1]) +
 //					   (-agelist[i].brs[k-1] + agelist[i].btc[k-1])*conj(agelist[i].brc[k] - agelist[i].bts[k])));
 //
-//				fx+=Re(dfx);
-//				fy+=Re(dfy);
+//				fx+=std::real(dfx);
+//				fy+=std::real(dfy);
 //			}
 //			fx*=Depth*PI*R/(4.*muo);
 //			fy*=Depth*PI*R/(4.*muo);
@@ -6022,7 +6022,7 @@ FPProcError FPProc::gapTimeAvgStoredEnergyIntegral(const std::string myBdryName,
 //			else
 //				W+=2*dr*agelist[i].btc[k]*agelist[i].btc[k];
 //		}
-//		W=Re(W)*(PI*R*Depth)/(2.*muo);
+//		W=std::real(W)*(PI*R*Depth)/(2.*muo);
 //		if (Frequency!=0) W/=2;
 //
 //		lua_pushnumber(L,W);

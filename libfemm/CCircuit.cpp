@@ -85,28 +85,36 @@ CMCircuit CMCircuit::fromStream(std::istream &input, std::ostream &err)
             if( token == "<voltgradient_re>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.dVolts.re, err);
+                double real_part;
+                parseValue(input, real_part, err);
+                prop.dVolts = complexd_t(real_part, prop.dVolts.imag());
                 continue;
             }
 
             if( token == "<voltgradient_im>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.dVolts.im, err);
+                double imag_part;
+                parseValue(input, imag_part, err);
+                prop.dVolts = complexd_t(prop.dVolts.real(), imag_part);
                 continue;
             }
 
             if( token == "<totalamps_re>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.Amps.re, err);
+                double real_part;
+                parseValue(input, real_part, err);
+                prop.Amps = complexd_t(real_part, prop.Amps.imag());
                 continue;
             }
 
             if( token == "<totalamps_im>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.Amps.im, err);
+                double imag_part;
+                parseValue(input, imag_part, err);
+                prop.Amps = complexd_t(prop.Amps.real(), imag_part);
                 continue;
             }
 
@@ -128,13 +136,13 @@ void CMCircuit::toStream(ostream &out) const
 {
     out << "  <BeginCircuit>\n";
     out << "    <CircuitName> = \"" << CircName << "\"\n";
-    out << "    <TotalAmps_re> = " << Amps.re << "\n";
-    out << "    <TotalAmps_im> = " << Amps.im << "\n";
+    out << "    <TotalAmps_re> = " << Amps.real() << "\n";
+    out << "    <TotalAmps_im> = " << Amps.imag() << "\n";
     out << "    <CircuitType> = " << CircType << "\n";
-    if (dVolts!=0)
+    if (dVolts != complexd_t(0.0, 0.0))
     {
-        out << "    <Voltgradient_re> = " << dVolts.re << "\n";
-        out << "    <Voltgradient_im> = " << dVolts.im << "\n";
+        out << "    <Voltgradient_re> = " << dVolts.real() << "\n";
+        out << "    <Voltgradient_im> = " << dVolts.imag() << "\n";
     }
     out << "  <EndCircuit>\n";
 }

@@ -21,7 +21,7 @@
 #ifndef FULLMATRIX_H
 #define FULLMATRIX_H
 
-class complexd_t;
+#include "complex_type.h"
 
 class CFullMatrix{
 

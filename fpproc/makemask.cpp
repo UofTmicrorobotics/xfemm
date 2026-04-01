@@ -116,7 +116,7 @@ bool FPProc::MakeMask()
 		if(blockproplist[i].BHpoints!=0) k=1;
 		if(blockproplist[i].LamType!=0) k=1;
 		if(blockproplist[i].H_c!=0) k=1;
-        if((blockproplist[i].J.re!=0) || (blockproplist[i].J.im!=0)) k=1;
+        if((blockproplist[i].J.real()!=0) || (blockproplist[i].J.imag()!=0)) k=1;
 		if(blockproplist[i].Cduct!=0) k=1;
 		if((blockproplist[i].Theta_hn!=0) ||
 		   (blockproplist[i].Theta_hx!=0) ||
@@ -270,11 +270,11 @@ bool FPProc::MakeMask()
 				// based on an error measure;
 				for(j=0,bsq=0,dbsq=0;j<3;j++)
 				{
-					dbsq+=Re((meshelem[i].B1-meshelem[i].b1[j])*
+					dbsq+=std::real((meshelem[i].B1-meshelem[i].b1[j])*
 						 conj(meshelem[i].B1-meshelem[i].b1[j]) +
 							 (meshelem[i].B2-meshelem[i].b2[j])*
 						 conj(meshelem[i].B2-meshelem[i].b2[j]));
-					bsq +=Re(meshelem[i].B1*conj(meshelem[i].B1) +
+					bsq +=std::real(meshelem[i].B1*conj(meshelem[i].B1) +
 							 meshelem[i].B2*conj(meshelem[i].B2));
 				}
 				if(bsq!=0) v=dbsq/bsq;
@@ -287,11 +287,11 @@ bool FPProc::MakeMask()
 				for(k=0,dbsq=0,bsq=0;k<3;k++)
 					for(j=0;j<NumList[n[k]];j++)
 					{
-						dbsq+=Re((meshelem[i].B1-meshelem[ConList[n[k]][j]].B1)*
+						dbsq+=std::real((meshelem[i].B1-meshelem[ConList[n[k]][j]].B1)*
 							 conj(meshelem[i].B1-meshelem[ConList[n[k]][j]].B1) +
 							 (meshelem[i].B2-meshelem[ConList[n[k]][j]].B2)*
 							 conj(meshelem[i].B2-meshelem[ConList[n[k]][j]].B2));
-						bsq +=Re(meshelem[i].B1*conj(meshelem[i].B1) +
+						bsq +=std::real(meshelem[i].B1*conj(meshelem[i].B1) +
 							 meshelem[i].B2*conj(meshelem[i].B2));
 					}
 				if(bsq!=0) v=dbsq/bsq;

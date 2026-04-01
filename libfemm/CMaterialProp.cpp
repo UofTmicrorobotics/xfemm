@@ -166,7 +166,7 @@ void CMMaterialProp::GetSlopes(double omega)
             hn[i]=Hdata[i];
             for(k=1,bn[i]=0;k<=i;k++)
             {
-                bn[i]+=Re((4.*(Hdata[k]*Bdata[k-1] -
+                bn[i]+=std::real((4.*(Hdata[k]*Bdata[k-1] -
                            Hdata[k-1]*Bdata[k])*(-cos((Hdata[k-1]*PI)/(2.*Hdata[i])) +
                         cos((Hdata[k]*PI)/(2.*Hdata[i]))) + (-Bdata[k-1] +
                         Bdata[k])*((Hdata[k-1] - Hdata[k])*PI +
@@ -179,7 +179,7 @@ void CMMaterialProp::GetSlopes(double omega)
         {
             Bdata[i]=bn[i];
             Hdata[i]=hn[i];
-            munow=Re(Bdata[i]/Hdata[i]);
+            munow=std::real(Bdata[i]/Hdata[i]);
             if (munow>mumax) mumax=munow;
         }
 
@@ -242,10 +242,10 @@ void CMMaterialProp::GetSlopes(double omega)
             // real part of the BH curve.  We do the test on just the
             // real part of the curve by taking the real parts of
             // slope and Hdata
-            d0=slope[i-1].re;
-            d1=slope[i].re;
-            u0=Hdata[i-1].re;
-            u1=Hdata[i].re;
+            d0=slope[i-1].real();
+            d1=slope[i].real();
+            u0=Hdata[i-1].real();
+            u1=Hdata[i].real();
             L=Bdata[i]-Bdata[i-1];
 
             c0=d0;
@@ -487,7 +487,7 @@ complexd_t CMMaterialProp::GetdHdB(const double B) const
 
 double CMMaterialProp::GetH(const double x) const
 {
-    return Re(GetH(complexd_t(x)));
+    return std::real(GetH(complexd_t(x)));
 }
 
 complexd_t CMMaterialProp::GetH(const complexd_t x) const
@@ -527,7 +527,7 @@ double CMMaterialProp::GetB(const double hc) const
     b=0;
     do{
         bo = b;
-        b  = bo + (hc-GetH(bo))/Re(GetdHdB(bo));
+        b  = bo + (hc-GetH(bo))/std::real(GetdHdB(bo));
     }while (fabs(b-bo)>1.e-8);
 
     return b;
@@ -547,10 +547,10 @@ double CMMaterialProp::GetEnergy(const double x) const
 
     for(i=0;i<BHpoints-1;i++){
 
-        b0=Bdata[i];    h0=Re(Hdata[i]);
-        b1=Bdata[i+1];    h1=Re(Hdata[i+1]);
-        dh0=Re(slope[i]);
-        dh1=Re(slope[i+1]);
+        b0=Bdata[i];    h0=std::real(Hdata[i]);
+        b1=Bdata[i+1];    h1=std::real(Hdata[i+1]);
+        dh0=std::real(slope[i]);
+        dh1=std::real(slope[i+1]);
 
         if((b>=b0) && (b<=b1)){
             l=b1-b0;
@@ -567,10 +567,10 @@ double CMMaterialProp::GetEnergy(const double x) const
         else{
             // point isn't in this section, but add in the
             // energy required to pass through it.
-            b0=Bdata[i];    h0=Re(Hdata[i]);
-            b1=Bdata[i+1];    h1=Re(Hdata[i+1]);
-            dh0=Re(slope[i]);
-            dh1=Re(slope[i+1]);
+            b0=Bdata[i];    h0=std::real(Hdata[i]);
+            b1=Bdata[i+1];    h1=std::real(Hdata[i+1]);
+            dh0=std::real(slope[i]);
+            dh1=std::real(slope[i+1]);
             nrg += ((b0 - b1)*((b0 - b1)*(dh0 - dh1) -
                                6.*(h0 + h1)))/12.;
         }
@@ -578,8 +578,8 @@ double CMMaterialProp::GetEnergy(const double x) const
 
     // if we've gotten to this point, the point is off the scale,
     // so we have to extrapolate the rest of the way...
-    h0=Re(Hdata[BHpoints-1]);
-    dh0=Re(slope[BHpoints-1]);
+    h0=std::real(Hdata[BHpoints-1]);
+    dh0=std::real(slope[BHpoints-1]);
     b0=Bdata[BHpoints-1];
 
     nrg += ((b - b0)*(b*dh0 - b0*dh0 + 2*h0))/2.;
@@ -686,7 +686,7 @@ double CMMaterialProp::DoEnergy(const complexd_t b1, const complexd_t b2)
     GetMu(b1,b2,mu1,mu2);
     h1=b1/(mu1*muo);
     h2=b2/(mu2*muo);
-    return (Re(h1*conj(b1)+h2*conj(b2))/4.);
+    return (std::real(h1*conj(b1)+h2*conj(b2))/4.);
 
 }
 
@@ -702,7 +702,7 @@ bool CMMaterialProp::isAir() const
     if (BHpoints!=0) return false;
     if (LamType!=0) return false;
     if (H_c!=0) return false;
-    if((J.re!=0) || (J.im!=0)) return false;
+    if((J.real()!=0) || (J.imag()!=0)) return false;
     if (Cduct!=0) return false;
     if ((Theta_hn!=0) || (Theta_hx!=0) || (Theta_hy!=0)) return false;
     return true;
@@ -813,14 +813,14 @@ void CMMaterialProp::GetMu(const double b1, const double b2, double &mu1, double
 
         if(LamType==0){
             biron=sqrt(b1*b1+b2*b2);
-            if(biron<1.e-08) mu1=1./Re(slope[0]); //catch degenerate case
+            if(biron<1.e-08) mu1=1./std::real(slope[0]); //catch degenerate case
             else mu1=biron/GetH(biron);
             mu2=mu1;
         }
 
         if(LamType==1){
             biron=sqrt((b1/LamFill)*(b1/LamFill) + b2*b2);
-            if(biron<1.e-08) muiron=1./Re(slope[0]);
+            if(biron<1.e-08) muiron=1./std::real(slope[0]);
             else muiron=biron/GetH(biron);
             mu1=muiron*LamFill;
             mu2=1./(LamFill/muiron + (1. - LamFill)/muo);
@@ -828,7 +828,7 @@ void CMMaterialProp::GetMu(const double b1, const double b2, double &mu1, double
 
         if(LamType==2){
             biron=sqrt((b2/LamFill)*(b2/LamFill) + b1*b1);
-            if(biron<1.e-08) muiron=1./Re(slope[0]);
+            if(biron<1.e-08) muiron=1./std::real(slope[0]);
             else muiron=biron/GetH(biron);
             mu2=muiron*LamFill;
             mu1=1./(LamFill/muiron + (1. - LamFill)/muo);
@@ -850,8 +850,8 @@ void CMMaterialProp::incrementalPermeability(const double B, const double w, com
 
     // get incremental permeability of the DC material
     // (i.e. incremental permeability at the offset)
-    double muinc=1./(muo*Re(GetdHdB(B)));
-    double murel=1./(muo*Re(Get_v(B)));
+    double muinc=1./(muo*std::real(GetdHdB(B)));
+    double murel=1./(muo*std::real(Get_v(B)));
 
     // if material is not laminated, just apply hysteresis lag...
     if ((Lam_d==0) || (LamFill==0))
@@ -869,7 +869,7 @@ void CMMaterialProp::incrementalPermeability(const double B, const double w, com
 
     if (Cduct!=0)
     {
-        const complexd_t deg45=1+I;
+        const complexd_t deg45=1.0+I;
 
         // incremental permeability direction
         double mu = (muinc - (1.-LamFill))/LamFill;
@@ -913,11 +913,11 @@ void CMMaterialProp::IncrementalPermeability(const double B, double &mu1, double
 
 	// get incremental permeability of the DC material
 	// (i.e. incremental permeability at the offset)
-	muinc = 1. / (muo*Re(GetdHdB(B)));
-	murel = 1. / (muo*Re(Get_v(B)));
+	muinc = 1. / (muo*std::real(GetdHdB(B)));
+	murel = 1. / (muo*std::real(Get_v(B)));
 
 	// if material is not laminated, just return
-	if ((Lam_d == 0) || (LamFill == 0)){
+	if ((Lam_d  == complexd_t(0.0, 0.0)) || (LamFill  == complexd_t(0.0, 0.0))){
 		mu1 = muinc;
 		mu2 = murel;
 		return;
@@ -1001,8 +1001,8 @@ void CMSolverMaterialProp::GetBHProps(double B, double &v, double &dv)
     complexd_t vc,dvc;
 
     GetBHProps(B,vc,dvc);
-    v =Re(vc);
-    dv=Re(dvc);
+    v =std::real(vc);
+    dv=std::real(dvc);
 }
 
 void CMSolverMaterialProp::GetBHProps(double B, complexd_t &v, complexd_t &dv)
@@ -1221,14 +1221,18 @@ CMSolverMaterialProp CMSolverMaterialProp::fromStream(std::istream &input, std::
             if( token == "<j_re>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.J.re, err);
+                double real_part;
+                parseValue(input, real_part, err);
+                prop.J = complexd_t(real_part, prop.J.imag());
                 continue;
             }
 
             if( token == "<j_im>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.J.im, err);
+                double imag_part;
+                parseValue(input, imag_part, err);
+                prop.J = complexd_t(prop.J.real(), imag_part);
                 continue;
             }
 
@@ -1307,10 +1311,10 @@ CMSolverMaterialProp CMSolverMaterialProp::fromStream(std::istream &input, std::
                     for(int i=0; i<prop.BHpoints; i++)
                     {
                         double b;
-                        complexd_t h;
-                        input >> b >> h.re;
+                        double h_real;
+                        input >> b >> h_real;
                         prop.Bdata.push_back(b);
-                        prop.Hdata.push_back(h);
+                        prop.Hdata.push_back(complexd_t(h_real, 0.0));
                     }
                 }
                 continue;
@@ -1335,8 +1339,8 @@ void CMSolverMaterialProp::toStream(ostream &out) const
     out << "    <Mu_y> = " << mu_y << "\n";
     out << "    <H_c> = " << H_c << "\n";
     out << "    <H_cAngle> = " << Theta_m << "\n";
-    out << "    <J_re> = " << J.re << "\n";
-    out << "    <J_im> = " << J.im << "\n";
+    out << "    <J_re> = " << J.real() << "\n";
+    out << "    <J_im> = " << J.imag() << "\n";
     out << "    <Sigma> = " << Cduct << "\n";
     out << "    <d_lam> = " << Lam_d << "\n";
     out << "    <Phi_h> = " << Theta_hn << "\n";
@@ -1349,7 +1353,7 @@ void CMSolverMaterialProp::toStream(ostream &out) const
     out << "    <BHPoints> = " << BHpoints << "\n";
     for(int i=0; i<BHpoints; i++)
     {
-        out << "      " << Bdata.at(i) << "\t" << Hdata.at(i).re << "\n";
+        out << "      " << Bdata.at(i) << "\t" << Hdata.at(i).real() << "\n";
     }
     out << "  <EndBlock>\n";
 }
@@ -1393,15 +1397,15 @@ complexd_t CHMaterialProp::GetK(double t) const
     // Ky returned as imag part
 
     if (npts==0) return (Kx+I*Ky);
-    if (npts==1) return (Im(Kn[0])*(1+I));
-    if (t<=Re(Kn[0])) return (Im(Kn[0])*(1+I));
-    if (t>=Re(Kn[npts-1])) return (Im(Kn[npts-1])*(1+I));
+    if (npts==1) return (std::imag(Kn[0])*(1.0+I));
+    if (t<=std::real(Kn[0])) return (std::imag(Kn[0])*(1.0+I));
+    if (t>=std::real(Kn[npts-1])) return (std::imag(Kn[npts-1])*(1.0+I));
 
     for(i=0,j=1;j<npts;i++,j++)
     {
-        if((t>=Re(Kn[i])) && (t<=Re(Kn[j])))
+        if((t>=std::real(Kn[i])) && (t<=std::real(Kn[j])))
         {
-            return (1+I)*(Im(Kn[i])+Im(Kn[j]-Kn[i])*Re(t-Kn[i])/Re(Kn[j]-Kn[i]));
+            return (1.0+I)*(std::imag(Kn[i])+std::imag(Kn[j]-Kn[i])*std::real(t-Kn[i])/std::real(Kn[j]-Kn[i]));
         }
     }
 
@@ -1469,7 +1473,9 @@ CHMaterialProp CHMaterialProp::fromStream(std::istream &input, std::ostream &err
                     }
                     for(int i=0; i<prop.npts; i++)
                     {
-                        input >> prop.Kn[i].re >> prop.Kn[i].im;
+                        double real_part, imag_part;
+                        input >> real_part >> imag_part;
+                        prop.Kn[i] = complexd_t(real_part, imag_part);
                     }
                 }
                 continue;
@@ -1508,8 +1514,8 @@ bool CHMaterialProp::isSameMaterialAs(const CMaterialProp *other) const
         {
             for(int k=0;k<npts;k++)
             {
-                if ((Kn[k].re!=m2->Kn[k].re) ||
-                    (Kn[k].im!=m2->Kn[k].im))
+                if ((Kn[k].real()!=m2->Kn[k].real()) ||
+                    (Kn[k].imag()!=m2->Kn[k].imag()))
                     return false;
             }
             return true;
@@ -1533,7 +1539,7 @@ void CHMaterialProp::toStream(std::ostream &out) const
     {
         for(int i=0; i<npts; i++)
         {
-            out << "        " << Kn[i].re << "\t" << Kn[i].im << "\n";
+            out << "        " << Kn[i].real() << "\t" << Kn[i].imag() << "\n";
         }
     }
     out << "  <EndBlock>\n";

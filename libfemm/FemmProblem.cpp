@@ -89,7 +89,7 @@ void femm::FemmProblem::writeProblemDescription(std::ostream &output) const
         output << "[ProblemType] =  planar\n";
     } else {
         output << "[ProblemType] =  axisymmetric\n";
-        if ( extRo != 0 && extRi != 0)
+        if ( extRo != 0 && extRi  != complexd_t(0.0, 0.0))
         {
             output.width(12);
             output << "[extZo]" << "  =  " << extZo << "\n";
@@ -374,10 +374,10 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
             p1 = p0;
             for (int i=1; i<(int)nodelist.size(); i++)
             {
-                if(nodelist[i]->x<p0.re) p0.re = nodelist[i]->x;
-                if(nodelist[i]->x>p1.re) p1.re = nodelist[i]->x;
-                if(nodelist[i]->y<p0.im) p0.im = nodelist[i]->y;
-                if(nodelist[i]->y>p1.im) p1.im = nodelist[i]->y;
+                if(nodelist[i]->x<p0.real()) p0 = complexd_t(nodelist[i]->x, p0.imag());
+                if(nodelist[i]->x>p1.real()) p1 = complexd_t(nodelist[i]->x, p1.imag());
+                if(nodelist[i]->y<p0.imag()) p0 = complexd_t(p0.real(), nodelist[i]->y);
+                if(nodelist[i]->y>p1.imag()) p1 = complexd_t(p1.real(), nodelist[i]->y);
             }
             t = abs(p1-p0)*CLOSE_ENOUGH;
         }
@@ -385,7 +385,7 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
     else t = tol;
 
     for (int i=0; i<(int)newnodes.size(); i++)
-        addNode(newnodes[i].re,newnodes[i].im,t);
+        addNode(newnodes[i].real(),newnodes[i].imag(),t);
 
     // add proposed arc segment;
     arclist.push_back(MAKE_UNIQUE<CArcSegment>(asegm));
@@ -419,9 +419,9 @@ bool femm::FemmProblem::addArcSegment(femm::CArcSegment &asegm, double tol)
             if (d<dmin){
 
                 complexd_t a0,a1,a2;
-                a0.Set(nodelist[asegm.n0]->x,nodelist[asegm.n0]->y);
-                a1.Set(nodelist[asegm.n1]->x,nodelist[asegm.n1]->y);
-                a2.Set(nodelist[i]->x,nodelist[i]->y);
+                a0 = complexd_t(nodelist[asegm.n0]->x, nodelist[asegm.n0]->y);
+                a1 = complexd_t(nodelist[asegm.n1]->x, nodelist[asegm.n1]->y);
+                a2 = complexd_t(nodelist[i]->x, nodelist[i]->y);
                 arclist[k]->ToggleSelect();
                 deleteSelectedArcSegments();
 
@@ -543,9 +543,9 @@ bool femm::FemmProblem::addNode(std::unique_ptr<femm::CNode> &&node, double d)
     {
         if (shortestDistanceFromArc(complexd_t(x,y),*arclist[i])<d)
         {
-            a0.Set(nodelist[arclist[i]->n0]->x,nodelist[arclist[i]->n0]->y);
-            a1.Set(nodelist[arclist[i]->n1]->x,nodelist[arclist[i]->n1]->y);
-            a2.Set(x,y);
+            a0 = complexd_t(nodelist[arclist[i]->n0]->x, nodelist[arclist[i]->n0]->y);
+            a1 = complexd_t(nodelist[arclist[i]->n1]->x, nodelist[arclist[i]->n1]->y);
+            a2 = complexd_t(x, y);
             getCircle(*arclist[i],c,R);
 
             std::unique_ptr<CArcSegment> asegm;
@@ -610,10 +610,10 @@ bool femm::FemmProblem::addSegment(int n0, int n1, const femm::CSegment *parsegm
             p1 = p0;
             for (int i=1; i<(int)nodelist.size(); i++)
             {
-                if(nodelist[i]->x<p0.re) p0.re=nodelist[i]->x;
-                if(nodelist[i]->x>p1.re) p1.re=nodelist[i]->x;
-                if(nodelist[i]->y<p0.im) p0.im=nodelist[i]->y;
-                if(nodelist[i]->y>p1.im) p1.im=nodelist[i]->y;
+                if(nodelist[i]->x<p0.real()) p0 = complexd_t(nodelist[i]->x, p0.imag());
+                if(nodelist[i]->x>p1.real()) p1 = complexd_t(nodelist[i]->x, p1.imag());
+                if(nodelist[i]->y<p0.imag()) p0 = complexd_t(p0.real(), nodelist[i]->y);
+                if(nodelist[i]->y>p1.imag()) p1 = complexd_t(p1.real(), nodelist[i]->y);
             }
             t=abs(p1-p0)*CLOSE_ENOUGH;
         }
@@ -621,7 +621,7 @@ bool femm::FemmProblem::addSegment(int n0, int n1, const femm::CSegment *parsegm
     else t=tol;
 
     for (int i=0; i<(int)newnodes.size(); i++)
-        addNode(newnodes[i].re,newnodes[i].im,t);
+        addNode(newnodes[i].real(),newnodes[i].imag(),t);
 
     // Add proposed line segment
     linelist.push_back(segm.clone());
@@ -986,7 +986,7 @@ bool femm::FemmProblem::createRadius(int n, double r)
             p1=nodelist[linelist[seg[0]]->n0]->CC();
 
         u=(p1-p0)/abs(p1-p0);  // unit vector along the line
-        q=p0 + u*Re((c-p0)/u); // closest point on line to center of circle
+        q=p0 + u*std::real((c-p0)/u); // closest point on line to center of circle
         u=(q-c)/abs(q-c); // unit vector from center to closest point on line;
 
         p[0]=q+r*u; R[0]=rc+r;
@@ -1012,14 +1012,14 @@ bool femm::FemmProblem::createRadius(int n, double r)
         int m=0;
         for(int k=0;k<j;k++)
         {
-            i1[m]=p0 +u*Re((v[k]-p0)/u); // intersection with the line
+            i1[m]=p0 +u*std::real((v[k]-p0)/u); // intersection with the line
             i2[m]=c + rc*(v[k]-c)/abs(v[k]-c); // intersection with the arc;
             v[m]=v[k];
 
             // add this one to the list of possibly valid solutions if
             // both of the intersection points actually lie on the arc
             if ( shortestDistanceFromArc(i2[m],*arclist[arc[0]])<(r/10000.) &&
-                 shortestDistanceFromSegment(Re(i1[m]),Im(i1[m]),seg[0])<(r/10000.)
+                 shortestDistanceFromSegment(std::real(i1[m]),std::imag(i1[m]),seg[0])<(r/10000.)
                  && abs(i1[m]-i2[m])>(r/10000.))
             {
                 m++;
@@ -1040,12 +1040,12 @@ bool femm::FemmProblem::createRadius(int n, double r)
         else j=0;	// The index of the winning case is in j....
 
         updateUndo();
-        addNode(Re(i1[j]),Im(i1[j]),r/10000.);
-        addNode(Re(i2[j]),Im(i2[j]),r/10000.);
+        addNode(std::real(i1[j]),std::imag(i1[j]),r/10000.);
+        addNode(std::real(i2[j]),std::imag(i2[j]),r/10000.);
         unselectAll();
 
         // delete the node that is to be replace by a radius;
-        n=closestNode(Re(p0),Im(p0));
+        n=closestNode(std::real(p0),std::imag(p0));
         nodelist[n]->IsSelected=true;
         deleteSelectedNodes();
 
@@ -1058,8 +1058,8 @@ bool femm::FemmProblem::createRadius(int n, double r)
         }
 
         // add in the new radius;
-        ar.n0=closestNode(Re(i1[j]),Im(i1[j]));
-        ar.n1=closestNode(Re(i2[j]),Im(i2[j]));
+        ar.n0=closestNode(std::real(i1[j]),std::imag(i1[j]));
+        ar.n1=closestNode(std::real(i2[j]),std::imag(i2[j]));
         ar.ArcLength=phi/DEG;
         addArcSegment(ar);
 
@@ -1109,18 +1109,18 @@ bool femm::FemmProblem::createRadius(int n, double r)
 
         // add new nodes at ends of radius
         updateUndo();
-        addNode(Re(p1),Im(p1),len/10000.);
-        addNode(Re(p2),Im(p2),len/10000.);
+        addNode(std::real(p1),std::imag(p1),len/10000.);
+        addNode(std::real(p2),std::imag(p2),len/10000.);
         unselectAll();
 
         // delete the node that is to be replace by a radius;
-        n=closestNode(Re(p0),Im(p0));
+        n=closestNode(std::real(p0),std::imag(p0));
         nodelist[n]->IsSelected=true;
         deleteSelectedNodes();
 
         // add in the new radius;
-        ar.n0=closestNode(Re(p2),Im(p2));
-        ar.n1=closestNode(Re(p1),Im(p1));
+        ar.n0=closestNode(std::real(p2),std::imag(p2));
+        ar.n1=closestNode(std::real(p1),std::imag(p1));
         ar.ArcLength=180.-phi/DEG;
         addArcSegment(ar);
 
@@ -1197,12 +1197,12 @@ bool femm::FemmProblem::createRadius(int n, double r)
 
         // add new nodes at ends of radius
         updateUndo();
-        addNode(Re(i1[j]),Im(i1[j]),c/10000.);
-        addNode(Re(i2[j]),Im(i2[j]),c/10000.);
+        addNode(std::real(i1[j]),std::imag(i1[j]),c/10000.);
+        addNode(std::real(i2[j]),std::imag(i2[j]),c/10000.);
         unselectAll();
 
         // delete the node that is to be replace by a radius;
-        n=closestNode(Re(c0),Im(c0));
+        n=closestNode(std::real(c0),std::imag(c0));
         nodelist[n]->IsSelected=true;
         deleteSelectedNodes();
 
@@ -1215,8 +1215,8 @@ bool femm::FemmProblem::createRadius(int n, double r)
         }
 
         // add in the new radius;
-        ar.n0=closestNode(Re(i1[j]),Im(i1[j]));
-        ar.n1=closestNode(Re(i2[j]),Im(i2[j]));
+        ar.n0=closestNode(std::real(i1[j]),std::imag(i1[j]));
+        ar.n1=closestNode(std::real(i2[j]),std::imag(i2[j]));
         ar.ArcLength=phi/DEG;
         addArcSegment(ar);
 
@@ -1366,10 +1366,10 @@ void femm::FemmProblem::enforcePSLG(double tol)
             complexd_t p1 = p0;
             for (int i=1; i<(int)newnodelist.size(); i++)
             {
-                if(newnodelist[i]->x<p0.re) p0.re = newnodelist[i]->x;
-                if(newnodelist[i]->x>p1.re) p1.re = newnodelist[i]->x;
-                if(newnodelist[i]->y<p0.im) p0.im = newnodelist[i]->y;
-                if(newnodelist[i]->y>p1.im) p1.im = newnodelist[i]->y;
+                if(newnodelist[i]->x<p0.real()) p0 = complexd_t(newnodelist[i]->x, p0.imag());
+                if(newnodelist[i]->x>p1.real()) p1 = complexd_t(newnodelist[i]->x, p1.imag());
+                if(newnodelist[i]->y<p0.imag()) p0 = complexd_t(p0.real(), newnodelist[i]->y);
+                if(newnodelist[i]->y>p1.imag()) p1 = complexd_t(p1.real(), newnodelist[i]->y);
             }
             d = abs(p1-p0)*CLOSE_ENOUGH;
         }
@@ -1394,7 +1394,7 @@ void femm::FemmProblem::enforcePSLG(double tol)
         complexd_t p0 (newnodelist[line->n0]->x, newnodelist[line->n0]->y);
         complexd_t p1 (newnodelist[line->n1]->x, newnodelist[line->n1]->y);
         // using the raw pointer is ok here, because AddSegment creates a copy anyways
-        addSegment(ClosestNode(p0.re,p0.im), ClosestNode(p1.re,p1.im), line.get(), d);
+        addSegment(ClosestNode(p0.real(),p0.imag()), ClosestNode(p1.real(),p1.imag()), line.get(), d);
     }
 
     // put in all of the arcs;
@@ -1409,8 +1409,8 @@ void femm::FemmProblem::enforcePSLG(double tol)
 
         complexd_t p0 (newnodelist[arc->n0]->x, newnodelist[arc->n0]->y);
         complexd_t p1 (newnodelist[arc->n1]->x, newnodelist[arc->n1]->y);
-        arc->n0 = closestNode(p0.re,p0.im);
-        arc->n1 = closestNode(p1.re,p1.im);
+        arc->n0 = closestNode(p0.real(),p0.imag());
+        arc->n1 = closestNode(p1.real(),p1.imag());
         // using the raw pointer is ok here, because AddArcSegment creates a copy anyways
         addArcSegment(*arc.get(), d);
     }
@@ -1432,8 +1432,8 @@ int femm::FemmProblem::getArcArcIntersection(const femm::CArcSegment &arc0, cons
     double d,l,R0,R1,z0,z1,c,tta0,tta1;
     int i=0;
 
-    a0.Set(nodelist[arc0.n0]->x,nodelist[arc0.n0]->y);
-    a1.Set(nodelist[arc1.n0]->x,nodelist[arc1.n0]->y);
+    a0 = complexd_t(nodelist[arc0.n0]->x, nodelist[arc0.n0]->y);
+    a1 = complexd_t(nodelist[arc1.n0]->x, nodelist[arc1.n0]->y);
 
     getCircle(arc1,c1,R1);
     getCircle(arc0,c0,R0);
@@ -1509,10 +1509,10 @@ bool femm::FemmProblem::getBoundingBox(double (&x)[2], double (&y)[2]) const
         for(int j=0; j<k; j++)
         {
             p=(p-c)*s+c;
-            if(p.re<x[0]) x[0]=p.re;
-            if(p.re>x[1]) x[1]=p.re;
-            if(p.im<y[0]) y[0]=p.im;
-            if(p.im>y[1]) y[1]=p.im;
+            if(p.real()<x[0]) x[0]=p.real();
+            if(p.real()>x[1]) x[1]=p.real();
+            if(p.imag()<y[0]) y[0]=p.imag();
+            if(p.imag()>y[1]) y[1]=p.imag();
         }
     }
 
@@ -1576,23 +1576,23 @@ bool femm::FemmProblem::getIntersection(int n0, int n1, int segm, double *xi, do
     q1=(q1-p0)/(p1-p0);
 
     // Check for cases where there is obviously no intersection
-    if ((Re(q0)<=0.) && (Re(q1)<=0.)) return false;
-    if ((Re(q0)>=1.) && (Re(q1)>=1.)) return false;
-    if ((Im(q0)<=0.) && (Im(q1)<=0.)) return false;
-    if ((Im(q0)>=0.) && (Im(q1)>=0.)) return false;
+    if ((std::real(q0)<=0.) && (std::real(q1)<=0.)) return false;
+    if ((std::real(q0)>=1.) && (std::real(q1)>=1.)) return false;
+    if ((std::imag(q0)<=0.) && (std::imag(q1)<=0.)) return false;
+    if ((std::imag(q0)>=0.) && (std::imag(q1)>=0.)) return false;
 
     // compute intersection
-    z=Im(q0)/Im(q0-q1);
+    z=std::imag(q0)/std::imag(q0-q1);
 
     // check to see if the line segments intersect at a point sufficiently
     // far from the segment endpoints....
-    x=Re((1.0 - z)*q0 + z*q1);
+    x=std::real((1.0 - z)*q0 + z*q1);
     if((x < ee) || (x > (1.0 - ee))) return false;
 
     // return resulting intersection point
     p0 = (1.0 - z)*nodelist[n0]->CC() + z*nodelist[n1]->CC();
-    *xi=Re(p0);
-    *yi=Im(p0);
+    *xi=std::real(p0);
+    *yi=std::imag(p0);
 
     return true;
 }
@@ -1603,10 +1603,10 @@ int femm::FemmProblem::getLineArcIntersection(const femm::CSegment &seg, const f
     double d,l,R,z,tta;
     int i=0;
 
-    p0.Set(nodelist[seg.n0]->x,nodelist[seg.n0]->y);
-    p1.Set(nodelist[seg.n1]->x,nodelist[seg.n1]->y);
-    a0.Set(nodelist[arc.n0]->x,nodelist[arc.n0]->y);
-    a1.Set(nodelist[arc.n1]->x,nodelist[arc.n1]->y);
+    p0 = complexd_t(nodelist[seg.n0]->x, nodelist[seg.n0]->y);
+    p1 = complexd_t(nodelist[seg.n1]->x, nodelist[seg.n1]->y);
+    a0 = complexd_t(nodelist[arc.n0]->x, nodelist[arc.n0]->y);
+    a1 = complexd_t(nodelist[arc.n1]->x, nodelist[arc.n1]->y);
     d=abs(a1-a0);			// distance between arc endpoints
 
     // figure out what the radius of the circle is...
@@ -1619,25 +1619,25 @@ int femm::FemmProblem::getLineArcIntersection(const femm::CSegment &seg, const f
     d=abs(p1-p0);
     t=(p1-p0)/d;
     v=(c-p0)/t;
-    if (fabs(Im(v))>R) return 0;
-    l=sqrt( R*R - Im(v)*Im(v));	// Im(v) is distance between line and center...
+    if (fabs(std::imag(v))>R) return 0;
+    l=sqrt( R*R - std::imag(v)*std::imag(v));	// std::imag(v) is distance between line and center...
 
     if ((l/R) < 1.e-05) 		// case where line is very close to a tangent;
     {
-        p[i]=p0 + Re(v)*t;		// make it be a tangent.
-        R=Re((p[i]-p0)/t);
+        p[i]=p0 + std::real(v)*t;		// make it be a tangent.
+        R=std::real((p[i]-p0)/t);
         z=arg((p[i]-c)/(a0-c));
         if ((R>0) && (R<d) && (z>0.) && (z<tta)) i++;
         return i;
     }
 
-    p[i]=p0 + (Re(v)+l)*t;		// first possible intersection;
-    R=Re((p[i]-p0)/t);
+    p[i]=p0 + (std::real(v)+l)*t;		// first possible intersection;
+    R=std::real((p[i]-p0)/t);
     z=arg((p[i]-c)/(a0-c));
     if ((R>0) && (R<d) && (z>0.) && (z<tta)) i++;
 
-    p[i]=p0 + (Re(v)-l)*t;		// second possible intersection
-    R=Re((p[i]-p0)/t);
+    p[i]=p0 + (std::real(v)-l)*t;		// second possible intersection
+    R=std::real((p[i]-p0)/t);
     z=arg((p[i]-c)/(a0-c));
     if ((R>0) && (R<d) && (z>0.) && (z<tta)) i++;
 
@@ -1676,12 +1676,12 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
             {
                 complexd_t y (node->x,node->y);
                 y = (y-x) / p;
-                y = p*y.Conj()+x;
+                y = p*std::conj(y)+x;
                 // create copy
                 std::unique_ptr<CNode> newnode = node->clone();
                 // overwrite coordinates in copy
-                newnode->x = y.re;
-                newnode->y = y.im;
+                newnode->x = y.real();
+                newnode->y = y.imag();
                 newnode->IsSelected = false;
                 nodelist.push_back(std::move(newnode));
             }
@@ -1697,17 +1697,17 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
                 std::unique_ptr<CNode> n0 = nodelist[line->n0]->clone();
                 complexd_t y0 (n0->x,n0->y);
                 y0 = (y0-x) / p;
-                y0 = p*y0.Conj()+x;
-                n0->x = y0.re;
-                n0->y = y0.im;
+                y0 = p*std::conj(y0)+x;
+                n0->x = y0.real();
+                n0->y = y0.imag();
                 n0->IsSelected = false;
 
                 std::unique_ptr<CNode> n1 = nodelist[line->n1]->clone();
                 complexd_t y1 (n1->x,n1->y);
                 y1 = (y1-x) / p;
-                y1 = p*y1.Conj()+x;
-                n1->x = y1.re;
-                n1->y = y1.im;
+                y1 = p*std::conj(y1)+x;
+                n1->x = y1.real();
+                n1->y = y1.imag();
                 n1->IsSelected = false;
 
                 // copy line (with identical endpoints)
@@ -1732,9 +1732,9 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
                 std::unique_ptr<CBlockLabel> newlabel = label->clone();
                 complexd_t y (label->x,label->y);
                 y = (y-x) / p;
-                y = p*y.Conj()+x;
-                newlabel->x = y.re;
-                newlabel->y = y.im;
+                y = p*std::conj(y)+x;
+                newlabel->x = y.real();
+                newlabel->y = y.imag();
                 newlabel->IsSelected = false;
                 // set specific problem parameters:
                 if (CMBlockLabel *ptr=dynamic_cast<CMBlockLabel*>(newlabel.get()))
@@ -1754,17 +1754,17 @@ void femm::FemmProblem::mirrorCopy(double x0, double y0, double x1, double y1, f
                 std::unique_ptr<CNode> n0 = nodelist[arc->n0]->clone();
                 complexd_t y0 (n0->x,n0->y);
                 y0 = (y0-x) / p;
-                y0 = p*y0.Conj()+x;
-                n0->x = y0.re;
-                n0->y = y0.im;
+                y0 = p*std::conj(y0)+x;
+                n0->x = y0.real();
+                n0->y = y0.imag();
                 n0->IsSelected = false;
 
                 std::unique_ptr<CNode> n1 = nodelist[arc->n1]->clone();
                 complexd_t y1 (n1->x,n1->y);
                 y1 = (y1-x) / p;
-                y1 = p*y1.Conj()+x;
-                n1->x = y1.re;
-                n1->y = y1.im;
+                y1 = p*std::conj(y1)+x;
+                n1->x = y1.real();
+                n1->y = y1.imag();
                 n1->IsSelected = false;
 
                 // copy arc (with identical endpoints)
@@ -1790,7 +1790,7 @@ void femm::FemmProblem::rotateCopy(complexd_t c, double dt, int ncopies, femm::E
         // accumulated angle
         double t = ((double) (nc+1))*dt;
 
-        complexd_t z = exp(I*t*PI/180);
+        complexd_t z = exp(I*t*PI/180.0);
 
         if (selector==EditMode::EditNodes || selector == EditMode::EditGroup)
         {
@@ -1803,8 +1803,8 @@ void femm::FemmProblem::rotateCopy(complexd_t c, double dt, int ncopies, femm::E
                     // create copy
                     std::unique_ptr<CNode> newnode = node->clone();
                     // overwrite coordinates in copy
-                    newnode->x = x.re;
-                    newnode->y = x.im;
+                    newnode->x = x.real();
+                    newnode->y = x.imag();
                     newnode->IsSelected = false;
                     nodelist.push_back(std::move(newnode));
                 }
@@ -1821,15 +1821,15 @@ void femm::FemmProblem::rotateCopy(complexd_t c, double dt, int ncopies, femm::E
                     std::unique_ptr<CNode> n0 = nodelist[line->n0]->clone();
                     complexd_t x0 (n0->x,n0->y);
                     x0 = (x0-c)*z+c;
-                    n0->x = x0.re;
-                    n0->y = x0.im;
+                    n0->x = x0.real();
+                    n0->y = x0.imag();
                     n0->IsSelected = false;
 
                     std::unique_ptr<CNode> n1 = nodelist[line->n1]->clone();
                     complexd_t x1 (n1->x,n1->y);
                     x1 = (x1-c)*z+c;
-                    n1->x = x1.re;
-                    n1->y = x1.im;
+                    n1->x = x1.real();
+                    n1->y = x1.imag();
                     n1->IsSelected = false;
 
                     // copy line (with identical endpoints)
@@ -1855,15 +1855,15 @@ void femm::FemmProblem::rotateCopy(complexd_t c, double dt, int ncopies, femm::E
                     std::unique_ptr<CNode> n0 = nodelist[arc->n0]->clone();
                     complexd_t x0 (n0->x,n0->y);
                     x0 = (x0-c)*z+c;
-                    n0->x = x0.re;
-                    n0->y = x0.im;
+                    n0->x = x0.real();
+                    n0->y = x0.imag();
                     n0->IsSelected = false;
 
                     std::unique_ptr<CNode> n1 = nodelist[arc->n1]->clone();
                     complexd_t x1 (n1->x,n1->y);
                     x1 = (x1-c)*z+c;
-                    n1->x = x1.re;
-                    n1->y = x1.im;
+                    n1->x = x1.real();
+                    n1->y = x1.imag();
                     n1->IsSelected = false;
 
                     // copy arc (with identical endpoints)
@@ -1888,8 +1888,8 @@ void femm::FemmProblem::rotateCopy(complexd_t c, double dt, int ncopies, femm::E
                     std::unique_ptr<CBlockLabel> newlabel = label->clone();
                     complexd_t x(label->x,label->y);
                     x = (x-c)*z+c;
-                    newlabel->x = x.re;
-                    newlabel->y = x.im;
+                    newlabel->x = x.real();
+                    newlabel->y = x.imag();
                     newlabel->IsSelected = false;
 
                     for (const auto &bprop: blockproplist)
@@ -1897,7 +1897,7 @@ void femm::FemmProblem::rotateCopy(complexd_t c, double dt, int ncopies, femm::E
                         CMMaterialProp *prop = dynamic_cast<CMMaterialProp*>(bprop.get());
                         if (prop
                                 && prop->BlockName == newlabel->BlockTypeName
-                                && prop->H_c != 0)
+                                && prop->H_c  != complexd_t(0.0, 0.0))
                         {
                             if (CMBlockLabel *ptr=dynamic_cast<CMBlockLabel*>(newlabel.get()))
                                 ptr->MagDir += t;
@@ -1918,7 +1918,7 @@ void femm::FemmProblem::rotateMove(complexd_t c, double t, femm::EditMode select
     assert(selector != EditMode::Invalid);
     bool processNodes = (selector == EditMode::EditNodes);
 
-    const complexd_t z = exp(I*t*PI/180);
+    const complexd_t z = exp(I*t*PI/180.0);
 
     if(selector==EditMode::EditLines || selector==EditMode::EditGroup)
     {
@@ -1954,8 +1954,8 @@ void femm::FemmProblem::rotateMove(complexd_t c, double t, femm::EditMode select
             {
                 complexd_t x (label->x, label->y);
                 x = (x-c)*z+c;
-                label->x = x.re;
-                label->y = x.im;
+                label->x = x.real();
+                label->y = x.imag();
 
                 // only relevant to magnetics problems:
                 for (const auto &bprop : blockproplist)
@@ -1963,7 +1963,7 @@ void femm::FemmProblem::rotateMove(complexd_t c, double t, femm::EditMode select
                     CMMaterialProp *prop = dynamic_cast<CMMaterialProp*>(bprop.get());
                     if (prop
                             && prop->BlockName == label->BlockTypeName
-                            && prop->H_c != 0)
+                            && prop->H_c  != complexd_t(0.0, 0.0))
                     {
                         if (CMBlockLabel *ptr=dynamic_cast<CMBlockLabel*>(label.get()))
                             ptr->MagDir += t;
@@ -1981,8 +1981,8 @@ void femm::FemmProblem::rotateMove(complexd_t c, double t, femm::EditMode select
             {
                 complexd_t x(node->x,node->y);
                 x = (x-c)*z+c;
-                node->x = x.re;
-                node->y = x.im;
+                node->x = x.real();
+                node->y = x.imag();
             }
         }
     }
@@ -2315,8 +2315,8 @@ void femm::FemmProblem::GetCircle(const CArcSegment &arc, complexd_t &c, double 
     complexd_t a0,a1,t;
     double d,tta;
 
-    a0.Set(nodelist[arc.n0]->x, nodelist[arc.n0]->y);
-    a1.Set(nodelist[arc.n1]->x, nodelist[arc.n1]->y);
+    a0 = complexd_t(nodelist[arc.n0]->x,  nodelist[arc.n0]->y);
+    a1 = complexd_t(nodelist[arc.n1]->x,  nodelist[arc.n1]->y);
     d=abs(a1-a0);            // distance between arc endpoints
 
     // figure out what the radius of the circle is...
@@ -2331,8 +2331,8 @@ double femm::FemmProblem::ShortestDistanceFromArc(const complexd_t p, const CArc
     double R,d,l,z;
     complexd_t a0,a1,c,t;
 
-    a0.Set(nodelist[arc.n0]->x,nodelist[arc.n0]->y);
-    a1.Set(nodelist[arc.n1]->x,nodelist[arc.n1]->y);
+    a0 = complexd_t(nodelist[arc.n0]->x, nodelist[arc.n0]->y);
+    a1 = complexd_t(nodelist[arc.n1]->x, nodelist[arc.n1]->y);
     GetCircle(arc,c,R);
     d=abs(p-c);
 

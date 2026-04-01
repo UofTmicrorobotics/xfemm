@@ -46,7 +46,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iomanip>
-#include <malloc.h>
+#include <cstdlib>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -65,7 +65,7 @@
 #define BoundingBoxFraction 100.0
 #endif
 
-#define toDegrees(x) ((Im(x)>=0) ? arg(x) : (arg(x) + 2.*PI))*(180./PI)
+#define toDegrees(x) ((std::imag(x)>=0) ? arg(x) : (arg(x) + 2.*PI))*(180./PI)
 
 using namespace std;
 using namespace femm;
@@ -245,10 +245,10 @@ double fmesher::defaultMeshSizeHeuristics(const std::vector<std::unique_ptr<CNod
     complexd_t max=min;
     for(const auto &node: nodelst)
     {
-        if (node->x < min.re) min.re = node->x;
-        if (node->y < min.im) min.im = node->y;
-        if (node->x > max.re) max.re = node->x;
-        if (node->y > max.im) max.im = node->y;
+        if (node->x < min.real()) min = complexd_t(node->x, min.imag());
+        if (node->y < min.imag()) min = complexd_t(min.real(), node->y);
+        if (node->x > max.real()) max = complexd_t(node->x, max.imag());
+        if (node->y > max.imag()) max = complexd_t(max.real(), node->y);
     }
 
     if (doSmartMesh)
@@ -305,7 +305,7 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
 //
 //                // first part
 //                complexd_t a2 = a0 + dL * (a1-a0) / abs(a1-a0);
-//                CNode node1 (a2.re, a2.im);
+//                CNode node1 (a2.real(), a2.imag());
 //                nodelst.push_back(node1.clone());
 //                segm.n0 = line.n0;
 //                segm.n1 = l;
@@ -313,7 +313,7 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
 //
 //                // middle part
 //                a2 = a1 + dL * (a0-a1) / abs(a1-a0);
-//                CNode node2 (a2.re, a2.im);
+//                CNode node2 (a2.real(), a2.imag());
 //                nodelst.push_back(node2.clone());
 //                segm.n0 = l;
 //                segm.n1 = l + 1;
@@ -335,7 +335,7 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
 					if(j==0)
 					{
 						a2=a0+dL*(a1-a0)/abs(a1-a0);
-						node.x=a2.re; node.y=a2.im;
+						node.x=a2.real(); node.y=a2.imag();
 						l=(int) nodelst.size();
 						nodelst.push_back (node.clone());
 						segm.n0=line.n0;
@@ -346,7 +346,7 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
 					if(j==1)
 					{
 						a2=a1+dL*(a0-a1)/abs(a1-a0);
-						node.x=a2.re; node.y=a2.im;
+						node.x=a2.real(); node.y=a2.imag();
 						l=(int) nodelst.size ();
 						nodelst.push_back(node.clone());
 						segm.n0=l-1;
@@ -369,8 +369,8 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
             for(int j=0; j<numParts; j++)
             {
                 complexd_t a2 = a0 + (a1-a0)*((double) (j+1)) / ((double) numParts);
-                CNode node (a2.re, a2.im);
-                if(j == 0){
+                CNode node (a2.real(), a2.imag());
+                if(j  == complexd_t(0.0, 0.0)){
                     // first part -> n0 == line.n0
                     int l=nodelst.size();
                     nodelst.push_back(node.clone());
@@ -441,7 +441,7 @@ void fmesher::discretizeInputArcSegments(const FemmProblem &problem, std::vector
         {
             // move point along arc
             a2=(a2-center)*a1+center;
-            CNode node(a2.re,a2.im);
+            CNode node(a2.real(),a2.imag());
             int l = (int)nodelst.size();
             if(j==0){
                 // first part -> n0 == arc.n0
@@ -800,7 +800,7 @@ int FMesher::DoNonPeriodicBCTriangulation(string PathName)
             triHelper.writePolyFile(plyname, triHelper.triangulateParams());
         }
         int tristatus = triHelper.triangulate(Verbose);
-        if (tristatus != 0)
+        if (tristatus  != complexd_t(0.0, 0.0))
             return tristatus;
 
         triHelper.writeTriangulationFiles(PathName);
@@ -900,7 +900,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
             triHelper.writePolyFile(plyname, triHelper.triangulateParams());
         }
         int tristatus = triHelper.triangulate(Verbose);
-        if (tristatus != 0)
+        if (tristatus  != complexd_t(0.0, 0.0))
             return tristatus;
 
         triHelper.writeTriangulationFiles(PathName);
@@ -1064,7 +1064,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
     // impose "new" mesh constraints on bdry arcs and segments....
     for(i=0; i < (int)problem->linelist.size(); i++)
     {
-        if (ptlst[i]->t == 0)
+        if (ptlst[i]->t  == complexd_t(0.0, 0.0))
         {
             // simply make the max side length equal to the
             // length of the boundary divided by the number
@@ -1076,7 +1076,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 
     for(i=0; i < (int)problem->arclist.size(); i++)
     {
-        if (ptlst[i+problem->linelist.size()]->t == 0)
+        if (ptlst[i+problem->linelist.size()]->t  == complexd_t(0.0, 0.0))
         {
             // alter maxsidelength, but do it in such
             // a way that it carries only 4 significant
@@ -1414,7 +1414,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 
     for(n=0; n<(int)pbclst.size(); n++)
     {
-        if (pbclst[n]->nseg != 0) // if this pbc is a line segment...
+        if (pbclst[n]->nseg  != complexd_t(0.0, 0.0)) // if this pbc is a line segment...
         {
             int s0,s1;
             CNode node0,node1;
@@ -1464,8 +1464,8 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
                 {
                     a2 = a0+(a1-a0)*((double) (j+1))/((double) k);
                     b2 = b0+(b1-b0)*((double) (j+1))/((double) k);
-                    node0.x = a2.re; node0.y = a2.im;
-                    node1.x = b2.re; node1.y = b2.im;
+                    node0.x = a2.real(); node0.y = a2.imag();
+                    node1.x = b2.real(); node1.y = b2.imag();
                     if(j==0){
                         l = nodelst.size();
                         nodelst.push_back(node0.clone());
@@ -1585,10 +1585,10 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
                 for(j=0;j<k;j++)
                 {
                     bgn0=(bgn0-c0)*d0+c0;
-                    node0.x=bgn0.re; node0.y=bgn0.im;
+                    node0.x=bgn0.real(); node0.y=bgn0.imag();
 
                     bgn1=(bgn1-c1)*d1+c1;
-                    node1.x=bgn1.re; node1.y=bgn1.im;
+                    node1.x=bgn1.real(); node1.y=bgn1.imag();
 
                     if(j==0){
                         l=nodelst.size();
@@ -1658,7 +1658,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 		for(i=0;i<(int)problem->arclist.size();i++)
 		if((problem->arclist[i]->IsSelected==false) && (problem->arclist[i]->BoundaryMarkerName==agelst[n]->BdryName)){
 			problem->arclist[i]->IsSelected=true;
-			a2.Set(problem->nodelist[problem->arclist[i]->n0]->x,problem->nodelist[problem->arclist[i]->n0]->y);
+			a2 = complexd_t(problem->nodelist[problem->arclist[i]->n0]->x, problem->nodelist[problem->arclist[i]->n0]->y);
 			k=(int) ceil(problem->arclist[i]->ArcLength/problem->arclist[i]->MaxSideLength);
 			segm.BoundaryMarker=problem->arclist[i]->BoundaryMarker;
 			problem->GetCircle(*(problem->arclist[i]),c,R);
@@ -1678,7 +1678,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 			else for(j=0;j<k;j++)
 			{
 				a2=(a2-c)*a1+c;
-				node.x=a2.re; node.y=a2.im;
+				node.x=a2.real(); node.y=a2.imag();
 				if(j==0){
 					l=(int) nodelst.size();
 					nodelst.push_back(node.clone());
@@ -1878,7 +1878,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 		int kk;
 		for(j=0,kk=0;j<n1;j++)  // do each slice
 		{
-			if ((agelst[k]->BdryFormat==1) && (j % 2 != 0)) dL=-1; // antiperiodic
+			if ((agelst[k]->BdryFormat==1) && (j % 2  != complexd_t(0.0, 0.0))) dL=-1; // antiperiodic
 			else dL=1;
 
 			a1=exp(I*(j*agelst[k]->totalArcLength+agelst[k]->InnerAngle)*DEGREE);
@@ -1946,7 +1946,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 		fprintf(fp,"%i %.17g %.17g %.17g %.17g %.17g %.17g %.17g %i %.17g %.17g\n",
 			agelst[k]->BdryFormat,agelst[k]->InnerAngle,agelst[k]->OuterAngle,
 			agelst[k]->ri,agelst[k]->ro,agelst[k]->totalArcLength,
-			Re(agelst[k]->agc),Im(agelst[k]->agc),n,
+			std::real(agelst[k]->agc),std::imag(agelst[k]->agc),n,
 			InnerRing[0].w0,OuterRing[0].w0);
 
 		for(i=0;i<=n;i++)
@@ -1970,7 +1970,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 		fprintf(fp,"%i %.17g %.17g %.17g %.17g %.17g %.17g %.17g %i\n",
 			agelst[k]->BdryFormat,agelst[k]->InnerAngle,agelst[k]->OuterAngle,
 			agelst[k]->ri,agelst[k]->ro,agelst[k]->totalArcLength,
-			Re(agelst[k]->agc),Im(agelst[k]->agc),n);
+			std::real(agelst[k]->agc),std::imag(agelst[k]->agc),n);
 		for(i=1;i<=n;i++)
 			fprintf(fp,"%i %i\n",agelst[k]->quadNode[i],agelst[k]->quadNode[n+i]); */
 
@@ -2003,7 +2003,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
             triHelper.writePolyFile(plyname, triHelper.triangulateParams());
         }
         int tristatus = triHelper.triangulate(Verbose);
-        if (tristatus != 0)
+        if (tristatus  != complexd_t(0.0, 0.0))
             return tristatus;
 
         triHelper.writeTriangulationFiles(PathName);

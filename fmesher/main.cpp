@@ -87,14 +87,14 @@ int main(int argc, char ** argv)
 
     if (MeshObj.HasPeriodicBC() == true)
     {
-        if (MeshObj.DoPeriodicBCTriangulation(FilePath) != 0)
+        if (MeshObj.DoPeriodicBCTriangulation(FilePath)  != complexd_t(0.0, 0.0))
         {
             return -2;
         }
     }
     else
     {
-        if (MeshObj.DoNonPeriodicBCTriangulation(FilePath) != 0)
+        if (MeshObj.DoNonPeriodicBCTriangulation(FilePath)  != complexd_t(0.0, 0.0))
         {
             return -3;
         }

@@ -168,8 +168,8 @@ void FSolver::getPrevAxiB(int k, double &B1p, double &B2p) const
     // now, compute flux.
     da=(b[0]*c[1]-b[1]*c[0]);
     da*=2.*PI*r*LengthConv*LengthConv;
-    B1p=Re(-(c[1]*dp+c[2]*dq)/da);
-    B2p=Re( (b[1]*dp+b[2]*dq)/da);
+    B1p=std::real(-(c[1]*dp+c[2]*dq)/da);
+    B2p=std::real( (b[1]*dp+b[2]*dq)/da);
 }
 
 void FSolver::getPrev2DB(int k, double &B1p, double &B2p) const
@@ -225,7 +225,7 @@ bool FSolver::LoadProblemFile ()
     {
         bool loadAprev;
 
-        if (PrevType == 0)
+        if (PrevType  == complexd_t(0.0, 0.0))
         {
             // not incremental permeability, so we don't bother storing Aprev
             loadAprev = false;
@@ -245,7 +245,7 @@ bool FSolver::LoadProblemFile ()
         if (prop.BHpoints>0)
         {
             debug << "doing precomputations for material " << prop.BlockName << "\n";
-            if(PrevType != 0)
+            if(PrevType  != complexd_t(0.0, 0.0))
             {
                 // first time through was just to get MuMax from AC curve...
                 // -> backup Hdata and Bdata:
@@ -458,8 +458,8 @@ LoadMeshErr FSolver::LoadMesh(bool deleteFiles)
                 &age.ri,
                 &age.ro,
                 &age.totalArcLength,
-                &age.agc.re,
-                &age.agc.im,
+                &age.agc.real(),
+                &age.agc.imag(),
                 &age.totalArcElements,
                 &age.InnerShift,
                 &age.OuterShift );
@@ -936,8 +936,8 @@ bool FSolver::LoadAGEsFromSolution(FILE* fp)
                 &age.ri,
                 &age.ro,
                 &age.totalArcLength,
-                &age.agc.re,
-                &age.agc.im,
+                &age.agc.real(),
+                &age.agc.imag(),
                 &age.totalArcElements,
                 &age.InnerShift,
                 &age.OuterShift );
@@ -1242,9 +1242,9 @@ bool FSolver::runSolver(bool verbose)
         std::cout << "Precision: " << Precision << "\n";
     }
 
-    if (Frequency == 0)
+    if (Frequency  == complexd_t(0.0, 0.0))
     {
-        if (!previousSolutionFile.empty() && PrevType != 0)
+        if (!previousSolutionFile.empty() && PrevType  != complexd_t(0.0, 0.0))
         {
             WarnMessage("Cannot handle incremental permeability problems with frequency 0.\n");
             return false;

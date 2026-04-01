@@ -27,7 +27,7 @@
 
 #define MAXITER 1000000
 #define KLUDGE
-#define nrm(X) sqrt(Re(ConjDot(X,X)))
+#define nrm(X) sqrt(std::real(ConjDot(X,X)))
 
 
 complexd_tEntry::complexd_tEntry()
@@ -296,7 +296,7 @@ void CBigComplexLinProb::MultA(complexd_t *X, complexd_t *Y, int k)
 
     // force the program to give the plain matrix multiply
     // if auxilliary matrices have not been built
-    if ((!bNewton) && (k!=0)) k=0;
+    if ((!bNewton) && (k != 0)) k=0;
 
     // Make the default call return the full multiply, including
     // the auxilliary matrix multiplies, when these matrices exist
@@ -366,38 +366,38 @@ void CBigComplexLinProb::MultConjA(complexd_t *X, complexd_t *Y, int k)
 
     for(i=0; i<n; i++) Y[i]=0;
 
-    if ((k!=0) && (!bNewton)) k=0;
+    if ((k != 0) && (!bNewton)) k=0;
 
     for(i=0; i<n; i++)
     {
         switch (k)
         {
         case 1:
-            Y[i]+=(Mh[i]->x.Conj()*X[i]);
+            Y[i]+=(std::conj(Mh[i]->x)*X[i]);
             e=Mh[i]->next;
             break;
         case 2:
-            Y[i]+=(Ms[i]->x.Conj()*X[i]);
+            Y[i]+=(std::conj(Ms[i]->x)*X[i]);
             e=Ms[i]->next;
             break;
         case 3:
-            Y[i]+=(Ma[i]->x.Conj()*X[i]);
+            Y[i]+=(std::conj(Ma[i]->x)*X[i]);
             e=Ma[i]->next;
             break;
         default:
-            Y[i]+=(M[i]->x.Conj()*X[i]);
+            Y[i]+=(std::conj(M[i]->x)*X[i]);
             e=M[i]->next;
             break;
         }
         while(e!=NULL)
         {
-            Y[i]+=(e->x.Conj()*X[e->c]);
+            Y[i]+=(std::conj(e->x)*X[e->c]);
             if (k==1)
                 Y[e->c]+=(e->x*X[i]);   // case in which the matrix is hermitian
             if (k==3)
                 Y[e->c]+=(-e->x*X[i]);   // case in which the matrix is antihermitian
             else
-                Y[e->c]+=(e->x.Conj()*X[i]); // case in which the matrix is complex-symmetric
+                Y[e->c]+=(std::conj(e->x)*X[i]); // case in which the matrix is complex-symmetric
             e=e->next;
         }
     }
@@ -408,10 +408,10 @@ void CBigComplexLinProb::MultAPPA(complexd_t *X, complexd_t *Y)
     int i;
     MultA(X,Z);
     MultPC(Z,Y);
-    for(i=0; i<n; i++) Y[i].im=-Y[i].im;
+    for(i=0; i<n; i++) Y[i] = complexd_t(Y[i].real(), -Y[i].imag());
     MultPC(Y,Z);
     MultA(Z,Y);
-    for(i=0; i<n; i++) Y[i].im=-Y[i].im;
+    for(i=0; i<n; i++) Y[i] = complexd_t(Y[i].real(), -Y[i].imag());
 }
 
 complexd_t CBigComplexLinProb::Dot(complexd_t *x, complexd_t *y)
@@ -430,8 +430,8 @@ complexd_t CBigComplexLinProb::ConjDot(complexd_t *x, complexd_t *y)
     int i;
     complexd_t z;
 
-    z=0;
-    for(i=0; i<n; i++) z+=x[i].Conj()*y[i];
+    z=complexd_t(0.0, 0.0);
+    for(i=0; i<n; i++) z+=std::conj(x[i])*y[i];
 
     return z;
 }
@@ -484,7 +484,7 @@ void CBigComplexLinProb::SetValue(int i, complexd_t x)
     int k,fst,lst;
     complexd_t z;
 
-    if(bdw==0)
+    if(bdw == 0)
     {
         fst=0;
         lst=n;
@@ -502,7 +502,7 @@ void CBigComplexLinProb::SetValue(int i, complexd_t x)
         if (k==lst) k=NumNodes;
 
         z=Get(k,i);
-        if(z!=0)
+        if(z != complexd_t(0.0, 0.0))
         {
             b[k]-=(z*x);
             if(i!=k) Put(complexd_t(0,0),k,i);
@@ -511,21 +511,21 @@ void CBigComplexLinProb::SetValue(int i, complexd_t x)
         if (bNewton)
         {
             z=Get(k,i,1);
-            if(z!=0)
+            if(z != complexd_t(0.0, 0.0))
             {
                 if (i!=k) b[k]=b[k]-(z*x);
                 Put(complexd_t(0,0),k,i,1);
             }
 
             z=Get(k,i,2);
-            if(z!=0)
+            if(z != complexd_t(0.0, 0.0))
             {
                 if (i!=k) b[k]=b[k]-(z*conj(x));
                 Put(complexd_t(0,0),k,i,2);
             }
 
             z=Get(k,i,3);
-            if(z!=0)
+            if(z != complexd_t(0.0, 0.0))
             {
 //				if (i!=k) b[k]=b[k]-(-z*conj(x));
                 if (i!=k) b[k]=b[k]-(z*conj(x));
@@ -606,7 +606,7 @@ void CBigComplexLinProb::AntiPeriodicity(int i, int j)
         i=k;
     }
 
-    if(bdw==0)
+    if(bdw == 0)
     {
         fst=0;
         lst=n;
@@ -626,14 +626,14 @@ void CBigComplexLinProb::AntiPeriodicity(int i, int j)
         {
             v1=Get(k,i);
             v2=Get(k,j);
-            if ((v1!=0) || (v2!=0))
+            if ((v1 != complexd_t(0.0, 0.0)) || (v2 != complexd_t(0.0, 0.0)))
             {
                 c=(v1-v2)/2.;
                 Put(c,k,i);
                 Put(-c,k,j);
             }
         }
-        if((k==i+bdw) && (k<j-bdw) && (bdw!=0)) k=j-bdw;
+        if((k==i+bdw) && (k<j-bdw) && (bdw != 0)) k=j-bdw;
         else if(k==lst) k=NumNodes;
     }
     c=0.5*(Get(i,i)+Get(j,j));
@@ -653,14 +653,14 @@ void CBigComplexLinProb::AntiPeriodicity(int i, int j)
                 {
                     v1=Get(k,i,h);
                     v2=Get(k,j,h);
-                    if ((v1!=0) || (v2!=0))
+                    if ((v1 != complexd_t(0.0, 0.0)) || (v2 != complexd_t(0.0, 0.0)))
                     {
                         c=(v1-v2)/2.;
                         Put(c,k,i,h);
                         Put(-c,k,j,h);
                     }
                 }
-                if((k==i+bdw) && (k<j-bdw) && (bdw!=0)) k=j-bdw;
+                if((k==i+bdw) && (k<j-bdw) && (bdw != 0)) k=j-bdw;
                 else if(k==lst) k=NumNodes;
             }
             c=(Get(i,i,h)-Get(i,j,h)-Get(j,i,h)+Get(j,j,h))/4.;
@@ -691,7 +691,7 @@ void CBigComplexLinProb::Periodicity(int i, int j)
         i=k;
     }
 
-    if(bdw==0)
+    if(bdw == 0)
     {
         fst=0;
         lst=n;
@@ -710,14 +710,14 @@ void CBigComplexLinProb::Periodicity(int i, int j)
         {
             v1=Get(k,i);
             v2=Get(k,j);
-            if ((v1!=0) || (v2!=0))
+            if ((v1 != complexd_t(0.0, 0.0)) || (v2 != complexd_t(0.0, 0.0)))
             {
                 c=(v1+v2)/2.;
                 Put(c,k,i);
                 Put(c,k,j);
             }
         }
-        if((k==i+bdw) && (k<j-bdw) && (bdw!=0)) k=j-bdw;
+        if((k==i+bdw) && (k<j-bdw) && (bdw != 0)) k=j-bdw;
         else if(k==lst) k=NumNodes;
     }
 
@@ -737,14 +737,14 @@ void CBigComplexLinProb::Periodicity(int i, int j)
                 {
                     v1=Get(k,i,h);
                     v2=Get(k,j,h);
-                    if ((v1!=0) || (v2!=0))
+                    if ((v1 != complexd_t(0.0, 0.0)) || (v2 != complexd_t(0.0, 0.0)))
                     {
                         c=(v1+v2)/2.;
                         Put(c,k,i,h);
                         Put(c,k,j,h);
                     }
                 }
-                if((k==i+bdw) && (k<j-bdw) && (bdw!=0)) k=j-bdw;
+                if((k==i+bdw) && (k<j-bdw) && (bdw != 0)) k=j-bdw;
                 else if(k==lst) k=NumNodes;
             }
             c=(Get(i,i,h)+Get(i,j,h)+Get(j,i,h)+Get(j,j,h))/4.;
@@ -767,7 +767,7 @@ int CBigComplexLinProb::PCGSQStart()
     complexd_t res,res_new,del,rho,pAp;
 
     // quick check for most obvious sign of singularity;
-    for(i=0; i<n; i++) if((M[i]->x.re==0) && (M[i]->x.im==0))
+    for(i=0; i<n; i++) if((M[i]->x.real()  == 0) && (M[i]->x.imag()  == 0))
         {
             fprintf(stderr,"singular flag tripped.");
             return 0;
@@ -775,10 +775,10 @@ int CBigComplexLinProb::PCGSQStart()
 
     // Operate on RHS to scale for squared problem
     MultPC(b,Z);
-    for(i=0; i<n; i++) Z[i].im=-Z[i].im;
+    for(i=0; i<n; i++) Z[i] = complexd_t(Z[i].real(), -Z[i].imag());
     MultPC(Z,P);
     MultA(P,Z);
-    for(i=0; i<n; i++) P[i]=Z[i].Conj();
+    for(i=0; i<n; i++) P[i]=std::conj(Z[i]);
 
     // initialize V with zeros;
     for(i=0; i<n; i++) V[i]=0;
@@ -926,8 +926,8 @@ int CBigComplexLinProb::BiCGSTAB(int flag)
 
     for(k=0; k<MAXITER; k++)
     {
-        rho1 = Re(ConjDot(R2,R));
-        if (k==0)
+        rho1 = std::real(ConjDot(R2,R));
+        if (k == 0)
         {
             for(j=0; j<n; j++) P[j]=R[j];
         }
@@ -938,11 +938,11 @@ int CBigComplexLinProb::BiCGSTAB(int flag)
         }
         MultPC(P,P2);
         MultA(P2,U,-1);
-        alf=rho1/Re(ConjDot(R2,U));
+        alf=rho1/std::real(ConjDot(R2,U));
         for(j=0; j<n; j++) Z[j]=R[j]-alf*U[j];
         MultPC(Z,Z2);
         MultA(Z2,t,-1);
-        om=Re(ConjDot(t,Z))/Re(ConjDot(t,t));
+        om=std::real(ConjDot(t,Z))/std::real(ConjDot(t,t));
         for(j=0; j<n; j++)
         {
             V[j]=V[j]+alf*P2[j]+om*Z2[j];
@@ -993,7 +993,7 @@ int CBigComplexLinProb::KludgeSolve(int flag)
     r    =(complexd_t *)calloc(n,sizeof(complexd_t));
 
     // if flag is false, initialize V with zeros;
-    if (flag==0) for(i=0; i<n; i++) V[i]=0;
+    if (flag == 0) for(i=0; i<n; i++) V[i]=0;
 
     // get norm of RHS
     normb=nrm(b);
@@ -1038,7 +1038,7 @@ int CBigComplexLinProb::KludgeSolve(int flag)
         // to result in the greatest reduction in error
         for(i=0; i<n; i++) P[i]= V[i]-v[i];
         MultA(P,U,-1);
-        c=Re(ConjDot(r,U))/Re(ConjDot(U,U));
+        c=std::real(ConjDot(r,U))/std::real(ConjDot(U,U));
         for(i=0; i<n; i++)
         {
             V[i] = v[i] + c*P[i];
@@ -1072,7 +1072,7 @@ int CBigComplexLinProb::PBCGSolveMod(int flag,bool verbose)
 //		TheView->SetDlgItemText(IDC_FRAME1,"Initializing Solver");
         if(verbose)
             printf("Initializing Solver");
-        if (PCGSQStart()==0) return 0;
+        if (PCGSQStart() == 0) return 0;
     }
 
 

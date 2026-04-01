@@ -87,8 +87,9 @@ CMMeshNode CMMeshNode::fromStream(istream &input, ostream &)
     // scan in data
     inputStream >> n.x;
     inputStream >> n.y;
-    inputStream >> n.A.re;
-    inputStream >> n.A.im; // 4th field only applies when problem->Frequency is 0
+    double a_real, a_imag;
+    inputStream >> a_real >> a_imag; // 4th field only applies when problem->Frequency is 0
+    n.A = complexd_t(a_real, a_imag);
 
     return n;
 }

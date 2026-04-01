@@ -131,7 +131,7 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
 
                     // integral of applied J over current;
                     CircInt3[labellist[El->lbl].InCircuit]+=
-                            (blockproplist[El->blk].J.re+I*blockproplist[El->blk].J.im)*a*100.;
+                            (blockproplist[El->blk].J.real()+I*blockproplist[El->blk].J.imag())*a*100.;
                 }
             }
         }
@@ -149,7 +149,7 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
                     circproplist[i].Case=1;
                     if (CircInt1[i]==0.) circproplist[i].J=0.;
                     else circproplist[i].J=0.01*(
-                                                   (circproplist[i].Amps.re+I*circproplist[i].Amps.im) -
+                                                   (circproplist[i].Amps.real()+I*circproplist[i].Amps.imag()) -
                                                    CircInt3[i])/CircInt1[i];
                 }
                 else
@@ -163,8 +163,8 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
             {
                 // case where voltage gradient is specified a priori...
                 circproplist[i].Case=0;
-                circproplist[i].dV=circproplist[i].dVolts.re +
-                                   I*circproplist[i].dVolts.im;
+                circproplist[i].dV=circproplist[i].dVolts.real() +
+                                   I*circproplist[i].dVolts.imag();
             }
         }
     }
@@ -183,7 +183,7 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
 
             if(blockproplist[k].Lam_d!=0)
             {
-                if (blockproplist[k].Cduct != 0)
+                if (blockproplist[k].Cduct  != complexd_t(0.0, 0.0))
                 {
                     halflag=exp(-I*blockproplist[k].Theta_hx*DEG/2.);
                     ds=sqrt(2./(0.4*PI*w*blockproplist[k].Cduct*blockproplist[k].mu_x));
@@ -526,7 +526,7 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
                     if(circproplist[k].Case==0)
                         Jv=-circproplist[k].dV*blockproplist[El->blk].Cduct;
                 }
-                K=-(blockproplist[El->blk].J.re+I*blockproplist[El->blk].J.im+Jv)*a/3.;
+                K=-(blockproplist[El->blk].J.real()+I*blockproplist[El->blk].J.imag()+Jv)*a/3.;
                 be[j]+=K;
 
                 if(labellist[El->lbl].InCircuit>=0)
@@ -562,7 +562,7 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
                 meshele[i].mu1=Mu[k][0];
                 meshele[i].mu2=Mu[k][1];
                 meshele[i].v12=0;
-                if (blockproplist[k].BHpoints != 0) {
+                if (blockproplist[k].BHpoints  != complexd_t(0.0, 0.0)) {
                     if (bIncremental == MS_LEGACY_FALSE) {
                         // There's no previous solution.  This is a standard nonlinear time harmonic problem
                         LinearFlag=false;
@@ -631,9 +631,9 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
                                 // the complex-symmetric approx.  This will be useful
                                 // w.r.t. preconditioning.  However, subtract it off of Mnh and Mna
                                 // so that there is no net addition.
-                                Mn[j][ww] =K*Re(v[j]*conj(v[ww]));
-                                Mnh[j][ww]=  0.5*Re(K)*v[j]*conj(v[ww])-Re(Mn[j][ww]);
-                                Mna[j][ww]=I*0.5*Im(K)*v[j]*conj(v[ww])-I*Im(Mn[j][ww]);
+                                Mn[j][ww] =K*std::real(v[j]*conj(v[ww]));
+                                Mnh[j][ww]=  0.5*std::real(K)*v[j]*conj(v[ww])-std::real(Mn[j][ww]);
+                                Mna[j][ww]=I*0.5*std::imag(K)*v[j]*conj(v[ww])-I*std::imag(Mn[j][ww]);
                                 Mns[j][ww]=  0.5*K*v[j]*v[ww];
                             }
                     }
@@ -677,7 +677,7 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
                     {
                         Me[j][k]+= (Mx[j][k]/(El->mu2) + My[j][k]/(El->mu1) + Mn[j][k] );
                         be[j]+=(Mnh[j][k]+Mna[j][k]+Mn[j][k])*L.V[n[k]];
-                        be[j]+=Mns[j][k]*L.V[n[k]].Conj();
+                        be[j]+=Mns[j][k]*L.V[n[k]]conj();
                     }
 // #else
                     else
@@ -712,7 +712,7 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
             if(meshnode[i].BoundaryMarker>=0)
             {
                 K=0.01*(nodeproplist[meshnode[i].BoundaryMarker].J.re
-                        +I*nodeproplist[meshnode[i].BoundaryMarker].J.im);
+                        +I*nodeproplist[meshnode[i].BoundaryMarker].J.imag());
                 L.b[i]+=(-K);
             }
 
@@ -720,18 +720,18 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
         for(i=0; i<NumCircProps; i++)
             if (circproplist[i].Case==2)
             {
-                L.b[NumNodes+i]+=0.01*(circproplist[i].Amps.re +
-                                       I*circproplist[i].Amps.im);
+                L.b[NumNodes+i]+=0.01*(circproplist[i].Amps.real() +
+                                       I*circproplist[i].Amps.imag());
             }
 
         // apply fixed boundary conditions at points;
         for(i=0; i<NumNodes; i++)
             if(meshnode[i].BoundaryMarker >=0)
-                if((nodeproplist[meshnode[i].BoundaryMarker].J.re==0) &&
-                        (nodeproplist[meshnode[i].BoundaryMarker].J.im==0))
+                if((nodeproplist[meshnode[i].BoundaryMarker].J.real() ==0) &&
+                        (nodeproplist[meshnode[i].BoundaryMarker].J.imag() ==0))
                 {
-                    K= (nodeproplist[meshnode[i].BoundaryMarker].A.re +
-                        I*nodeproplist[meshnode[i].BoundaryMarker].A.im)/c;
+                    K= (nodeproplist[meshnode[i].BoundaryMarker].A.real() +
+                        I*nodeproplist[meshnode[i].BoundaryMarker].A.imag())/c;
                     L.SetValue(i,K);
                 }
 
@@ -831,8 +831,8 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
 
             for(j=0,x=0,y=0; j<NumNodes; j++)
             {
-                x+=Re((L.V[j]-V_old[j])*conj(L.V[j]-V_old[j]));
-                y+=Re(L.V[j]*conj(L.V[j]));
+                x+=std::real((L.V[j]-V_old[j])*conj(L.V[j]-V_old[j]));
+                y+=std::real(L.V[j]*conj(L.V[j]));
             }
 
             if (y==0) LinearFlag=true;
@@ -929,7 +929,7 @@ int FSolver::WriteHarmonic2D(CBigComplexLinProb &L)
     for(i=0; i<NumNodes; i++)
     {
         fprintf(fp,"%.17g\t%.17g\t%.17g\t%.17g\t%i",meshnode[i].x/cf,
-                meshnode[i].y/cf,L.b[i].re,L.b[i].im,
+                meshnode[i].y/cf,L.b[i].real(),L.b[i].imag(),
                 meshnode[i].BoundaryMarker
                 );
         // include A from previous solution if this is an incremental permeability problem
@@ -953,15 +953,15 @@ int FSolver::WriteHarmonic2D(CBigComplexLinProb &L)
     	fprintf(fp,"%i\n",NumCircPropsOrig);
     	for(i=0;i<NumCircPropsOrig;i++){
     		if (circproplist[i].Case==0)
-    			fprintf(fp,"0	%.17g	%.17g\n",circproplist[i].dV.Re(),
-    								      circproplist[i].dV.Im());
+    			fprintf(fp,"0	%.17g	%.17g\n",circproplist[i].dV.std::real(),
+    								      circproplist[i].dV.std::imag());
     		if (circproplist[i].Case==1)
-    			fprintf(fp,"1	%.17g	%.17g\n",circproplist[i].J.Re(),
-    									  circproplist[i].J.Im());
+    			fprintf(fp,"1	%.17g	%.17g\n",circproplist[i].J.std::real(),
+    									  circproplist[i].J.std::imag());
 
     		if (circproplist[i].Case==2)
-    			fprintf(fp,"0	%.17g	%.17g\n",L.b[NumNodes+i].Re(),
-    									  L.b[NumNodes+i].Im());
+    			fprintf(fp,"0	%.17g	%.17g\n",L.b[NumNodes+i].std::real(),
+    									  L.b[NumNodes+i].std::imag());
     	}
     */
     // print out circuit info on a blocklabel by blocklabel basis;
@@ -979,15 +979,15 @@ int FSolver::WriteHarmonic2D(CBigComplexLinProb &L)
         else
         {
             if (circproplist[i].Case==0)
-                fprintf(fp,"0\t%.17g\t%.17g\n",circproplist[i].dV.Re(),
-                        circproplist[i].dV.Im());
+                fprintf(fp,"0\t%.17g\t%.17g\n",circproplist[i].dV.std::real(),
+                        circproplist[i].dV.std::imag());
             if (circproplist[i].Case==1)
-                fprintf(fp,"1\t%.17g\t%.17g\n",circproplist[i].J.Re(),
-                        circproplist[i].J.Im());
+                fprintf(fp,"1\t%.17g\t%.17g\n",circproplist[i].J.std::real(),
+                        circproplist[i].J.std::imag());
 
             if (circproplist[i].Case==2)
-                fprintf(fp,"0\t%.17g\t%.17g\n",L.b[NumNodes+i].Re(),
-                        L.b[NumNodes+i].Im());
+                fprintf(fp,"0\t%.17g\t%.17g\n",L.b[NumNodes+i].std::real(),
+                        L.b[NumNodes+i].std::imag());
         }
     }
 
@@ -1011,8 +1011,8 @@ int FSolver::WriteHarmonic2D(CBigComplexLinProb &L)
                  agelist[i].ri,
                  agelist[i].ro,
                  agelist[i].totalArcLength,
-                 agelist[i].agc.re,
-                 agelist[i].agc.im,
+                 agelist[i].agc.real(),
+                 agelist[i].agc.imag(),
                  agelist[i].totalArcElements,
                  agelist[i].InnerShift,
                  agelist[i].OuterShift );

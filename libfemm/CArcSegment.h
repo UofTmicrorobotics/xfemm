@@ -33,7 +33,7 @@
 #define FEMM_CARCSEGMENT_H
 
 #include "CSegment.h"
-#include "femmcomplex.h"
+#include "complex_type.h"
 #include <string>
 
 namespace femm {

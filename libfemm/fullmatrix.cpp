@@ -21,7 +21,6 @@
 
 #include <cstdlib>
 #include <math.h>
-#include "malloc.h"
 #include "complex_type.h"
 #include "fullmatrix.h"
 
@@ -99,7 +98,7 @@ int CFullMatrix::GaussSolve()
                 max=M[j][i];
                 q=j;
             }
-        if(max==0) return false;
+        if(max==complexd_t(0.0, 0.0)) return false;
         z=M[i];
         M[i]=M[q];
         M[q]=z;
@@ -196,7 +195,7 @@ int complexd_tFullMatrix::GaussSolve()
                 max=M[j][i];
                 q=j;
             }
-        if(max==0) return false;
+        if(max==complexd_t(0.0, 0.0)) return false;
         std::swap(M[i],M[q]);
         std::swap(b[i],b[q]);
         for(j=i+1; j<n; j++)

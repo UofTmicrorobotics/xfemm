@@ -75,28 +75,36 @@ CMPointProp CMPointProp::fromStream(istream &input, ostream &err)
             if( token == "<a_re>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.A.re, err);
+                double real_part;
+                parseValue(input, real_part, err);
+                prop.A = complexd_t(real_part, prop.A.imag());
                 continue;
             }
 
             if( token == "<a_im>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.A.im, err);
+                double imag_part;
+                parseValue(input, imag_part, err);
+                prop.A = complexd_t(prop.A.real(), imag_part);
                 continue;
             }
 
             if( token == "<i_re>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.J.re, err);
+                double real_part;
+                parseValue(input, real_part, err);
+                prop.J = complexd_t(real_part, prop.J.imag());
                 continue;
             }
 
             if( token == "<i_im>" )
             {
                 expectChar(input, '=', err);
-                parseValue(input, prop.J.im, err);
+                double imag_part;
+                parseValue(input, imag_part, err);
+                prop.J = complexd_t(prop.J.real(), imag_part);
                 continue;
             }
             if ( token != "<endpoint>" )
@@ -111,10 +119,10 @@ void CMPointProp::toStream(ostream &out) const
 {
     out << "  <BeginPoint>\n";
     out << "    <PointName> = \"" << PointName << "\"\n";
-    out << "    <I_re> = " << J.re << "\n";
-    out << "    <I_im> = " << J.im << "\n";
-    out << "    <A_re> = " << A.re << "\n";
-    out << "    <A_im> = " << A.im << "\n";
+    out << "    <I_re> = " << J.real() << "\n";
+    out << "    <I_im> = " << J.imag() << "\n";
+    out << "    <A_re> = " << A.real() << "\n";
+    out << "    <A_im> = " << A.imag() << "\n";
     out << "  <EndPoint>\n";
 }
 
