@@ -370,7 +370,7 @@ void fmesher::discretizeInputSegments(const FemmProblem &problem, std::vector<st
             {
                 complexd_t a2 = a0 + (a1-a0)*((double) (j+1)) / ((double) numParts);
                 CNode node (a2.real(), a2.imag());
-                if(j  == complexd_t(0.0, 0.0)){
+                if(j  == 0){
                     // first part -> n0 == line.n0
                     int l=nodelst.size();
                     nodelst.push_back(node.clone());
