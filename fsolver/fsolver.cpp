@@ -34,7 +34,6 @@
 #include "complex_type.h"
 #include <fparse.h>
 #include <fsolver.h>
-#include <LuaInstance.h>
 #include <spars.h>
 
 #include <algorithm>

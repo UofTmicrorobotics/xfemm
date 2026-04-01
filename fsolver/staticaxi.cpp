@@ -23,8 +23,6 @@
 #include "complex_type.h"
 #include "femmconstants.h"
 #include "fsolver.h"
-#include "lua.h"
-#include "LuaInstance.h"
 #include "spars.h"
 
 #include <cstdio>

@@ -24,8 +24,6 @@
 #include "CElement.h"
 #include "spars.h"
 #include "fsolver.h"
-#include "lua.h"
-#include "LuaInstance.h"
 
 #include <stdio.h>
 #include <math.h>

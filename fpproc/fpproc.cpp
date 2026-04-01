@@ -35,8 +35,6 @@
 #include <regex>
 #include "femmconstants.h"
 #include "fparse.h"
-#include "lua.h"
-#include "lualib.h"
 #include "fpproc.h"
 #include "complex_type.h"
 

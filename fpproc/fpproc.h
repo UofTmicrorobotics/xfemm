@@ -32,8 +32,6 @@
 
 #include "CMPointVals.h"
 
-#include "lua.h"
-#include "luadebug.h"
 #include "complex_type.h"
 #include "femmenums.h"
 #include "fparse.h"
