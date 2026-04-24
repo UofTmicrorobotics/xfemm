@@ -46,4 +46,4 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} 
 add_subdirectory(libfemm)
 add_subdirectory(fmesher)
 add_subdirectory(fsolver)
-add_subdirectory(fpproc)
+# add_subdirectory(fpproc)
