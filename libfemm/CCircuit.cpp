@@ -25,7 +25,7 @@
         richard.crozier@yahoo.co.uk
         johannes@zarl-zierl.at
 
- Contributions by Johannes Zarl-Zierl were funded by Linz Center of 
+ Contributions by Johannes Zarl-Zierl were funded by Linz Center of
  Mechatronics GmbH (LCM)
 */
 #include "CCircuit.h"
@@ -48,228 +48,211 @@ using namespace femm;
 using namespace std;
 
 CCircuit::CCircuit()
-    : CircName("New Circuit")
-    , CircType(0)
+: CircName("New Circuit")
+  , CircType(0)
 {
 }
 
 CMCircuit::CMCircuit()
-    : CCircuit()
-    , Amps()
-    , dVolts()
-    , OrigCirc(0)
-    , J()
-    , dV()
-    , Case(0)
+: CCircuit()
+  , Amps()
+  , dVolts()
+  , OrigCirc(0)
+  , J()
+  , dV()
+  , Case(0)
 {
 }
 
-CMCircuit CMCircuit::fromStream(std::istream &input, std::ostream &err)
+CMCircuit CMCircuit::fromStream(std::istream & input, std::ostream & err)
 {
-    CMCircuit prop;
+  CMCircuit prop;
 
-    if( expectToken(input, "<begincircuit>", err) )
-    {
-        string token;
-        while (input.good() && token != "<endcircuit>")
-        {
-            nextToken(input, &token);
+  if (expectToken(input, "<begincircuit>", err) ) {
+    string token;
+    while (input.good() && token != "<endcircuit>") {
+      nextToken(input, &token);
 
-            if( token == "<circuitname>" )
-            {
-                expectChar(input, '=', err);
-                parseString(input, &prop.CircName, err);
-                continue;
-            }
+      if (token == "<circuitname>") {
+        expectChar(input, '=', err);
+        parseString(input, &prop.CircName, err);
+        continue;
+      }
 
-            if( token == "<voltgradient_re>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.dVolts.re, err);
-                continue;
-            }
+      if (token == "<voltgradient_re>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.dVolts.re, err);
+        continue;
+      }
 
-            if( token == "<voltgradient_im>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.dVolts.im, err);
-                continue;
-            }
+      if (token == "<voltgradient_im>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.dVolts.im, err);
+        continue;
+      }
 
-            if( token == "<totalamps_re>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.Amps.re, err);
-                continue;
-            }
+      if (token == "<totalamps_re>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.Amps.re, err);
+        continue;
+      }
 
-            if( token == "<totalamps_im>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.Amps.im, err);
-                continue;
-            }
+      if (token == "<totalamps_im>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.Amps.im, err);
+        continue;
+      }
 
-            if( token == "<circuittype>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.CircType, err);
-                continue;
-            }
-            if (token != "<endcircuit>")
-                err << "CMCircuit: unexpected token: "<<token << "\n";
-        }
+      if (token == "<circuittype>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.CircType, err);
+        continue;
+      }
+      if (token != "<endcircuit>") {
+        err << "CMCircuit: unexpected token: " << token << "\n";
+      }
     }
+  }
 
-    return prop;
+  return prop;
 }
 
-void CMCircuit::toStream(ostream &out) const
+void CMCircuit::toStream(ostream & out) const
 {
-    out << "  <BeginCircuit>\n";
-    out << "    <CircuitName> = \"" << CircName << "\"\n";
-    out << "    <TotalAmps_re> = " << Amps.re << "\n";
-    out << "    <TotalAmps_im> = " << Amps.im << "\n";
-    out << "    <CircuitType> = " << CircType << "\n";
-    if (dVolts!=0)
-    {
-        out << "    <Voltgradient_re> = " << dVolts.re << "\n";
-        out << "    <Voltgradient_im> = " << dVolts.im << "\n";
-    }
-    out << "  <EndCircuit>\n";
+  out << "  <BeginCircuit>\n";
+  out << "    <CircuitName> = \"" << CircName << "\"\n";
+  out << "    <TotalAmps_re> = " << Amps.re << "\n";
+  out << "    <TotalAmps_im> = " << Amps.im << "\n";
+  out << "    <CircuitType> = " << CircType << "\n";
+  if (dVolts != 0) {
+    out << "    <Voltgradient_re> = " << dVolts.re << "\n";
+    out << "    <Voltgradient_im> = " << dVolts.im << "\n";
+  }
+  out << "  <EndCircuit>\n";
 }
 
 CHConductor::CHConductor()
-    : CCircuit()
-    , V(0)
-    , q(0)
+: CCircuit()
+  , V(0)
+  , q(0)
 {
 }
 
-CHConductor CHConductor::fromStream(std::istream &input, std::ostream &err)
+CHConductor CHConductor::fromStream(std::istream & input, std::ostream & err)
 {
-    CHConductor prop;
+  CHConductor prop;
 
-    if( expectToken(input, "<beginconductor>", err) )
-    {
-        string token;
-        while (input.good() && token != "<endconductor>")
-        {
-            nextToken(input, &token);
+  if (expectToken(input, "<beginconductor>", err) ) {
+    string token;
+    while (input.good() && token != "<endconductor>") {
+      nextToken(input, &token);
 
-            if( token == "<conductorname>" )
-            {
-                expectChar(input, '=', err);
-                parseString(input, &prop.CircName, err);
-                continue;
-            }
+      if (token == "<conductorname>") {
+        expectChar(input, '=', err);
+        parseString(input, &prop.CircName, err);
+        continue;
+      }
 
-            if( token == "<tc>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.V, err);
-                continue;
-            }
+      if (token == "<tc>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.V, err);
+        continue;
+      }
 
-            if( token == "<qc>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.q, err);
-                continue;
-            }
+      if (token == "<qc>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.q, err);
+        continue;
+      }
 
-            if( token == "<conductortype>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.CircType, err);
-                continue;
-            }
+      if (token == "<conductortype>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.CircType, err);
+        continue;
+      }
 
-            if ( token != "<endconductor>")
-                err << "CHConductor: unexpected token: "<<token << "\n";
-        }
+      if (token != "<endconductor>") {
+        err << "CHConductor: unexpected token: " << token << "\n";
+      }
     }
+  }
 
-    return prop;
+  return prop;
 }
 
-void CHConductor::toStream(std::ostream &out) const
+void CHConductor::toStream(std::ostream & out) const
 {
-    out << "  <BeginConductor>\n";
-    out << "    <Tc> = " << V << "\n";
-    out << "    <qc> = " << q << "\n";
-    out << "    <ConductorType> = " << CircType << "\n";
-    if (!CircName.empty())
-        out << "    <ConductorName> = \"" << CircName << "\"\n";
-    out << "  <EndConductor>\n";
+  out << "  <BeginConductor>\n";
+  out << "    <Tc> = " << V << "\n";
+  out << "    <qc> = " << q << "\n";
+  out << "    <ConductorType> = " << CircType << "\n";
+  if (!CircName.empty()) {
+    out << "    <ConductorName> = \"" << CircName << "\"\n";
+  }
+  out << "  <EndConductor>\n";
 }
-ostream &operator<<(ostream &os, const CCircuit &prop)
+ostream & operator<<(ostream & os, const CCircuit & prop)
 {
-    prop.toStream(os);
-    return os;
+  prop.toStream(os);
+  return os;
 }
 
 CSCircuit::CSCircuit()
-    : CCircuit()
-    , V(0)
-    , q(0)
+: CCircuit()
+  , V(0)
+  , q(0)
 {
 }
 
-CSCircuit CSCircuit::fromStream(istream &input, ostream &err)
+CSCircuit CSCircuit::fromStream(istream & input, ostream & err)
 {
-    CSCircuit prop;
+  CSCircuit prop;
 
-    if( expectToken(input, "<beginconductor>", err) )
-    {
-        string token;
-        while (input.good() && token != "<endconductor>")
-        {
-            nextToken(input, &token);
+  if (expectToken(input, "<beginconductor>", err) ) {
+    string token;
+    while (input.good() && token != "<endconductor>") {
+      nextToken(input, &token);
 
-            if( token == "<conductorname>" )
-            {
-                expectChar(input, '=', err);
-                parseString(input, &prop.CircName, err);
-                continue;
-            }
+      if (token == "<conductorname>") {
+        expectChar(input, '=', err);
+        parseString(input, &prop.CircName, err);
+        continue;
+      }
 
-            if( token == "<vc>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.V, err);
-                continue;
-            }
+      if (token == "<vc>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.V, err);
+        continue;
+      }
 
-            if( token == "<qc>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.q, err);
-                continue;
-            }
+      if (token == "<qc>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.q, err);
+        continue;
+      }
 
-            if( token == "<conductortype>" )
-            {
-                expectChar(input, '=', err);
-                parseValue(input, prop.CircType, err);
-                continue;
-            }
-            if (token != "<endconductor>")
-                err << "CSCircuit: unexpected token: "<<token << "\n";
-        }
+      if (token == "<conductortype>") {
+        expectChar(input, '=', err);
+        parseValue(input, prop.CircType, err);
+        continue;
+      }
+      if (token != "<endconductor>") {
+        err << "CSCircuit: unexpected token: " << token << "\n";
+      }
     }
+  }
 
-    return prop;
+  return prop;
 }
 
-void CSCircuit::toStream(ostream &out) const
+void CSCircuit::toStream(ostream & out) const
 {
-    out << "  <BeginConductor>\n";
-    if (!CircName.empty())
-        out << "    <ConductorName> = \"" << CircName << "\"\n";
-    out << "    <Vc> = " << V << "\n";
-    out << "    <qc> = " << q << "\n";
-    out << "    <ConductorType> = " << CircType << "\n";
-    out << "  <EndConductor>\n";
+  out << "  <BeginConductor>\n";
+  if (!CircName.empty()) {
+    out << "    <ConductorName> = \"" << CircName << "\"\n";
+  }
+  out << "    <Vc> = " << V << "\n";
+  out << "    <qc> = " << q << "\n";
+  out << "    <ConductorType> = " << CircType << "\n";
+  out << "  <EndConductor>\n";
 }
-

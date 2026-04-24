@@ -21,10 +21,11 @@
 #ifdef DEBUG_LOCATION_TOOLS
 #define debug std::cerr
 #else
-#define debug while(false) std::cerr
+#define debug while (false) std::cerr
 #endif
 
-namespace {
+namespace
+{
 
 /**
  * @brief get the value of an environment variable or a fallback if not set.
@@ -32,13 +33,14 @@ namespace {
  * @param fallback
  * @return
  */
-std::string getEnv(const char* envVar, const std::string &fallback)
+std::string getEnv(const char * envVar, const std::string & fallback)
 {
-    char *value = std::getenv(envVar);
-    if (value)
-        return std::string( value );
-    else
-        return fallback;
+  char * value = std::getenv(envVar);
+  if (value) {
+    return std::string(value);
+  } else {
+    return fallback;
+  }
 }
 
 /**
@@ -48,85 +50,88 @@ std::string getEnv(const char* envVar, const std::string &fallback)
  * @param text
  * @param sep
  */
-void splitInto( std::vector<std::string> &destination, const std::string &text, char sep )
+void splitInto(std::vector<std::string> & destination, const std::string & text, char sep)
 {
-    std::istringstream stream(text);
-    std::string part;
-    while (std::getline(stream, part, sep))
-        if (! part.empty())
-            destination.push_back(part);
+  std::istringstream stream(text);
+  std::string part;
+  while (std::getline(stream, part, sep)) {
+    if (!part.empty()) {
+      destination.push_back(part);
+    }
+  }
 }
-} // namespace
+}  // namespace
 
 
 std::vector<std::string> location::baseDirectories(location::LocationType type)
 {
-    std::vector<std::string> result;
-    switch (type) {
+  std::vector<std::string> result;
+  switch (type) {
     case LocationType::SystemData:
-    {
+      {
 #ifdef WIN32
         std::string dirs = getEnv("ProgramFiles", "");
 #else
         std::string dirs = getEnv("XDG_DATA_DIRS", "/usr/local/share/:/usr/share/");
 #endif
-        splitInto( result, dirs, pathSeparator());
-    }
-        /* FALLTHRU */
+        splitInto(result, dirs, pathSeparator());
+      }
+    /* FALLTHRU */
     case LocationType::UserData:
 #ifdef WIN32
-        result.insert(result.begin(), getEnv("APPDATA", ""));
-        result.insert(result.begin(), getEnv("LOCALAPPDATA", ""));
+      result.insert(result.begin(), getEnv("APPDATA", ""));
+      result.insert(result.begin(), getEnv("LOCALAPPDATA", ""));
 #else
-        const std::string homeDir = getEnv("HOME","");
-        result.insert(result.begin(), getEnv("XDG_DATA_HOME", homeDir+"/.local/share"));
+      const std::string homeDir = getEnv("HOME", "");
+      result.insert(result.begin(), getEnv("XDG_DATA_HOME", homeDir + "/.local/share"));
 #endif
-        break;
-    }
-    return result;
+      break;
+  }
+  return result;
 }
 
-std::string location::locateFile(location::LocationType type, const std::string &appName, const std::string &path)
+std::string location::locateFile(
+  location::LocationType type,
+  const std::string & appName,
+  const std::string & path)
 {
-    for (std::string filename: baseDirectories(type))
-    {
-        filename = filename + directorySeparator() + appName + directorySeparator() + path;
-        debug << "locateFile: " << filename << "\n";
-        if (fileExists(filename))
-        {
-            debug << "locateFile: *exists*\n";
-            return filename;
-        }
+  for (std::string filename: baseDirectories(type)) {
+    filename = filename + directorySeparator() + appName + directorySeparator() + path;
+    debug << "locateFile: " << filename << "\n";
+    if (fileExists(filename)) {
+      debug << "locateFile: *exists*\n";
+      return filename;
     }
-    return "";
+  }
+  return "";
 }
 
 constexpr char location::pathSeparator()
 {
 #ifdef WIN32
-    return ';';
+  return ';';
 #else
-    return ':';
+  return ':';
 #endif
 }
 
 constexpr char location::directorySeparator()
 {
 #ifdef WIN32
-    return '\\';
+  return '\\';
 #else
-    return '/';
+  return '/';
 #endif
 }
 
-bool location::fileExists(const std::string &path)
+bool location::fileExists(const std::string & path)
 {
 #ifdef XFEMM_HAVE_STAT
 #else
-    // fall-back in case there's no usable stat
-    std::ifstream ifs;
-    ifs.open(path);
-    return ifs.good();
+  // fall-back in case there's no usable stat
+  std::ifstream ifs;
+  ifs.open(path);
+  return ifs.good();
 #endif
 }
 

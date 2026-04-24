@@ -48,322 +48,308 @@ using namespace std;
 using namespace femm;
 using namespace fmesher;
 
-namespace {
+namespace
+{
 // set up some default behaviors
-constexpr double DEFAULT_MINANGLE=30.;
+constexpr double DEFAULT_MINANGLE = 30.;
 }
 
 FMesher::FMesher()
-    : problem(nullptr)
-    , Verbose(true)
-    , WarnMessage(&PrintWarningMsg)
-    , TriMessage(nullptr)
+: problem(nullptr)
+  , Verbose(true)
+  , WarnMessage(&PrintWarningMsg)
+  , TriMessage(nullptr)
 {
-    // initialize the problem data structures
-    // and default behaviour etc.
-    Initialize(femm::FileType::Unknown);
+  // initialize the problem data structures
+  // and default behaviour etc.
+  Initialize(femm::FileType::Unknown);
 }
 
 
 FMesher::FMesher(std::shared_ptr<FemmProblem> p)
-    : problem(p)
-    , Verbose(true)
-    , WarnMessage(&PrintWarningMsg)
-    , TriMessage(nullptr)
+: problem(p)
+  , Verbose(true)
+  , WarnMessage(&PrintWarningMsg)
+  , TriMessage(nullptr)
 {
 }
 
 bool FMesher::Initialize(femm::FileType t)
 {
-    // clear out all current lines, nodes, and block labels
-    meshnode.clear ();
-    meshline.clear ();
-    greymeshline.clear ();
-    probdescstrings.clear ();
+  // clear out all current lines, nodes, and block labels
+  meshnode.clear();
+  meshline.clear();
+  greymeshline.clear();
+  probdescstrings.clear();
 
-    problem = std::make_shared<femm::FemmProblem>(t);
-    // set problem attributes to generic ones;
-    problem->MinAngle = DEFAULT_MINANGLE;
+  problem = std::make_shared<femm::FemmProblem>(t);
+  // set problem attributes to generic ones;
+  problem->MinAngle = DEFAULT_MINANGLE;
 
-    return true;
+  return true;
 }
 
-femm::FileType FMesher::GetFileType (string PathName)
+femm::FileType FMesher::GetFileType(string PathName)
 {
-    // find the position of the last '.' in the string
-    size_t dotpos = PathName.rfind ('.');
+  // find the position of the last '.' in the string
+  size_t dotpos = PathName.rfind('.');
 
-    if (dotpos == string::npos)
-    {
-        // no '.' found
-        return femm::FileType::Unknown;
-    }
+  if (dotpos == string::npos) {
+    // no '.' found
+    return femm::FileType::Unknown;
+  }
 
-    // compare different file extensions and return the appropriate string
-    if ( PathName.compare (dotpos, string::npos, ".fem") == 0 )
-    {
-        return femm::FileType::MagneticsFile;
-    }
-    else if ( PathName.compare (dotpos, string::npos, ".feh") == 0 )
-    {
-        return femm::FileType::HeatFlowFile;
-    }
-    else if ( PathName.compare(dotpos, string::npos, ".fee") == 0)
-    {
-        return femm::FileType::ElectrostaticsFile;
-    }
-    else
-    {
-        return femm::FileType::Unknown;
-    }
+  // compare different file extensions and return the appropriate string
+  if (PathName.compare(dotpos, string::npos, ".fem") == 0) {
+    return femm::FileType::MagneticsFile;
+  } else if (PathName.compare(dotpos, string::npos, ".feh") == 0) {
+    return femm::FileType::HeatFlowFile;
+  } else if (PathName.compare(dotpos, string::npos, ".fee") == 0) {
+    return femm::FileType::ElectrostaticsFile;
+  } else {
+    return femm::FileType::Unknown;
+  }
 
 }
 
-void FMesher::addFileStr (char *s)
+void FMesher::addFileStr(char * s)
 {
-    probdescstrings.push_back (string (s));
+  probdescstrings.push_back(string(s));
 }
 
 bool FMesher::SaveFEMFile(string PathName)
 {
-    FILE *fp;
-    unsigned int i, j;
-    int k,t;
-    string s;
+  FILE * fp;
+  unsigned int i, j;
+  int k, t;
+  string s;
 
-    // check to see if we are ready to write a datafile;
-    if ((fp = fopen(PathName.c_str(),"wt"))==NULL)
+  // check to see if we are ready to write a datafile;
+  if ((fp = fopen(PathName.c_str(), "wt")) == NULL) {
+    WarnMessage("Couldn't write to specified file.\nPerhaps the file is write-protected?");
+    return false;
+  }
+
+  // echo the start of the input file
+  for (i = 0; i < probdescstrings.size(); i++) {
+    fprintf(fp, "%s", probdescstrings[i].c_str() );
+  }
+
+  // write out node list
+  fprintf(fp, "[NumPoints] = %i\n", (int) problem->nodelist.size());
+  for (i = 0; i < problem->nodelist.size(); i++) {
+    for (j = 0, t = 0; j < problem->nodeproplist.size(); j++) {
+      if (problem->nodeproplist[j]->PointName == problem->nodelist[i]->BoundaryMarkerName) {
+        t = j + 1;
+      }
+    }
+    fprintf(
+      fp, "%.17g\t%.17g\t%i\t%i", problem->nodelist[i]->x, problem->nodelist[i]->y, t,
+      problem->nodelist[i]->InGroup);
+
+    if (problem->filetype == femm::FileType::HeatFlowFile ||
+      problem->filetype == femm::FileType::ElectrostaticsFile)
     {
-        WarnMessage("Couldn't write to specified file.\nPerhaps the file is write-protected?");
-        return false;
+      // find and write number of conductor property group
+      for (j = 0, t = 0; j < problem->circproplist.size(); j++) {
+        if (problem->circproplist[j]->CircName == problem->nodelist[i]->InConductorName) {
+          t = j + 1;
+        }
+      }
+
+      fprintf(fp, "\t%i", t);
     }
 
-    // echo the start of the input file
-    for (i = 0; i < probdescstrings.size (); i++)
-    {
-        fprintf(fp,"%s", probdescstrings[i].c_str () );
+    fprintf(fp, "\n");
+  }
+
+  // write out segment list
+  fprintf(fp, "[NumSegments] = %i\n", (int) problem->linelist.size());
+  for (i = 0; i < problem->linelist.size(); i++) {
+    for (j = 0, t = 0; j < problem->lineproplist.size(); j++) {
+      if (problem->lineproplist[j]->BdryName == problem->linelist[i]->BoundaryMarkerName) {
+        t = j + 1;
+      }
     }
 
-    // write out node list
-    fprintf(fp,"[NumPoints] = %i\n", (int) problem->nodelist.size());
-    for(i=0; i<problem->nodelist.size(); i++)
-    {
-        for(j=0,t=0; j<problem->nodeproplist.size(); j++)
-            if(problem->nodeproplist[j]->PointName==problem->nodelist[i]->BoundaryMarkerName) t=j+1;
-        fprintf(fp,"%.17g\t%.17g\t%i\t%i",problem->nodelist[i]->x,problem->nodelist[i]->y,t,
-                problem->nodelist[i]->InGroup);
+    fprintf(fp, "%i\t%i\t", problem->linelist[i]->n0, problem->linelist[i]->n1);
 
-        if (problem->filetype == femm::FileType::HeatFlowFile
-                || problem->filetype == femm::FileType::ElectrostaticsFile )
-        {
-            // find and write number of conductor property group
-            for (j=0,t=0; j<problem->circproplist.size (); j++)
-                if (problem->circproplist[j]->CircName==problem->nodelist[i]->InConductorName) t=j+1;
-
-            fprintf(fp,"\t%i",t);
-        }
-
-        fprintf(fp,"\n");
+    if (problem->linelist[i]->MaxSideLength < 0) {
+      fprintf(fp, "-1\t");
+    } else {
+      fprintf(fp, "%.17g\t", problem->linelist[i]->MaxSideLength);
     }
 
-    // write out segment list
-    fprintf(fp,"[NumSegments] = %i\n", (int) problem->linelist.size());
-    for(i=0; i<problem->linelist.size(); i++)
+    fprintf(fp, "%i\t%i\t%i", t, problem->linelist[i]->Hidden, problem->linelist[i]->InGroup);
+
+    if (problem->filetype == femm::FileType::HeatFlowFile ||
+      problem->filetype == femm::FileType::ElectrostaticsFile)
     {
-        for(j=0,t=0; j<problem->lineproplist.size(); j++)
-            if(problem->lineproplist[j]->BdryName==problem->linelist[i]->BoundaryMarkerName) t=j+1;
-
-        fprintf(fp,"%i\t%i\t",problem->linelist[i]->n0,problem->linelist[i]->n1);
-
-        if(problem->linelist[i]->MaxSideLength<0)
-        {
-            fprintf(fp,"-1\t");
+      // find and write number of conductor property group
+      for (j = 0, t = 0; j < problem->circproplist.size(); j++) {
+        if (problem->circproplist[j]->CircName == problem->linelist[i]->InConductorName) {
+          t = j + 1;
         }
-        else
-        {
-            fprintf(fp,"%.17g\t",problem->linelist[i]->MaxSideLength);
-        }
-
-        fprintf(fp,"%i\t%i\t%i",t,problem->linelist[i]->Hidden,problem->linelist[i]->InGroup);
-
-        if (problem->filetype == femm::FileType::HeatFlowFile
-                || problem->filetype == femm::FileType::ElectrostaticsFile )
-        {
-            // find and write number of conductor property group
-            for(j=0,t=0;j<problem->circproplist.size ();j++)
-            {
-                if(problem->circproplist[j]->CircName==problem->linelist[i]->InConductorName) t = j + 1;
-            }
-            fprintf(fp,"\t%i",t);
-        }
-
-        fprintf(fp,"\n");
+      }
+      fprintf(fp, "\t%i", t);
     }
 
-    // write out arc segment list
-    fprintf(fp,"[NumArcSegments] = %i\n", (int) problem->arclist.size());
-    for(i=0; i<problem->arclist.size(); i++)
-    {
-        for(j=0,t=0; j<problem->lineproplist.size(); j++)
-            if(problem->lineproplist[j]->BdryName==problem->arclist[i]->BoundaryMarkerName) t=j+1;
+    fprintf(fp, "\n");
+  }
 
-        fprintf( fp,"%i\t%i\t%.17g\t%.17g\t%i\t%i\t%i",
-                 problem->arclist[i]->n0,
-                 problem->arclist[i]->n1,
-                 problem->arclist[i]->ArcLength,
-                 problem->arclist[i]->MaxSideLength,
-                 t,
-                 problem->arclist[i]->Hidden,
-                 problem->arclist[i]->InGroup );
-
-        if (problem->filetype == femm::FileType::HeatFlowFile
-                || problem->filetype == femm::FileType::ElectrostaticsFile )
-        {
-            // find and write number of conductor property group
-            for(j=0,t=0;j<problem->circproplist.size ();j++)
-                if(problem->circproplist[j]->CircName==problem->arclist[i]->InConductorName) t=j+1;
-            fprintf(fp,"\t%i",t);
-        }
-        else if (problem->filetype == femm::FileType::MagneticsFile)
-        {
-            std::cout << "fmesher.cpp SaveFEMFile, mySideLength: " << problem->arclist[i]->mySideLength << std::endl;
-            fprintf(fp,"\t%.17g",problem->arclist[i]->mySideLength);
-        }
-        fprintf(fp,"\n");
+  // write out arc segment list
+  fprintf(fp, "[NumArcSegments] = %i\n", (int) problem->arclist.size());
+  for (i = 0; i < problem->arclist.size(); i++) {
+    for (j = 0, t = 0; j < problem->lineproplist.size(); j++) {
+      if (problem->lineproplist[j]->BdryName == problem->arclist[i]->BoundaryMarkerName) {
+        t = j + 1;
+      }
     }
 
-    // write out list of holes;
-    for(i=0,j=0; i<problem->labellist.size(); i++)
+    fprintf(
+      fp, "%i\t%i\t%.17g\t%.17g\t%i\t%i\t%i",
+      problem->arclist[i]->n0,
+      problem->arclist[i]->n1,
+      problem->arclist[i]->ArcLength,
+      problem->arclist[i]->MaxSideLength,
+      t,
+      problem->arclist[i]->Hidden,
+      problem->arclist[i]->InGroup);
+
+    if (problem->filetype == femm::FileType::HeatFlowFile ||
+      problem->filetype == femm::FileType::ElectrostaticsFile)
     {
-        if(problem->labellist[i]->BlockTypeName=="<No Mesh>")
-        {
-            j++;
-        }
+      // find and write number of conductor property group
+      for (j = 0, t = 0; j < problem->circproplist.size(); j++) {
+        if (problem->circproplist[j]->CircName == problem->arclist[i]->InConductorName) {t = j + 1;
+        }}
+      fprintf(fp, "\t%i", t);
+    } else if (problem->filetype == femm::FileType::MagneticsFile) {
+      std::cout << "fmesher.cpp SaveFEMFile, mySideLength: " << problem->arclist[i]->mySideLength <<
+        std::endl;
+      fprintf(fp, "\t%.17g", problem->arclist[i]->mySideLength);
     }
+    fprintf(fp, "\n");
+  }
 
-    fprintf(fp,"[NumHoles] = %i\n",j);
-    for(i=0,k=0; i<problem->labellist.size(); i++)
-    {
-        if(problem->labellist[i]->BlockTypeName=="<No Mesh>")
-        {
-            fprintf(fp,"%.17g\t%.17g\t%i\n",problem->labellist[i]->x,problem->labellist[i]->y,
-                    problem->labellist[i]->InGroup);
-            k++;
-        }
+  // write out list of holes;
+  for (i = 0, j = 0; i < problem->labellist.size(); i++) {
+    if (problem->labellist[i]->BlockTypeName == "<No Mesh>") {
+      j++;
     }
+  }
 
-    fclose(fp);
+  fprintf(fp, "[NumHoles] = %i\n", j);
+  for (i = 0, k = 0; i < problem->labellist.size(); i++) {
+    if (problem->labellist[i]->BlockTypeName == "<No Mesh>") {
+      fprintf(
+        fp, "%.17g\t%.17g\t%i\n", problem->labellist[i]->x, problem->labellist[i]->y,
+        problem->labellist[i]->InGroup);
+      k++;
+    }
+  }
 
-    return true;
+  fclose(fp);
+
+  return true;
 }
 
 bool FMesher::LoadMesh(string PathName)
 {
-    int i,j,k,q,nl;
-    string pathname,rootname,infile;
-    FILE *fp;
-    char s[1024];
+  int i, j, k, q, nl;
+  string pathname, rootname, infile;
+  FILE * fp;
+  char s[1024];
 
-    // clear out the old mesh...
-    meshnode.clear();
-    meshline.clear();
-    greymeshline.clear();
+  // clear out the old mesh...
+  meshnode.clear();
+  meshline.clear();
+  greymeshline.clear();
 
-    pathname = PathName;
-    if (pathname.length()==0)
-    {
-        WarnMessage("No mesh to display");
-        return false;
-    }
+  pathname = PathName;
+  if (pathname.length() == 0) {
+    WarnMessage("No mesh to display");
+    return false;
+  }
 
-    rootname = pathname.substr(0,pathname.find_last_of('.'));
+  rootname = pathname.substr(0, pathname.find_last_of('.'));
 
-    //read meshnodes;
-    infile = rootname + ".node";
-    if((fp=fopen(infile.c_str(),"rt"))==NULL)
-    {
-        WarnMessage("No mesh to display");
-        return false;
-    }
-    fgets(s,1024,fp);
-    sscanf(s,"%i",&k);
-    meshnode.resize(k);
-    CNode node;
-    for(i=0; i<k; i++)
-    {
-        fgets(s,1024,fp);
-        sscanf(s,"%i\t%lf\t%lf",&j,&node.x,&node.y);
-        meshnode[i] = node.clone();
-    }
-    fclose(fp);
+  // read meshnodes;
+  infile = rootname + ".node";
+  if ((fp = fopen(infile.c_str(), "rt")) == NULL) {
+    WarnMessage("No mesh to display");
+    return false;
+  }
+  fgets(s, 1024, fp);
+  sscanf(s, "%i", &k);
+  meshnode.resize(k);
+  CNode node;
+  for (i = 0; i < k; i++) {
+    fgets(s, 1024, fp);
+    sscanf(s, "%i\t%lf\t%lf", &j, &node.x, &node.y);
+    meshnode[i] = node.clone();
+  }
+  fclose(fp);
 
-    //read meshlines;
-    infile = rootname + ".edge";
-    if((fp=fopen(infile.c_str(),"rt"))==NULL)
-    {
-        WarnMessage("No mesh to display");
-        return false;
-    }
-    fgets(s,1024,fp);
-    sscanf(s,"%i",&k);
-    meshline.resize(k);
-    fclose(fp);
+  // read meshlines;
+  infile = rootname + ".edge";
+  if ((fp = fopen(infile.c_str(), "rt")) == NULL) {
+    WarnMessage("No mesh to display");
+    return false;
+  }
+  fgets(s, 1024, fp);
+  sscanf(s, "%i", &k);
+  meshline.resize(k);
+  fclose(fp);
 
-    infile = rootname + ".ele";
-    if((fp=fopen(infile.c_str(),"rt"))==NULL)
-    {
-        WarnMessage("No mesh to display");
-        return false;
-    }
-    fgets(s,1024,fp);
-    sscanf(s,"%i",&k);
+  infile = rootname + ".ele";
+  if ((fp = fopen(infile.c_str(), "rt")) == NULL) {
+    WarnMessage("No mesh to display");
+    return false;
+  }
+  fgets(s, 1024, fp);
+  sscanf(s, "%i", &k);
 
-    IntPoint segm;
-    int n[3],p;
-    for(i=0,nl=0; i<k; i++)
-    {
-        fgets(s,1024,fp);
-        sscanf(s,"%i	%i	%i	%i	%i",&q,&n[0],&n[1],&n[2],&j);
-        for(q=0; q<3; q++)
-        {
-            p=q+1;
-            if(p==3) p=0;
-            if (n[p]>n[q])
-            {
-                segm.x = n[p];
-                segm.y = n[q];
+  IntPoint segm;
+  int n[3], p;
+  for (i = 0, nl = 0; i < k; i++) {
+    fgets(s, 1024, fp);
+    sscanf(s, "%i	%i	%i	%i	%i", &q, &n[0], &n[1], &n[2], &j);
+    for (q = 0; q < 3; q++) {
+      p = q + 1;
+      if (p == 3) {p = 0;}
+      if (n[p] > n[q]) {
+        segm.x = n[p];
+        segm.y = n[q];
 
-                if (j != 0)
-                {
-                    meshline[nl++] = MAKE_UNIQUE<femm::IntPoint>(segm);
-                }
-                else
-                {
-                    greymeshline.push_back(MAKE_UNIQUE<femm::IntPoint>(segm));
-                }
-            }
+        if (j != 0) {
+          meshline[nl++] = MAKE_UNIQUE<femm::IntPoint>(segm);
+        } else {
+          greymeshline.push_back(MAKE_UNIQUE<femm::IntPoint>(segm));
         }
+      }
     }
-    meshline.resize(nl);
-    fclose(fp);
+  }
+  meshline.resize(nl);
+  fclose(fp);
 
-    // clear out temporary files
-    infile = rootname + ".ele";
-    remove(infile.c_str());
-    infile = rootname + ".node";
-    remove(infile.c_str());
-    infile = rootname + ".edge";
-    remove(infile.c_str());
-    infile = rootname + ".pbc";
-    remove(infile.c_str());
-    infile = rootname + ".poly";
-    remove(infile.c_str());
+  // clear out temporary files
+  infile = rootname + ".ele";
+  remove(infile.c_str());
+  infile = rootname + ".node";
+  remove(infile.c_str());
+  infile = rootname + ".edge";
+  remove(infile.c_str());
+  infile = rootname + ".pbc";
+  remove(infile.c_str());
+  infile = rootname + ".poly";
+  remove(infile.c_str());
 
-    return true;
+  return true;
 }
 
-//bool FMesher::ScanPreferences()
-//{
+// bool FMesher::ScanPreferences()
+// {
 //	FILE *fp;
 //	CStdString fname;
 //
@@ -443,60 +429,59 @@ bool FMesher::LoadMesh(string PathName)
 //	}
 //
 //	return false;
-//}
+// }
 
 
-//--------------------------------------------------------------
+// --------------------------------------------------------------
 
 
-//void CFemmeView::lnuMakeMesh()
-//{
+// void CFemmeView::lnuMakeMesh()
+// {
 //	OnMakeMesh();
-//}
+// }
 
 
-
-//void CFemmeView::lnu_purge_mesh()
-//{
+// void CFemmeView::lnu_purge_mesh()
+// {
 //	OnPurgemesh();
-//}
+// }
 //
-//void CFemmeView::lnu_show_mesh()
-//{
+// void CFemmeView::lnu_show_mesh()
+// {
 //	OnShowMesh();
-//}
+// }
 //
-//void CFemmeView::lnu_analyze(int bShow)
-//{
+// void CFemmeView::lnu_analyze(int bShow)
+// {
 //	if (bShow) bLinehook=HiddenLua;
 //	else bLinehook=NormalLua;
 //	OnMenuAnalyze();
-//}
+// }
 //
-//void CFemmeView::lua_zoomnatural()
-//{
+// void CFemmeView::lua_zoomnatural()
+// {
 //	OnZoomNatural();
-//}
+// }
 //
-//void CFemmeView::lua_zoomout()
-//{
+// void CFemmeView::lua_zoomout()
+// {
 //	OnZoomOut();
-//}
+// }
 //
-//void CFemmeView::lua_zoomin()
-//{
+// void CFemmeView::lua_zoomin()
+// {
 //	OnZoomIn();
-//}
+// }
 
-//bool FMesher::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
-//{
+// bool FMesher::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+// {
 //	// TODO: Add your specialized code here and/or call the base class
 //	if (bLinehook!=false) return true;
 //	return CDocument::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
-//}
+// }
 
-//void FMesher::OnEditExterior()
-//{
+// void FMesher::OnEditExterior()
+// {
 //	// TODO: Add your command handler code here
 //	CExteriorProps dlg;
 //
@@ -509,12 +494,11 @@ bool FMesher::LoadMesh(string PathName)
 //		extRi=dlg.m_Ri;
 //		extZo=dlg.m_Zo;
 //	}
-//}
+// }
 
 
-
-//void FMesher::OnEditMatprops()
-//{
+// void FMesher::OnEditMatprops()
+// {
 //	// TODO: Add your command handler code here
 //	CPtProp pProp;
 //
@@ -523,10 +507,10 @@ bool FMesher::LoadMesh(string PathName)
 //	pProp.ProblemType=ProblemType;
 //
 //	pProp.DoModal();
-//}
+// }
 
-//void FMesher::OnEditPtprops()
-//{
+// void FMesher::OnEditPtprops()
+// {
 //	// TODO: Add your command handler code here
 //	CPtProp pProp;
 //
@@ -534,10 +518,10 @@ bool FMesher::LoadMesh(string PathName)
 //	pProp.PropType=0;
 //
 //	pProp.DoModal();
-//}
+// }
 
-//void FMesher::OnEditSegprops()
-//{
+// void FMesher::OnEditSegprops()
+// {
 //	// TODO: Add your command handler code here
 //	CPtProp pProp;
 //
@@ -545,10 +529,10 @@ bool FMesher::LoadMesh(string PathName)
 //	pProp.PropType=1;
 //	pProp.ProblemType=ProblemType;
 //	pProp.DoModal();
-//}
+// }
 
-//void FMesher::OnEditCircprops()
-//{
+// void FMesher::OnEditCircprops()
+// {
 //	CPtProp pProp;
 //
 //	pProp.pcircproplist=&circproplist;
@@ -556,10 +540,10 @@ bool FMesher::LoadMesh(string PathName)
 //	pProp.PropType=3;
 //
 //	pProp.DoModal();
-//}
+// }
 
-//bool FMesher::OpBlkDlg()
-//{
+// bool FMesher::OpBlkDlg()
+// {
 //	int i,j,k,nselected,cselected;
 //	double a;
 //	COpBlkDlg zDlg;
@@ -637,10 +621,10 @@ bool FMesher::LoadMesh(string PathName)
 //	}
 //
 //	return false;
-//}
+// }
 
-//void FMesher::OpNodeDlg()
-//{
+// void FMesher::OpNodeDlg()
+// {
 //	int i,k,nselected;
 //	COpNodeDlg zDlg;
 //
@@ -678,10 +662,10 @@ bool FMesher::LoadMesh(string PathName)
 //			}
 //		}
 //	}
-//}
+// }
 
-//void FMesher::OpSegDlg()
-//{
+// void FMesher::OpSegDlg()
+// {
 //	int i,j,k,nselected;
 //	COpSegDlg zDlg;
 //
@@ -749,10 +733,10 @@ bool FMesher::LoadMesh(string PathName)
 //			}
 //		}
 //	}
-//}
+// }
 
-//void FMesher::OpArcSegDlg()
-//{
+// void FMesher::OpArcSegDlg()
+// {
 //	int i,j,k,nselected;
 //	COpArcSegDlg zDlg;
 //
@@ -810,10 +794,10 @@ bool FMesher::LoadMesh(string PathName)
 //			}
 //		}
 //	}
-//}
+// }
 
-//void FMesher::OpGrpDlg()
-//{
+// void FMesher::OpGrpDlg()
+// {
 //	COpGrp dlg;
 //	bool bFlag=false;
 //	int nsel=0;
@@ -897,9 +881,9 @@ bool FMesher::LoadMesh(string PathName)
 //
 //	}
 //
-//}
+// }
 
 string fmesher::triangleVersionString()
 {
-    return TRIANGLE_VERSION;
+  return TRIANGLE_VERSION;
 }

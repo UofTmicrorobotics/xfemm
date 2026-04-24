@@ -38,26 +38,26 @@
 namespace fmesher
 {
 
-//*************************************************************************//
+// *************************************************************************//
 //                                                                         //
 //                    CPeriodicBoundary definitions                        //
 //                                                                         //
-//*************************************************************************//
+// *************************************************************************//
 
 CPeriodicBoundary::CPeriodicBoundary()
 {
-    BdryName="";
-    BdryFormat=0;
-    antiPeriodic=false;
-    nseg=0;
-    narc=0;
-    seg[0]=0;
-    seg[1]=0;
+  BdryName = "";
+  BdryFormat = 0;
+  antiPeriodic = false;
+  nseg = 0;
+  narc = 0;
+  seg[0] = 0;
+  seg[1] = 0;
 }
 
 std::unique_ptr<CPeriodicBoundary> CPeriodicBoundary::clone() const
 {
-    return std::unique_ptr<CPeriodicBoundary>(new CPeriodicBoundary(*this));
+  return std::unique_ptr<CPeriodicBoundary>(new CPeriodicBoundary(*this));
 }
 
-} // namespace femme
+}  // namespace femme

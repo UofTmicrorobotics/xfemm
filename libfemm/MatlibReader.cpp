@@ -30,93 +30,106 @@
 using namespace femm;
 
 MatlibReader::MatlibReader(FileType filetype)
-    : type(filetype)
+: type(filetype)
 {
-    assert(filetype != FileType::Unknown && filetype != FileType::CurrentFlowFile);
+  assert(filetype != FileType::Unknown && filetype != FileType::CurrentFlowFile);
 }
 
-MatlibParseResult MatlibReader::parse(const std::string &libraryFile, std::ostream &err, const std::string &filter)
+MatlibParseResult MatlibReader::parse(
+  const std::string & libraryFile,
+  std::ostream & err,
+  const std::string & filter)
 {
-    std::ifstream input;
-    input.open(libraryFile.c_str(), std::ifstream::in);
-    if (!input.is_open())
+  std::ifstream input;
+  input.open(libraryFile.c_str(), std::ifstream::in);
+  if (!input.is_open()) {
+    err << "Couldn't open " + libraryFile + "\n";
+    return MatlibParseResult::FileError;
+  }
+
+  std::stringstream err_internal;
+  while (input && err_internal.str().empty()) {
+    std::string line;
+    std::getline(input, line);
+    trim(line);
+    if (line.empty()) {
+      continue;
+    }
+    to_lower(line);
+    if (begins_with(line, "<beginfolder>") ||
+      begins_with(line, "<foldername>") ||
+      begins_with(line, "<folderurl>") ||
+      begins_with(line, "<foldervendor>") ||
+      begins_with(line, "<endfolder>"))
     {
-        err << "Couldn't open " + libraryFile + "\n";
-        return MatlibParseResult::FileError;
+      continue;
     }
 
-    std::stringstream err_internal;
-    while (input && err_internal.str().empty())
-    {
-        std::string line;
-        std::getline(input, line);
-        trim(line);
-        if (line.empty())
-            continue;
-        to_lower(line);
-        if ( begins_with(line,"<beginfolder>")
-             || begins_with(line, "<foldername>")
-             || begins_with(line, "<folderurl>")
-             || begins_with(line, "<foldervendor>")
-             || begins_with(line, "<endfolder>"))
-            continue;
-
-        if ( line != "<beginblock>" )
-        {
-            err << "Invalid material library file: expected '<beginblock>', but got '"
-                << line << "'!\n";
-            return MatlibParseResult::ParseFolderError;
-        }
-        std::unique_ptr<CMaterialProp> prop;
-        // in .fem files, material properties are identified by context;
-        // in matlib.dat files, we need to read the beginBlock line, requiring the fromStream method to go without that line.
-        switch (type) {
-        case FileType::ElectrostaticsFile:
-                prop = MAKE_UNIQUE<CSMaterialProp>(CSMaterialProp::fromStream(input, err_internal, PropertyParseMode::NoBeginBlock));
-                break;
-        case FileType::HeatFlowFile:
-                prop = MAKE_UNIQUE<CHMaterialProp>(CHMaterialProp::fromStream(input, err_internal, PropertyParseMode::NoBeginBlock));
-                break;
-        case FileType::MagneticsFile:
-                prop = MAKE_UNIQUE<CMSolverMaterialProp>(CMSolverMaterialProp::fromStream(input, err_internal, PropertyParseMode::NoBeginBlock));
-                break;
-        default:
-                err << "MatlibReader: File type not implemented!\n";
-                break;
-        }
-        if ( ! err_internal.str().empty() )
-        {
-            err << err_internal.str();
-            return  MatlibParseResult::ParseMaterialError;
-        }
-        if (filter.empty() || prop->BlockName == filter)
-        {
-            m_library[prop->BlockName] = std::move(prop);
-        }
+    if (line != "<beginblock>") {
+      err << "Invalid material library file: expected '<beginblock>', but got '"
+          << line << "'!\n";
+      return MatlibParseResult::ParseFolderError;
     }
-    return  MatlibParseResult::OK;
+    std::unique_ptr<CMaterialProp> prop;
+    // in .fem files, material properties are identified by context;
+    // in matlib.dat files, we need to read the beginBlock line, requiring the fromStream method to go without that line.
+    switch (type) {
+      case FileType::ElectrostaticsFile:
+        prop =
+          MAKE_UNIQUE<CSMaterialProp>(
+          CSMaterialProp::fromStream(
+            input, err_internal,
+            PropertyParseMode::NoBeginBlock));
+        break;
+      case FileType::HeatFlowFile:
+        prop =
+          MAKE_UNIQUE<CHMaterialProp>(
+          CHMaterialProp::fromStream(
+            input, err_internal,
+            PropertyParseMode::NoBeginBlock));
+        break;
+      case FileType::MagneticsFile:
+        prop =
+          MAKE_UNIQUE<CMSolverMaterialProp>(
+          CMSolverMaterialProp::fromStream(
+            input, err_internal,
+            PropertyParseMode::NoBeginBlock));
+        break;
+      default:
+        err << "MatlibReader: File type not implemented!\n";
+        break;
+    }
+    if (!err_internal.str().empty() ) {
+      err << err_internal.str();
+      return MatlibParseResult::ParseMaterialError;
+    }
+    if (filter.empty() || prop->BlockName == filter) {
+      m_library[prop->BlockName] = std::move(prop);
+    }
+  }
+  return MatlibParseResult::OK;
 }
 
-const CMaterialProp *MatlibReader::getMaterial(const std::string &materialName) const
+const CMaterialProp * MatlibReader::getMaterial(const std::string & materialName) const
 {
-    const auto entry = m_library.find(materialName);
-    if (entry == m_library.end())
-        return nullptr;
-    else
-        return entry->second.get();
+  const auto entry = m_library.find(materialName);
+  if (entry == m_library.end()) {
+    return nullptr;
+  } else {
+    return entry->second.get();
+  }
 }
 
-CMaterialProp *MatlibReader::takeMaterial(const std::string &materialName)
+CMaterialProp * MatlibReader::takeMaterial(const std::string & materialName)
 {
-    auto entry = m_library.find(materialName);
-    if (entry == m_library.end())
-        return nullptr;
-    else
-    {
-        CMaterialProp *result = entry->second.release();
-        m_library.erase(entry);
-        return result;
-    }
+  auto entry = m_library.find(materialName);
+  if (entry == m_library.end()) {
+    return nullptr;
+  } else {
+    CMaterialProp * result = entry->second.release();
+    m_library.erase(entry);
+    return result;
+  }
 }
 
 // vi:expandtab:tabstop=4 shiftwidth=4:

@@ -1,7 +1,6 @@
-
-//#undef min
-//#undef max
-//#define NOMINMAX
+// #undef min
+// #undef max
+// #define NOMINMAX
 /*
    This code is a modified version of an algorithm
    forming part of the software program Finite
@@ -28,57 +27,53 @@
 #include <math.h>
 #include <string.h>
 #include "femmcomplex.h"
-//#include "spars.h"
-//#include "mmesh.h"
+// #include "spars.h"
+// #include "mmesh.h"
 #include "feasolver.h"
 #include "fsolver.h"
 
-//using namespace std;
+// using namespace std;
 
-//#include "lua.h"
+// #include "lua.h"
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
-    FSolver theFSolver;
-    char PathName[512];
+  FSolver theFSolver;
+  char PathName[512];
 //    int i;
 
-    if (argc < 2)
-    {
-        // request the file name from the user
-        printf("Enter fem file name without extension:\n");
+  if (argc < 2) {
+    // request the file name from the user
+    printf("Enter fem file name without extension:\n");
 
-        //char tempFilePath[512];
+    // char tempFilePath[512];
 
-        //scanf("%s", tempFilePath);
+    // scanf("%s", tempFilePath);
 
-        fgets(PathName, 512, stdin);
-        char *pos;
-        if ((pos=strchr(PathName, '\n')) != NULL)
-            *pos = '\0';
-
-        //PathName = tempFilePath;
-
-    }
-    else if(argc > 2)
-    {
-        printf("Too many arguments");
-    }
-    else
-    {
-        strcpy(PathName, argv[1]);
+    fgets(PathName, 512, stdin);
+    char * pos;
+    if ((pos = strchr(PathName, '\n')) != NULL) {
+      *pos = '\0';
     }
 
-    theFSolver.PathName = PathName;
+    // PathName = tempFilePath;
 
-    if (theFSolver.LoadProblemFile () != true)
-    {
-        theFSolver.WarnMessage("problem loading .fem file\n");
-        return 1;
-    }
+  } else if (argc > 2) {
+    printf("Too many arguments");
+  } else {
+    strcpy(PathName, argv[1]);
+  }
 
-    if ( !theFSolver.runSolver(true))
-        return 2;
+  theFSolver.PathName = PathName;
 
-    return 0;
+  if (theFSolver.LoadProblemFile() != true) {
+    theFSolver.WarnMessage("problem loading .fem file\n");
+    return 1;
+  }
+
+  if (!theFSolver.runSolver(true)) {
+    return 2;
+  }
+
+  return 0;
 }

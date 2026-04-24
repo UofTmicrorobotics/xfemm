@@ -41,26 +41,26 @@ using namespace femm;
 
 // CNode construction
 femm::CNode::CNode()
-    : x(0.)
-    , y(0.)
-    , InGroup(0)
-    , IsSelected(false)
-    , BoundaryMarker(-1)
-    , InConductor(-1)
-    , BoundaryMarkerName("<None>")
-    , InConductorName("<None>")
+: x(0.)
+  , y(0.)
+  , InGroup(0)
+  , IsSelected(false)
+  , BoundaryMarker(-1)
+  , InConductor(-1)
+  , BoundaryMarkerName("<None>")
+  , InConductorName("<None>")
 {
 }
 
 CNode::CNode(double x, double y)
-    : x(x)
-    , y(y)
-    , InGroup(0)
-    , IsSelected(false)
-    , BoundaryMarker(-1)
-    , InConductor(-1)
-    , BoundaryMarkerName("<None>")
-    , InConductorName("<None>")
+: x(x)
+  , y(y)
+  , InGroup(0)
+  , IsSelected(false)
+  , BoundaryMarker(-1)
+  , InConductor(-1)
+  , BoundaryMarkerName("<None>")
+  , InConductorName("<None>")
 {
 }
 
@@ -70,31 +70,30 @@ CNode::~CNode()
 
 CComplex femm::CNode::CC() const
 {
-    return CComplex(x,y);
+  return CComplex(x, y);
 }
 
 double femm::CNode::GetDistance(const double xo, const double yo) const
 {
-    return sqrt((x-xo)*(x-xo) + (y-yo)*(y-yo));
+  return sqrt((x - xo) * (x - xo) + (y - yo) * (y - yo));
 }
 
 void femm::CNode::ToggleSelect()
 {
-    IsSelected = ! IsSelected;
+  IsSelected = !IsSelected;
 }
 
 std::unique_ptr<CNode> CNode::clone() const
 {
-    return std::unique_ptr<CNode>(new CNode(*this));
+  return std::unique_ptr<CNode>(new CNode(*this));
 }
 
 bool CNode::hasBoundaryMarker() const
 {
-    return (BoundaryMarker!=-1);
+  return BoundaryMarker != -1;
 }
 
 bool CNode::isInConductor() const
 {
-    return (InConductor!=-1);
+  return InConductor != -1;
 }
-

@@ -6,73 +6,64 @@
 
 using namespace std;
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
-    string mystr;
-    FPProc testFPProc;
-    CComplex out;
+  string mystr;
+  FPProc testFPProc;
+  CComplex out;
 
-    char PathName[512];
+  char PathName[512];
 //    int i;
 
-    if (argc < 2)
-    {
-        // request the file name from the user
-        printf("Enter ans file name:\n");
+  if (argc < 2) {
+    // request the file name from the user
+    printf("Enter ans file name:\n");
 
-        //char tempFilePath[512];
+    // char tempFilePath[512];
 
-        //scanf("%s", tempFilePath);
+    // scanf("%s", tempFilePath);
 
-        fgets(PathName, 512, stdin);
-        char *pos;
-        if ((pos=strchr(PathName, '\n')) != NULL)
-            *pos = '\0';
-
-        //PathName = tempFilePath;
-
-    }
-    else if(argc > 2)
-    {
-        printf("Too many arguments");
-    }
-    else
-    {
-        strcpy(PathName, argv[1]);
+    fgets(PathName, 512, stdin);
+    char * pos;
+    if ((pos = strchr(PathName, '\n')) != NULL) {
+      *pos = '\0';
     }
 
-    //getline (cin, mystr);
+    // PathName = tempFilePath;
 
-    //testFPProc.OpenDocument(mystr);
-    int test = testFPProc.OpenDocument(PathName);
+  } else if (argc > 2) {
+    printf("Too many arguments");
+  } else {
+    strcpy(PathName, argv[1]);
+  }
 
-    if (test==true)
-    {
-        // Deselect all blocks in problem
-        for(int i=0; i<(int)(testFPProc.blocklist.size()); i++)
-        {
-            if (testFPProc.blocklist[i].IsSelected == true)
-            {
-                testFPProc.blocklist[i].IsSelected = false;
-            }
-        }
+  // getline (cin, mystr);
 
-        // select all blocks with group number 3
-        for(int j=0; j<(int)(testFPProc.blocklist.size()); j++)
-        {
-            if (testFPProc.blocklist[j].InGroup==3)
-            {
-                testFPProc.blocklist[j].ToggleSelect();
-            }
+  // testFPProc.OpenDocument(mystr);
+  int test = testFPProc.OpenDocument(PathName);
 
-            testFPProc.bHasMask = false;
-        }
-
-        // perform integral
-        testFPProc.MakeMask();
-
-        out = testFPProc.BlockIntegral(18);
+  if (test == true) {
+    // Deselect all blocks in problem
+    for (int i = 0; i < (int)(testFPProc.blocklist.size()); i++) {
+      if (testFPProc.blocklist[i].IsSelected == true) {
+        testFPProc.blocklist[i].IsSelected = false;
+      }
     }
 
-    return 0;
+    // select all blocks with group number 3
+    for (int j = 0; j < (int)(testFPProc.blocklist.size()); j++) {
+      if (testFPProc.blocklist[j].InGroup == 3) {
+        testFPProc.blocklist[j].ToggleSelect();
+      }
+
+      testFPProc.bHasMask = false;
+    }
+
+    // perform integral
+    testFPProc.MakeMask();
+
+    out = testFPProc.BlockIntegral(18);
+  }
+
+  return 0;
 }

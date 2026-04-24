@@ -35,26 +35,26 @@ femmsolver::CAirGapElement::~CAirGapElement()
 
 
 femmsolver::CAirGapElement::CAirGapElement()
-    : BdryName("")
-    , BdryFormat(0)
-    , totalArcElements(0)
-    , totalArcLength(0)
-    , ri(0)
-    , ro(0)
-    , InnerAngle(0)
-    , OuterAngle(0)
-    , agc(0)
+: BdryName("")
+  , BdryFormat(0)
+  , totalArcElements(0)
+  , totalArcLength(0)
+  , ri(0)
+  , ro(0)
+  , InnerAngle(0)
+  , OuterAngle(0)
+  , agc(0)
 {
 }
 
 std::unique_ptr<femmsolver::CAirGapElement> femmsolver::CAirGapElement::clone() const
 {
-    return std::unique_ptr<femmsolver::CAirGapElement>(new femmsolver::CAirGapElement(*this));
+  return std::unique_ptr<femmsolver::CAirGapElement>(new femmsolver::CAirGapElement(*this));
 }
 
 
-//femmsolver::CAirGapElement femmsolver::CMElement::fromStream(std::istream &input, std::ostream &)
-//{
+// femmsolver::CAirGapElement femmsolver::CMElement::fromStream(std::istream &input, std::ostream &)
+// {
 //    std::string line;
 //    // read whole line to prevent reading from the next line if a line is malformed/too short
 //    std::getline(input, line);
@@ -69,5 +69,4 @@ std::unique_ptr<femmsolver::CAirGapElement> femmsolver::CAirGapElement::clone() 
 //    inputStream >> e.lbl;
 //
 //    return e;
-//}
-
+// }

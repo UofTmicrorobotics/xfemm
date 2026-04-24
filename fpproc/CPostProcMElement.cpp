@@ -22,16 +22,12 @@
 #include "CPostProcMElement.h"
 
 femmpostproc::CPostProcMElement::CPostProcMElement()
-    : femmsolver::CMElement()
-    , B1p(0.)
-    , B2p(0.)
+: femmsolver::CMElement()
+  , B1p(0.)
+  , B2p(0.)
 {
 }
 
 femmpostproc::CPostProcMElement::~CPostProcMElement()
 {
 }
-
-
-
-

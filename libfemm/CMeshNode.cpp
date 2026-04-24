@@ -44,98 +44,98 @@ using femm::trim;
 
 // CMeshNode construction
 CMeshNode::CMeshNode()
-    : x(0.)
-    , y(0.)
-    , msk(0)
-    , Q(0)
-    , IsSelected(false)
+: x(0.)
+  , y(0.)
+  , msk(0)
+  , Q(0)
+  , IsSelected(false)
 {
 }
 
 CComplex CMeshNode::CC() const
 {
-    return (x+I*y);
+  return x + I * y;
 }
 
 void CMeshNode::ToggleSelect()
 {
-    IsSelected = ! IsSelected;
+  IsSelected = !IsSelected;
 }
 
 double CMeshNode::GetDistance(const double xo, const double yo) const
 {
-    return sqrt((x-xo)*(x-xo) + (y-yo)*(y-yo));
+  return sqrt((x - xo) * (x - xo) + (y - yo) * (y - yo));
 }
 
 CMMeshNode::CMMeshNode()
-    : CMeshNode()
-    , A(0)
-    , Aprev(0)
+: CMeshNode()
+  , A(0)
+  , Aprev(0)
 {
-    Q = -2; // hack for PostProcessor::makeMask; Q is not used in magnetics problems
+  Q = -2;   // hack for PostProcessor::makeMask; Q is not used in magnetics problems
 }
 
-CMMeshNode CMMeshNode::fromStream(istream &input, ostream &)
+CMMeshNode CMMeshNode::fromStream(istream & input, ostream &)
 {
-    std::string line;
-    // read whole line to prevent reading from the next line if a line is malformed/too short
-    std::getline(input, line);
-    trim(line);
-    std::istringstream inputStream(line);
+  std::string line;
+  // read whole line to prevent reading from the next line if a line is malformed/too short
+  std::getline(input, line);
+  trim(line);
+  std::istringstream inputStream(line);
 
-    CMMeshNode n;
-    // scan in data
-    inputStream >> n.x;
-    inputStream >> n.y;
-    inputStream >> n.A.re;
-    inputStream >> n.A.im; // 4th field only applies when problem->Frequency is 0
+  CMMeshNode n;
+  // scan in data
+  inputStream >> n.x;
+  inputStream >> n.y;
+  inputStream >> n.A.re;
+  inputStream >> n.A.im;   // 4th field only applies when problem->Frequency is 0
 
-    return n;
+  return n;
 }
 
 CHMeshNode::CHMeshNode()
-    : CMeshNode()
-    , T(0)
+: CMeshNode()
+  , T(0)
 {
 }
 
-CHMeshNode CHMeshNode::fromStream(istream &input, ostream &)
+CHMeshNode CHMeshNode::fromStream(istream & input, ostream &)
 {
-    std::string line;
-    // read whole line to prevent reading from the next line if a line is malformed/too short
-    std::getline(input, line);
-    trim(line);
-    std::istringstream inputStream(line);
+  std::string line;
+  // read whole line to prevent reading from the next line if a line is malformed/too short
+  std::getline(input, line);
+  trim(line);
+  std::istringstream inputStream(line);
 
-    CHMeshNode n;
-    // scan in data
-    inputStream >> n.x;
-    inputStream >> n.y;
-    inputStream >> n.T;
-    inputStream >> n.Q;
+  CHMeshNode n;
+  // scan in data
+  inputStream >> n.x;
+  inputStream >> n.y;
+  inputStream >> n.T;
+  inputStream >> n.Q;
 
-    return n;
+  return n;
 }
 
 CSMeshNode::CSMeshNode()
-    : CMeshNode()
+: CMeshNode()
 {
 }
 
-CSMeshNode CSMeshNode::fromStream(istream &input, ostream &)
+CSMeshNode CSMeshNode::fromStream(istream & input, ostream &)
 {
-    std::string line;
-    // read whole line to prevent reading from the next line if a line is malformed/too short
-    std::getline(input, line);
-    trim(line);
-    std::istringstream inputStream(line);
+  std::string line;
+  // read whole line to prevent reading from the next line if a line is malformed/too short
+  std::getline(input, line);
+  trim(line);
+  std::istringstream inputStream(line);
 
-    CSMeshNode n;
-    // scan in data
-    inputStream >> n.x;
-    inputStream >> n.y;
-    inputStream >> n.V;
-    inputStream >> n.Q;
+  CSMeshNode n;
+  // scan in data
+  inputStream >> n.x;
+  inputStream >> n.y;
+  inputStream >> n.V;
+  inputStream >> n.Q;
 
-    return n;
+  return n;
 }

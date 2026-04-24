@@ -30,36 +30,34 @@
 */
 #include "CCommonPoint.h"
 
-#include <utility>   //std::swap
+#include <utility>   // std::swap
 using std::swap;
 
 // CCommonPoint construction
 femm::CCommonPoint::CCommonPoint()
-	: x(0),y(0),t(0)
+: x(0), y(0), t(0)
 {
 }
 
 void femm::CCommonPoint::sortXY()
 {
-    if(x>y)
-    {
-        swap(x,y);
-    }
+  if (x > y) {
+    swap(x, y);
+  }
 }
 
 void femm::CCommonPoint::setSortedValues(int v1, int v2)
 {
-    if (v1<v2)
-    {
-        x = v1;
-        y = v2;
-    } else {
-        x = v2;
-        y = v1;
-    }
+  if (v1 < v2) {
+    x = v1;
+    y = v2;
+  } else {
+    x = v2;
+    y = v1;
+  }
 }
 
 std::unique_ptr<femm::CCommonPoint> femm::CCommonPoint::clone() const
 {
-    return std::unique_ptr<femm::CCommonPoint>(new femm::CCommonPoint(*this));
+  return std::unique_ptr<femm::CCommonPoint>(new femm::CCommonPoint(*this));
 }

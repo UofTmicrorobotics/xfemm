@@ -25,80 +25,80 @@
 
 const std::shared_ptr<femm::FemmProblem> femmcli::FemmState::femmDocument()
 {
-    return current.document;
+  return current.document;
 }
 
 void femmcli::FemmState::setDocument(std::shared_ptr<femm::FemmProblem> doc)
 {
-    // FIXME(ZaJ): maybe it's better to deactivate the current problem set instead?
-    //            -> create a test case and cross-check with femm
-    // invalidate current state
-    close();
-    current.document = doc;
+  // FIXME(ZaJ): maybe it's better to deactivate the current problem set instead?
+  //            -> create a test case and cross-check with femm
+  // invalidate current state
+  close();
+  current.document = doc;
 }
 
 const std::shared_ptr<femm::PProcIface> femmcli::FemmState::getPostProcessor()
 {
-    if (!current.postProcessor && current.document)
-    {
-        if (current.document->filetype == femm::FileType::MagneticsFile)
-            current.postProcessor = std::make_shared<FPProc>();
-        if (current.document->filetype == femm::FileType::ElectrostaticsFile)
-            throw std::invalid_argument("Electrostatics post-processor is not implemented.");
-        if (current.document->filetype == femm::FileType::HeatFlowFile)
-            throw std::invalid_argument("Heat flow post-processor is not implemented.");
+  if (!current.postProcessor && current.document) {
+    if (current.document->filetype == femm::FileType::MagneticsFile) {
+      current.postProcessor = std::make_shared<FPProc>();
     }
-    return current.postProcessor;
+    if (current.document->filetype == femm::FileType::ElectrostaticsFile) {
+      throw std::invalid_argument("Electrostatics post-processor is not implemented.");
+    }
+    if (current.document->filetype == femm::FileType::HeatFlowFile) {
+      throw std::invalid_argument("Heat flow post-processor is not implemented.");
+    }
+  }
+  return current.postProcessor;
 }
 
 const std::shared_ptr<fmesher::FMesher> femmcli::FemmState::getMesher()
 {
-    if (!current.mesher || current.mesher->problem != current.document)
-    {
-        current.mesher = std::make_shared<fmesher::FMesher>(current.document);
-    }
-    return current.mesher;
+  if (!current.mesher || current.mesher->problem != current.document) {
+    current.mesher = std::make_shared<fmesher::FMesher>(current.document);
+  }
+  return current.mesher;
 }
 
 void femmcli::FemmState::closeSolution()
 {
-    current.postProcessor.reset();
+  current.postProcessor.reset();
 }
 
 void femmcli::FemmState::close()
 {
-    current.document.reset();
-    current.mesher.reset();
-    current.postProcessor.reset();
+  current.document.reset();
+  current.mesher.reset();
+  current.postProcessor.reset();
 }
 
 void femmcli::FemmState::deactivateProblemSet()
 {
-    inactiveProblems.push_back(current);
-    current = ProblemSet();
+  inactiveProblems.push_back(current);
+  current = ProblemSet();
 }
 
-bool femmcli::FemmState::activateProblemSet(const std::string &title)
+bool femmcli::FemmState::activateProblemSet(const std::string & title)
 {
-    for (auto it=inactiveProblems.cbegin()
-         , end = inactiveProblems.cend()
-         ; it != end
-         ; ++it)
-    {
-        if (it->document->getTitle() == title)
-        {
-            // deactivate current problem set
-            inactiveProblems.push_back(current);
-            // activate problem set
-            current = *it;
-            inactiveProblems.erase(it);
-            return true;
-        }
+  for (auto it = inactiveProblems.cbegin(),
+    end = inactiveProblems.cend()
+    ; it != end
+    ; ++it)
+  {
+    if (it->document->getTitle() == title) {
+      // deactivate current problem set
+      inactiveProblems.push_back(current);
+      // activate problem set
+      current = *it;
+      inactiveProblems.erase(it);
+      return true;
     }
-    return false;
+  }
+  return false;
 }
 
 bool femmcli::FemmState::isValid() const
 {
-    return (nullptr != current.document.get());
+  return nullptr != current.document.get();
 }

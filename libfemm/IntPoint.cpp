@@ -22,77 +22,73 @@
 
 #include "IntPoint.h"
 
-//using namespace std;
+// using namespace std;
 
-femm::IntPoint::IntPoint ()
-    : x(0), y(0)
+femm::IntPoint::IntPoint()
+: x(0), y(0)
 {
 }
 
-femm::IntPoint::IntPoint (long a, long b)
-    : x(a), y(b)
+femm::IntPoint::IntPoint(long a, long b)
+: x(a), y(b)
 {
 }
 
-femm::IntPoint femm::IntPoint::operator+ (femm::IntPoint point) {
+femm::IntPoint femm::IntPoint::operator+(femm::IntPoint point)
+{
   femm::IntPoint temp;
   temp.x = x + point.x;
   temp.y = y + point.y;
-  return (temp);
+  return temp;
 }
 
-femm::IntPoint femm::IntPoint::operator- (femm::IntPoint point) {
+femm::IntPoint femm::IntPoint::operator-(femm::IntPoint point)
+{
   femm::IntPoint temp;
   temp.x = x - point.x;
   temp.y = y - point.y;
-  return (temp);
+  return temp;
 }
 
-bool femm::IntPoint::operator==( femm::IntPoint point)
+bool femm::IntPoint::operator==(femm::IntPoint point)
 {
-	if ((x == point.x) & (y == point.y))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+  if ((x == point.x) & (y == point.y)) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
-bool femm::IntPoint::operator!=( femm::IntPoint point)
+bool femm::IntPoint::operator!=(femm::IntPoint point)
 {
-	if ((x == point.x) & (y == point.y))
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+  if ((x == point.x) & (y == point.y)) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
-void femm::IntPoint::operator+=( femm::IntPoint point)        // +ve translation
+void femm::IntPoint::operator+=(femm::IntPoint point)        // +ve translation
 {
-    x += point.x;
-    y += point.y;
+  x += point.x;
+  y += point.y;
 }
 
-void femm::IntPoint::operator-=( femm::IntPoint point)        // +ve translation
+void femm::IntPoint::operator-=(femm::IntPoint point)        // +ve translation
 {
-    x -= point.x;
-    y -= point.y;
+  x -= point.x;
+  y -= point.y;
 }
 
 void femm::IntPoint::Offset(long xOffset, long yOffset)
 {
-    x = x + xOffset;
+  x = x + xOffset;
 
-    y = y + yOffset;
+  y = y + yOffset;
 }
 
-void femm::IntPoint::Offset( femm::IntPoint point )
+void femm::IntPoint::Offset(femm::IntPoint point)
 {
-    x = x + point.x;
-    y = y + point.y;
+  x = x + point.x;
+  y = y + point.y;
 }

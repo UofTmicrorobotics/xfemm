@@ -44,9 +44,9 @@ using namespace femm;
 
 // CArcSegment construction
 CArcSegment::CArcSegment()
-    : CSegment()
-    , ArcLength(90.)
-    , NormalDirection(true)
-    , mySideLength(1)
+: CSegment()
+  , ArcLength(90.)
+  , NormalDirection(true)
+  , mySideLength(1)
 {
 }

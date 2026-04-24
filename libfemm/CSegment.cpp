@@ -32,37 +32,36 @@ using namespace femm;
 
 // CSegment construction
 CSegment::CSegment()
-    : n0(0)
-    , n1(0)
-    , MaxSideLength(-1)
-    , Hidden(false)
-    , InGroup(0)
-    , IsSelected(false)
-    , BoundaryMarker(-1)
-    , InConductor(-1)
-    , BoundaryMarkerName("<None>")
-    , InConductorName("<None>")
-    , cnt(0)
+: n0(0)
+  , n1(0)
+  , MaxSideLength(-1)
+  , Hidden(false)
+  , InGroup(0)
+  , IsSelected(false)
+  , BoundaryMarker(-1)
+  , InConductor(-1)
+  , BoundaryMarkerName("<None>")
+  , InConductorName("<None>")
+  , cnt(0)
 {
 }
 
 void CSegment::ToggleSelect()
 {
-    IsSelected = !IsSelected;
+  IsSelected = !IsSelected;
 }
 
 std::unique_ptr<CSegment> CSegment::clone() const
 {
-    return std::unique_ptr<CSegment>(new CSegment(*this));
+  return std::unique_ptr<CSegment>(new CSegment(*this));
 }
 
 bool CSegment::hasBoundaryMarker() const
 {
-    return (BoundaryMarker!=-1);
+  return BoundaryMarker != -1;
 }
 
 bool CSegment::isInConductor() const
 {
-    return (InConductor!=-1);
+  return InConductor != -1;
 }
-
