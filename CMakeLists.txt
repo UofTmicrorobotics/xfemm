@@ -21,7 +21,6 @@ endfunction(setVersion)
 
 setVersion(XFEMM 0 0 0 dev)
 
-
 enable_testing()
 set(CMAKE_CXX_STANDARD 14)
 
