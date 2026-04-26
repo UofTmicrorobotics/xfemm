@@ -585,7 +585,19 @@ CComplex exp(const CComplex & x)
   const double exp_x = exp(x.re);
   double sin_x;
   double cos_x;
-  sincos(x.im, &sin_x, &cos_x);
+  #if defined(__APPLE__)
+    // Apple libSystem exposes __sincos for double.
+    __sincos(x.im, &sin_x, &cos_x);
+
+#elif defined(__GLIBC__) || defined(__linux__)
+    // GNU/glibc extension. You may need _GNU_SOURCE enabled before including math.h/cmath.
+    sincos(x.im, &sin_x, &cos_x);
+
+#else
+    // Portable fallback.
+    *s = std::sin(x.im);
+    *c = std::cos(x.im);
+#endif
   y.re = cos_x * exp_x;
   y.im = sin_x * exp_x;
 
