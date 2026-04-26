@@ -29,7 +29,7 @@
 
 #include <stdio.h>
 #include <math.h>
-#include <malloc.h>
+#include <cstdlib>
 #include <string>
 #include <cstdio>
 

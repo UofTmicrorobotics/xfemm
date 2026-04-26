@@ -28,7 +28,7 @@
 #include "spars.h"
 
 #include <cstdio>
-#include <malloc.h>
+#include <cstdlib>
 #include <math.h>
 #include <string>
 

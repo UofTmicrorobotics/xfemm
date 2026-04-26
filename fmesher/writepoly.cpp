@@ -46,7 +46,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iomanip>
-#include <malloc.h>
+#include <cstdlib>
 #include <stdexcept>
 #include <string>
 #include <vector>

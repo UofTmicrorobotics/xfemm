@@ -26,7 +26,7 @@
 #include "spars.h"
 
 #include <algorithm>
-#include <malloc.h>
+#include <cstdlib>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

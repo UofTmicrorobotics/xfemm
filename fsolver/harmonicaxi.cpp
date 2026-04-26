@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <algorithm>
-#include <malloc.h>
+#include <cstdlib>
 #include "femmcomplex.h"
 #include "femmconstants.h"
 #include "CElement.h"

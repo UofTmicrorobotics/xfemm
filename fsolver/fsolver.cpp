@@ -44,7 +44,7 @@
 #include <fstream>
 #include <ios>
 #include <iostream>
-#include <malloc.h>
+#include <cstdlib>
 #include <math.h>
 #include <sstream>
 #include <stdio.h>
